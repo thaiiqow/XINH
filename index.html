@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>XINH</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><text x='50' y='72' font-size='70' text-anchor='middle' fill='red' font-family='Arial' font-weight='bold'>X</text></svg>">
+<style>
+:root{--bg:#030303;--p:#0a0a0b;--p2:#111113;--ln:#2a0a10;--red:#ff1f3d;--red2:#ff5a6e;--tx:#f2e9ea;--mt:#8a7377;--glow:0 0 8px rgba(255,31,61,.7),0 0 22px rgba(255,31,61,.35)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--bg);color:var(--tx);font:15px/1.4 "Trebuchet MS","Segoe UI",sans-serif}
+body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button,input{font:inherit;color:inherit}
+input{background:var(--p2);border:1px solid var(--ln);border-radius:10px;padding:12px 14px;width:100%;outline:none}
+input:focus{border-color:var(--red);box-shadow:var(--glow)}
+button{cursor:pointer;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:10px;padding:11px 16px;font-weight:700;letter-spacing:.04em}
+button:hover,button:focus-visible{background:var(--red);color:#000;box-shadow:var(--glow);outline:none}
+button.solid{background:var(--red);color:#000}
+.logo{font:900 44px/1 "Arial Black",Impact,sans-serif;letter-spacing:.18em;color:var(--red);text-shadow:var(--glow)}
+.hide{display:none!important}
+#auth{height:100%;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% 0,#2a0710 0,transparent 55%)}
+.card{width:100%;max-width:380px;background:var(--p);border:1px solid var(--red);border-radius:16px;padding:28px 22px;box-shadow:var(--glow);display:flex;flex-direction:column;gap:12px}
+.card .logo{text-align:center;margin-bottom:4px}
+.tabs{display:flex;gap:8px}.tabs button{flex:1;border-color:var(--ln);color:var(--mt)}
+.tabs button.on{border-color:var(--red);color:var(--red);box-shadow:var(--glow)}
+.row{display:flex;gap:8px}.row button{flex:1}
+#err{color:var(--red2);min-height:20px;font-size:13px}
+#app{height:100%;display:flex}
+#side{width:320px;border-right:1px solid var(--ln);background:var(--p);display:flex;flex-direction:column;min-width:0}
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--ln)}
+.top .logo{font-size:24px}
+.top small{color:var(--mt);display:block;font-size:12px}
+#search{margin:10px 14px}
+#list{overflow:auto;flex:1}
+.u{display:flex;gap:12px;align-items:center;padding:12px 14px;cursor:pointer;border-bottom:1px solid #160609}
+.u:hover,.u.on{background:#1a070b}
+.av{width:42px;height:42px;border-radius:50%;border:1px solid var(--red);display:grid;place-items:center;color:var(--red);font-weight:900;flex:none;box-shadow:0 0 10px rgba(255,31,61,.35)}
+.u .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.u .sb{color:var(--mt);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:var(--glow);margin-left:auto;flex:none}
+.badge{font-size:10px;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:1px 5px;margin-left:6px}
+#main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+#head{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--ln);background:var(--p)}
+#back{display:none;padding:6px 12px}
+#msgs{flex:1;overflow:auto;padding:16px 14px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:78%;padding:9px 13px;border-radius:14px;word-wrap:break-word;white-space:pre-wrap;background:var(--p2);border:1px solid var(--ln)}
+.m.me{align-self:flex-end;background:#1c060b;border-color:var(--red);box-shadow:0 0 10px rgba(255,31,61,.25)}
+.m time{display:block;font-size:10px;color:var(--mt);margin-top:3px;text-align:right}
+.empty{margin:auto;color:var(--mt);text-align:center;padding:20px}
+#form{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--ln);background:var(--p)}
+@media(max-width:700px){#side{width:100%}#main{position:fixed;inset:0;padding-top:env(safe-area-inset-top);z-index:5}#back{display:block}#app.chat #side{display:none}#app:not(.chat) #main{display:none}}
+@media(prefers-reduced-motion:no-preference){.card{animation:in .5s ease}@keyframes in{from{opacity:0;box-shadow:none}}}
+</style>
+</head>
+<body>
+
+<div id="auth">
+ <div class="card">
+  <div class="logo">XINH</div>
+  <div class="tabs"><button id="tPhone" class="on">Номер</button><button id="tMail">Сервис (почта)</button></div>
+  <input id="name" placeholder="Имя (при регистрации)" autocomplete="name">
+  <input id="login" type="tel" placeholder="+7 900 000 00 00" autocomplete="username">
+  <input id="pass" type="password" placeholder="Пароль (от 6 символов)" autocomplete="current-password">
+  <div id="err"></div>
+  <div class="row"><button class="solid" id="bIn">Войти</button><button id="bUp">Регистрация</button></div>
+ </div>
+</div>
+
+<div id="app" class="hide">
+ <aside id="side">
+  <div class="top"><div><span class="logo">XINH</span><small id="who"></small></div><button id="out">Выйти</button></div>
+  <input id="search" placeholder="Поиск по имени или номеру">
+  <div id="list"></div>
+ </aside>
+ <section id="main">
+  <div id="head" class="hide"><button id="back">←</button><div class="av" id="hav"></div><div><b id="hnm"></b><div class="sb" id="hsb" style="color:var(--mt);font-size:12px"></div></div></div>
+  <div id="msgs"><div class="empty">Выберите контакт слева, чтобы начать переписку.</div></div>
+  <form id="form" class="hide"><input id="txt" placeholder="Сообщение" autocomplete="off"><button class="solid">Отправить</button></form>
+ </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const SUPABASE_URL='https://kwmzfuflngxgkahjivma.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3bXpmdWZsbmd4Z2thaGppdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwNTQ2MTksImV4cCI6MjEwODYzMDYxOX0.9a9oGE28t-OAMZ81H4cWS71-zODtf53V6aLG5OvxrPU';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+let mode='phone',me=null,peer=null,users=[],msgs=[],unread=new Set();
+
+function setMode(m){mode=m;$('tPhone').classList.toggle('on',m==='phone');$('tMail').classList.toggle('on',m==='mail');
+ $('login').type=m==='phone'?'tel':'email';$('login').placeholder=m==='phone'?'+7 900 000 00 00':'service@company.com';$('err').textContent='';}
+$('tPhone').onclick=()=>setMode('phone');$('tMail').onclick=()=>setMode('mail');
+
+function creds(){
+ let l=$('login').value.trim(),p=$('pass').value;
+ if(!l||p.length<6){$('err').textContent='Введите логин и пароль от 6 символов.';return null}
+ if(mode==='phone'){l='+'+l.replace(/\D/g,'');if(l.length<8){$('err').textContent='Неверный номер.';return null}return{phone:l,password:p}}
+ return{email:l,password:p};
+}
+$('bIn').onclick=async()=>{const c=creds();if(!c)return;const{error}=await sb.auth.signInWithPassword(c);if(error)$('err').textContent=error.message};
+$('bUp').onclick=async()=>{const c=creds();if(!c)return;
+ const nm=$('name').value.trim();if(!nm){$('err').textContent='Введите имя.';return}
+ const{data,error}=await sb.auth.signUp({...c,options:{data:{display_name:nm}}});
+ if(error)$('err').textContent=error.message;
+ else if(!data.session)$('err').textContent='Аккаунт создан. Подтвердите его или войдите.';};
+$('out').onclick=()=>sb.auth.signOut();
+
+sb.auth.onAuthStateChange((_e,s)=>{ // не вызывать await внутри колбэка
+ if(s&&s.user){if(!me||me.id!==s.user.id)setTimeout(()=>boot(s.user),0)}
+ else{me=null;$('app').classList.add('hide');$('auth').classList.remove('hide')}
+});
+
+async function boot(u){
+ me=u;$('auth').classList.add('hide');$('app').classList.remove('hide');
+ $('who').textContent=u.phone?'+'+u.phone.replace('+',''):u.email;
+ const[{data:us},{data:ms}]=await Promise.all([
+  sb.from('profiles').select('*').neq('id',u.id).order('display_name').limit(300),
+  sb.from('messages').select('*').or(`sender_id.eq.${u.id},recipient_id.eq.${u.id}`).order('created_at').limit(1000)]);
+ users=us||[];msgs=ms||[];renderList();
+ sb.channel('m-'+u.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>{
+  const m=p.new;if(m.sender_id!==me.id&&m.recipient_id!==me.id)return;
+  if(msgs.some(x=>x.id===m.id))return;msgs.push(m);
+  const other=m.sender_id===me.id?m.recipient_id:m.sender_id;
+  if(m.sender_id!==me.id&&(!peer||peer.id!==other))unread.add(other);
+  renderList();if(peer&&peer.id===other)renderMsgs();
+  if(!users.some(x=>x.id===other))refreshUsers();
+ }).subscribe();
+}
+async function refreshUsers(){const{data}=await sb.from('profiles').select('*').neq('id',me.id).order('display_name').limit(300);users=data||[];renderList()}
+
+function last(id){for(let i=msgs.length-1;i>=0;i--){const m=msgs[i];if(m.sender_id===id||m.recipient_id===id)return m}}
+function renderList(){
+ const q=$('search').value.toLowerCase(),box=$('list');box.textContent='';
+ users.filter(u=>(u.display_name+' '+(u.phone||'')+' '+(u.email||'')).toLowerCase().includes(q))
+ .sort((a,b)=>new Date(last(b.id)?.created_at||0)-new Date(last(a.id)?.created_at||0))
+ .forEach(u=>{
+  const d=document.createElement('div');d.className='u'+(peer&&peer.id===u.id?' on':'');
+  const av=document.createElement('div');av.className='av';av.textContent=(u.display_name||'?')[0].toUpperCase();
+  const w=document.createElement('div');w.style.minWidth=0;
+  const n=document.createElement('div');n.className='nm';n.textContent=u.display_name;
+  if(u.is_service){const b=document.createElement('span');b.className='badge';b.textContent='сервис';n.append(b)}
+  const s=document.createElement('div');s.className='sb';s.textContent=last(u.id)?.body||u.phone||u.email||'';
+  w.append(n,s);d.append(av,w);
+  if(unread.has(u.id)){const t=document.createElement('div');t.className='dot';d.append(t)}
+  d.onclick=()=>openChat(u);box.append(d);
+ });
+ if(!box.children.length){const e=document.createElement('div');e.className='empty';e.textContent='Пока никого нет. Пригласите друзей зарегистрироваться.';box.append(e)}
+}
+$('search').oninput=renderList;
+
+function openChat(u){peer=u;unread.delete(u.id);$('app').classList.add('chat');
+ $('head').classList.remove('hide');$('form').classList.remove('hide');
+ $('hav').textContent=(u.display_name||'?')[0].toUpperCase();$('hnm').textContent=u.display_name;
+ $('hsb').textContent=u.is_service?'служебный аккаунт':(u.phone||'');renderList();renderMsgs();$('txt').focus()}
+$('back').onclick=()=>{$('app').classList.remove('chat');peer=null;$('head').classList.add('hide');$('form').classList.add('hide');renderList()};
+
+function renderMsgs(){
+ const box=$('msgs');box.textContent='';
+ const l=msgs.filter(m=>m.sender_id===peer.id||m.recipient_id===peer.id);
+ if(!l.length){const e=document.createElement('div');e.className='empty';e.textContent='Сообщений пока нет. Напишите первым.';box.append(e);return}
+ l.forEach(m=>{const d=document.createElement('div');d.className='m'+(m.sender_id===me.id?' me':'');
+  d.textContent=m.body;const t=document.createElement('time');
+  t.textContent=new Date(m.created_at).toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'});d.append(t);box.append(d)});
+ box.scrollTop=box.scrollHeight;
+}
+$('form').onsubmit=async e=>{e.preventDefault();
+ const body=$('txt').value.trim();if(!body||!peer)return;$('txt').value='';
+ const{data,error}=await sb.from('messages').insert({sender_id:me.id,recipient_id:peer.id,body}).select().single();
+ if(error){alert('Не отправлено: '+error.message);$('txt').value=body;return}
+ if(!msgs.some(x=>x.id===data.id)){msgs.push(data);renderList();renderMsgs()}
+};
+</script>
+</body>
+</html>
