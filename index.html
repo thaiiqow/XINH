@@ -423,7 +423,7 @@ async function loadRooms(){const[{data:rs},{data:cs}]=await Promise.all([sb.from
  rooms=(rs||[]).map(x=>({id:'r'+x.id,rid:x.id,room:true,kind:x.kind,owner:x.owner,invite:x.invite,display_name:x.title}));
  conts={};(cs||[]).forEach(c=>conts[c.contact]=c.alias||'');renderList()}
 $('tChats').onclick=()=>{tab='chats';renderList()};$('tCont').onclick=()=>{tab='cont';renderList()};
-async function addContact(u,alias){const{error}=await sb.from('contacts').upsert({owner:me.id,contact:u.id,alias:alias||null});if(error)alert(error.message);
+async function addContact(u,alias){const{error}=await sb.rpc('save_contact',{cid:u.id,al:alias||null});if(error)alert(error.message);
  if(!error){conts[u.id]=alias||'';renderList();if(peer&&peer.id===u.id)setHead()}return !error}
 async function addByName(){const n=(prompt(t('addby'))||'').trim().replace(/^@/,'').toLowerCase();if(!n)return;
  let u=users.find(x=>x.username===n);
@@ -441,7 +441,7 @@ showProfile=function(){if(!peer)return;_sp();const r=!!peer.room,ic=peer.id in c
  if(r)$('vInfo').textContent=t(peer.kind);else $('vAdd').textContent=t(ic?'delc':'addc')};
 $('hav').onclick=$('hnm').onclick=showProfile;
 $('vAdd').onclick=async()=>{if(!peer||peer.room)return;
- if(peer.id in conts){await sb.from('contacts').delete().eq('owner',me.id).eq('contact',peer.id);delete conts[peer.id];renderList();setHead()}else await addContact(peer,'');showProfile()};
+ if(peer.id in conts){await sb.rpc('remove_contact',{cid:peer.id});delete conts[peer.id];renderList();setHead()}else await addContact(peer,'');showProfile()};
 $('vRen').onclick=async()=>{if(!peer||peer.room)return;const a=prompt(t('alias'),conts[peer.id]||peer.display_name);if(a===null)return;await addContact(peer,a.trim());showProfile()};
 $('bNew').onclick=()=>{if(tab==='cont'){addByName();return}
  const box=$('rMem');box.textContent='';
@@ -449,11 +449,10 @@ $('bNew').onclick=()=>{if(tab==='cont'){addByName();return}
  $('rErr').textContent='';$('rmodal').classList.remove('hide')};
 $('rX').onclick=()=>$('rmodal').classList.add('hide');
 $('rGo').onclick=async()=>{const title=$('rTitle').value.trim();if(!title){$('rErr').textContent=t('e_title');return}
- const{data:r,error}=await sb.from('rooms').insert({kind:$('rKind').value,title,owner:me.id}).select().single();if(error){$('rErr').textContent=error.message;return}
- const ids=[me.id,...[...$('rMem').querySelectorAll('input:checked')].map(i=>i.value)];
- const{error:e2}=await sb.from('room_members').insert(ids.map(id=>({room_id:r.id,user_id:id,role:id===me.id?'owner':'member'})));
- if(e2){$('rErr').textContent=e2.message;return}
- $('rmodal').classList.add('hide');$('rTitle').value='';await loadRooms();const o=rooms.find(x=>x.rid===r.id);if(o)openChat(o)};
+ const ids=[...$('rMem').querySelectorAll('input:checked')].map(i=>i.value);
+ const{data:rid,error}=await sb.rpc('create_room',{k:$('rKind').value,ttl:title,members:ids});
+ if(error){$('rErr').textContent=error.message;return}
+ $('rmodal').classList.add('hide');$('rTitle').value='';await loadRooms();const o=rooms.find(x=>x.rid===rid);if(o)openChat(o)};
 try{const j=new URLSearchParams(location.search).get('j');if(j)localStorage.setItem('xinh_join',j)}catch(e){}
 async function joinPending(){let c=null;try{c=localStorage.getItem('xinh_join');localStorage.removeItem('xinh_join')}catch(e){}
  if(!c)return;history.replaceState(null,'',location.pathname);
