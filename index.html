@@ -163,7 +163,7 @@ button.link:hover{background:none;box-shadow:none;color:var(--act)}
  <input id="rTitle" data-ip="rtitle"><div class="lbl" data-i="members"></div><div id="rMem" style="display:flex;flex-direction:column;gap:8px"></div>
  <div class="err" id="rErr"></div><button class="solid" id="rGo" data-i="create"></button><button id="rX" data-i="close"></button></div></div>
 <div id="toasts"></div>
-<div id="pview" class="hide"><div class="card"><div class="av avb" id="vAv" style="cursor:default"></div><h2 id="vName" style="text-align:center"></h2><div id="vInfo" class="lbl" style="white-space:pre-line;text-align:center"></div><button id="vAdd"></button><button id="vRen" data-i="rename"></button><button class="solid" id="vClose" data-i="close"></button></div></div>
+<div id="pview" class="hide"><div class="card"><div class="av avb" id="vAv" style="cursor:default"></div><h2 id="vName" style="text-align:center"></h2><div id="vInfo" class="lbl" style="white-space:pre-line;text-align:center"></div><input id="vLink" readonly class="hide"><button id="vShare" class="hide" data-i="share"></button><button id="vAdd"></button><button id="vRen" data-i="rename"></button><button class="solid" id="vClose" data-i="close"></button></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
@@ -184,7 +184,7 @@ ru:{login_t:'Вход',reg_t:'Регистрация',email:'Почта',pass:'�
  created:'Аккаунт создан. Подтвердите почту или войдите.',notsent:'Не отправлено: ',
  username:'имя_пользователя',notif:'Уведомления о сообщениях',ntext:'Показывать текст в уведомлениях',newmsg:'Новое сообщение',chats:'Чаты',contacts:'Контакты',newroom:'Новая группа или канал',group:'Группа',channel:'Канал',rtitle:'Название',members:'Участники (из контактов)',create:'Создать',
  rename:'Переименовать контакт',addc:'Добавить в контакты',delc:'Удалить из контактов',addby:'Добавить по @username',imp:'Импорт из телефона',noimp:'Импорт контактов поддерживает Chrome на Android.',
- nf:'Пользователь не найден.',alias:'Имя контакта (видно только вам)',e_title:'Введите название.',imported:'Добавлено контактов: ',nocont:'Контактов пока нет.',conf_t:'Подтвердите почту',conf_txt:'Мы отправили письмо на {e}. Откройте его и подтвердите адрес, затем нажмите «Войти».',conf_h:'Письмо не пришло? Проверьте папку «Спам».',
+ nf:'Пользователь не найден.',alias:'Имя контакта (видно только вам)',e_title:'Введите название.',imported:'Добавлено контактов: ',nocont:'Контактов пока нет.',share:'Поделиться ссылкой',copied:'Ссылка скопирована.',e_join:'Ссылка недействительна.',conf_t:'Подтвердите почту',conf_txt:'Мы отправили письмо на {e}. Откройте его и подтвердите адрес, затем нажмите «Войти».',conf_h:'Письмо не пришло? Проверьте папку «Спам».',
  e_user:'Имя пользователя: 3-20 символов, латиница, цифры и _.',e_taken:'Это имя пользователя уже занято.',g_none:'Пол не указан',g_m:'Мужской',g_f:'Женский',g_o:'Другой',
  birth:'Дата рождения',region:'Регион проживания',hide_seen:'Скрыть время посещения',plink:'Ссылка на профиль',save:'Сохранить',saved:'Сохранено',
  online:'в сети',recent:'был(а) недавно',seen:'был(а) ',e_big:'Файл слишком большой.',e_mic:'Нет доступа к микрофону.'},
@@ -198,7 +198,7 @@ en:{login_t:'Sign in',reg_t:'Create account',email:'Email',pass:'Password (6+ ch
  created:'Account created. Confirm your email or sign in.',notsent:'Not sent: ',
  username:'username',notif:'Message notifications',ntext:'Show text in notifications',newmsg:'New message',chats:'Chats',contacts:'Contacts',newroom:'New group or channel',group:'Group',channel:'Channel',rtitle:'Title',members:'Members (from contacts)',create:'Create',
  rename:'Rename contact',addc:'Add to contacts',delc:'Remove from contacts',addby:'Add by @username',imp:'Import from phone',noimp:'Contact import works in Chrome on Android.',
- nf:'User not found.',alias:'Contact name (only you see it)',e_title:'Enter a title.',imported:'Contacts added: ',nocont:'No contacts yet.',conf_t:'Confirm your email',conf_txt:'We sent an email to {e}. Open it, confirm your address, then press Sign in.',conf_h:'No email? Check your spam folder.',
+ nf:'User not found.',alias:'Contact name (only you see it)',e_title:'Enter a title.',imported:'Contacts added: ',nocont:'No contacts yet.',share:'Share link',copied:'Link copied.',e_join:'Invalid invite link.',conf_t:'Confirm your email',conf_txt:'We sent an email to {e}. Open it, confirm your address, then press Sign in.',conf_h:'No email? Check your spam folder.',
  e_user:'Username: 3-20 characters, Latin letters, digits and _.',e_taken:'This username is taken.',g_none:'Gender not set',g_m:'Male',g_f:'Female',g_o:'Other',
  birth:'Date of birth',region:'Region',hide_seen:'Hide last seen time',plink:'Profile link',save:'Save',saved:'Saved',
  online:'online',recent:'last seen recently',seen:'last seen ',e_big:'File is too large.',e_mic:'No microphone access.'}
@@ -269,7 +269,7 @@ async function boot(u){
  const[{data:us},{data:ms}]=await Promise.all([
   sb.from('profiles').select('*').neq('id',u.id).order('display_name').limit(300),
   sb.from('messages').select('*').order('created_at').limit(1000)]);
- users=us||[];msgs=ms||[];renderList();renderMsgs();await loadMe();await loadRooms();beat();clearInterval(window.hb);window.hb=setInterval(beat,60000);
+ users=us||[];msgs=ms||[];renderList();renderMsgs();await loadMe();await loadRooms();await joinPending();beat();clearInterval(window.hb);window.hb=setInterval(beat,60000);
  const qu=new URLSearchParams(location.search).get('u'),pu=qu&&users.find(x=>x.username===qu.toLowerCase());if(pu)openChat(pu);
  chan=sb.channel('m-'+u.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>{
   const m=p.new;if(!m.room_id&&m.sender_id!==me.id&&m.recipient_id!==me.id)return;
@@ -420,10 +420,10 @@ function buildRegions(){const sel=$('pRegion'),v=sel.value,lg=S.lang==='ru'?'ru'
 
 /* ===== КОНТАКТЫ, ГРУППЫ/КАНАЛЫ, ПЛЕЕР ===== */
 async function loadRooms(){const[{data:rs},{data:cs}]=await Promise.all([sb.from('rooms').select('*'),sb.from('contacts').select('*')]);
- rooms=(rs||[]).map(x=>({id:'r'+x.id,rid:x.id,room:true,kind:x.kind,owner:x.owner,display_name:x.title}));
+ rooms=(rs||[]).map(x=>({id:'r'+x.id,rid:x.id,room:true,kind:x.kind,owner:x.owner,invite:x.invite,display_name:x.title}));
  conts={};(cs||[]).forEach(c=>conts[c.contact]=c.alias||'');renderList()}
 $('tChats').onclick=()=>{tab='chats';renderList()};$('tCont').onclick=()=>{tab='cont';renderList()};
-async function addContact(u,alias){const{error}=await sb.from('contacts').upsert({owner:me.id,contact:u.id,alias:alias||null});
+async function addContact(u,alias){const{error}=await sb.from('contacts').upsert({owner:me.id,contact:u.id,alias:alias||null});if(error)alert(error.message);
  if(!error){conts[u.id]=alias||'';renderList();if(peer&&peer.id===u.id)setHead()}return !error}
 async function addByName(){const n=(prompt(t('addby'))||'').trim().replace(/^@/,'').toLowerCase();if(!n)return;
  let u=users.find(x=>x.username===n);
@@ -436,7 +436,8 @@ async function importContacts(){if(!('contacts' in navigator&&navigator.contacts
   alert(t('imported')+n)}catch(e){}}
 const _sp=showProfile;
 showProfile=function(){if(!peer)return;_sp();const r=!!peer.room,ic=peer.id in conts;
- $('vAdd').classList.toggle('hide',r);$('vRen').classList.toggle('hide',r||!ic);
+ $('vAdd').classList.toggle('hide',r);$('vLink').classList.toggle('hide',!r);$('vShare').classList.toggle('hide',!r);
+ if(r&&peer.invite)$('vLink').value=location.origin+location.pathname+'?j='+peer.invite;$('vRen').classList.toggle('hide',r||!ic);
  if(r)$('vInfo').textContent=t(peer.kind);else $('vAdd').textContent=t(ic?'delc':'addc')};
 $('hav').onclick=$('hnm').onclick=showProfile;
 $('vAdd').onclick=async()=>{if(!peer||peer.room)return;
@@ -453,6 +454,13 @@ $('rGo').onclick=async()=>{const title=$('rTitle').value.trim();if(!title){$('rE
  const{error:e2}=await sb.from('room_members').insert(ids.map(id=>({room_id:r.id,user_id:id,role:id===me.id?'owner':'member'})));
  if(e2){$('rErr').textContent=e2.message;return}
  $('rmodal').classList.add('hide');$('rTitle').value='';await loadRooms();const o=rooms.find(x=>x.rid===r.id);if(o)openChat(o)};
+try{const j=new URLSearchParams(location.search).get('j');if(j)localStorage.setItem('xinh_join',j)}catch(e){}
+async function joinPending(){let c=null;try{c=localStorage.getItem('xinh_join');localStorage.removeItem('xinh_join')}catch(e){}
+ if(!c)return;history.replaceState(null,'',location.pathname);
+ const{data,error}=await sb.rpc('join_room',{code:c});if(error||!data){alert(t('e_join'));return}
+ await loadRooms();const o=rooms.find(x=>x.rid===data);if(o)openChat(o)}
+$('vLink').onclick=e=>{e.target.select();if(navigator.clipboard)navigator.clipboard.writeText(e.target.value)};
+$('vShare').onclick=()=>{const u=$('vLink').value;if(navigator.share)navigator.share({title:peer.display_name,url:u}).catch(()=>{});else if(navigator.clipboard){navigator.clipboard.writeText(u);alert(t('copied'))}};
 const pc={};let curA=null;
 function player(m){if(pc[m.id])return pc[m.id];
  const w=document.createElement('div');w.className='mp';pc[m.id]=w;
