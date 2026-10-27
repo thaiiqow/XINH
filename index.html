@@ -88,6 +88,67 @@ button.link:hover{background:none;box-shadow:none;color:var(--act)}
 #form button.ic{padding:10px 12px}
 @media(max-width:700px){#side{width:100%}#main{position:fixed;inset:0;padding-top:env(safe-area-inset-top);z-index:5}#back{display:block}#app.chat #side{display:none}#app:not(.chat) #main{display:none}}
 @media(prefers-reduced-motion:no-preference){.card{animation:in .5s ease}@keyframes in{from{opacity:0;box-shadow:none}}}
+
+/* ===== iOS LIQUID GLASS ===== */
+:root{--blur:blur(22px) saturate(180%);--gl:rgba(255,255,255,.075);--gl2:rgba(255,255,255,.16);--gb:rgba(255,255,255,.2);--tn:color-mix(in srgb,var(--ac) 26%,transparent);--shade:rgba(0,0,0,.4);
+--gs:inset 0 1.5px 0 rgba(255,255,255,.38),inset 0 -1px 0 rgba(255,255,255,.07),inset 0 0 22px rgba(255,255,255,.035),0 10px 30px rgba(0,0,0,.5)}
+[data-mode=light]{--gl:rgba(255,255,255,.52);--gl2:rgba(255,255,255,.85);--gb:rgba(255,255,255,.95);--shade:rgba(255,255,255,.4);
+--gs:inset 0 1.5px 0 #fff,inset 0 -1px 0 rgba(0,0,0,.05),0 10px 28px rgba(50,50,80,.16)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){:root{--gl:rgba(28,28,32,.93)}[data-mode=light]{--gl:rgba(255,255,255,.95)}}
+html{background:var(--bg)}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","Segoe UI",sans-serif;
+background:radial-gradient(70% 45% at 12% 8%,color-mix(in srgb,var(--ac) 34%,transparent),transparent 70%),radial-gradient(60% 45% at 92% 88%,color-mix(in srgb,var(--ac) 24%,transparent),transparent 70%),var(--bg);background-attachment:fixed}
+#app,#main,#side{background:transparent}
+.m,input,select,.pfx,button,#head,#form,#rbar,#pin,.top,.card,.toast,.prow,.tabs2,#segMode,.mrow{background:var(--gl);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--gb);box-shadow:var(--gs)}
+#modal,#pview,#rmodal,#fmodal,#mm{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.card{border-radius:32px;box-shadow:var(--gs),0 0 0 1px color-mix(in srgb,var(--ac) 30%,transparent),0 0 44px color-mix(in srgb,var(--ac) 20%,transparent)}
+input,select{border-radius:16px}
+select{-webkit-appearance:none;appearance:none;padding-right:38px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center}
+input:focus,select:focus{border-color:var(--ac);box-shadow:var(--gs),0 0 0 3px var(--tn)}
+.chk input{accent-color:var(--ac)}
+.pfx{border-radius:16px}.pfx input{box-shadow:none!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+button{border-radius:999px;padding:11px 18px;color:var(--act);font-weight:600;letter-spacing:0;transition:transform .28s cubic-bezier(.34,1.56,.64,1),background .2s,box-shadow .2s}
+button:hover,button:focus-visible{background:var(--gl2);color:var(--act);box-shadow:var(--gs),0 0 18px var(--tn);outline:none}
+button:active{transform:scale(.95)}
+button.solid,#bNew{background:linear-gradient(180deg,color-mix(in srgb,var(--ac) 92%,#fff),color-mix(in srgb,var(--ac) 72%,#000));border-color:color-mix(in srgb,var(--ac) 55%,#fff);color:#000;
+box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -2px 6px rgba(0,0,0,.18),0 8px 22px color-mix(in srgb,var(--ac) 45%,transparent)}
+button.solid:hover,#bNew:hover{background:linear-gradient(180deg,color-mix(in srgb,var(--ac) 80%,#fff),color-mix(in srgb,var(--ac) 82%,#000));color:#000}
+button.link{background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;border-radius:8px;padding:6px}
+.sw{border-radius:50%;padding:0;border:2px solid transparent;background:var(--c);box-shadow:0 0 12px var(--c),inset 0 1px 0 rgba(255,255,255,.5);-webkit-backdrop-filter:none;backdrop-filter:none}
+.sw.on{border-color:#fff}
+#segAcc{display:flex;justify-content:space-between;gap:8px}#segAcc .sw{flex:none;width:36px;height:36px}
+#segMode,.tabs2{padding:4px;gap:4px;border-radius:999px;flex-wrap:nowrap}
+#segMode button,.tabs2 button{border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;background:transparent;color:var(--mt)}
+#segMode button.on,.tabs2 button.on{background:var(--tn);color:var(--act);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 2px 10px color-mix(in srgb,var(--ac) 30%,transparent)}
+.tabs2{margin:0 14px 10px}
+#bNew{border:1px solid color-mix(in srgb,var(--ac) 55%,#fff);font-size:20px;line-height:1;padding:6px 0;color:#000}
+#search{margin:0 14px 10px;width:calc(100% - 28px);border-radius:999px;padding:11px 18px}
+.top{margin:10px 12px;border-radius:26px;padding:10px 14px}
+#list{padding:0 8px}
+.u{border-bottom:0;border-radius:20px;margin:2px 0}
+.u:hover,.u.on{background:var(--gl2);box-shadow:var(--gs)}
+.av{background:var(--gl);border:1px solid color-mix(in srgb,var(--ac) 55%,#fff 25%);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 14px var(--tn)}
+.badge{border-radius:999px;background:var(--tn);padding:1px 8px}
+#head{margin:10px 12px 0;border-radius:26px;padding:10px 14px}
+#back{width:38px;height:38px;padding:0;text-align:center;line-height:1}
+#pin,#rbar{margin:8px 12px 0;border-radius:20px}
+#form{margin:8px 12px calc(10px + env(safe-area-inset-bottom));padding:6px;gap:6px;align-items:center;border-radius:999px}
+#form #txt{border:0;background:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:10px 12px}
+#form button.ic{width:42px;height:42px;padding:0;display:grid;place-items:center;font-size:19px;flex:none}
+#form .solid{padding:10px 18px}
+.m{border-radius:22px;padding:10px 14px;position:relative;overflow:hidden;-webkit-backdrop-filter:blur(16px) saturate(170%);backdrop-filter:blur(16px) saturate(170%)}
+.m::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.26),rgba(255,255,255,0) 38%,rgba(255,255,255,0) 68%,rgba(255,255,255,.07))}
+.m.me{background:linear-gradient(135deg,color-mix(in srgb,var(--ac) 58%,transparent),color-mix(in srgb,var(--ac) 24%,transparent));border-color:color-mix(in srgb,var(--ac) 65%,rgba(255,255,255,.5));box-shadow:var(--gs),0 6px 24px color-mix(in srgb,var(--ac) 28%,transparent)}
+.toast{border-radius:24px}
+#mm .card{border-radius:32px;max-width:440px;margin-bottom:env(safe-area-inset-bottom)}
+#mmc>button{border-radius:18px}
+.mrow{padding:8px 12px;border-radius:18px;-webkit-backdrop-filter:none;backdrop-filter:none}
+.prow{display:flex;align-items:center;gap:14px;padding:14px;border-radius:30px;text-align:left}
+.prow .avb{width:78px;height:78px;margin:0;font-size:30px;flex:none}
+.ptxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.ptxt h2{text-align:left;font-size:20px;font-weight:700;overflow-wrap:anywhere}
+.prow input,.prow .pfx{-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;background:rgba(255,255,255,.07);border-radius:14px;padding-top:8px;padding-bottom:8px}
+.prow .pfx{padding:0}.prow .pfx input{background:transparent;padding:8px 4px}
 </style>
 </head>
 <body>
@@ -146,8 +207,8 @@ button.link:hover{background:none;box-shadow:none;color:var(--act)}
  <div class="card">
   <h2 data-i="settings"></h2>
   <div id="profBox" class="hide" style="display:flex;flex-direction:column;gap:10px">
-   <div class="av avb" id="myAv"></div><input type="file" id="avFile" accept="image/*" class="hide">
-   <input id="pName" data-ip="name"><div class="pfx"><span>@</span><input id="pUser" data-ip="username" autocomplete="off" autocapitalize="none"></div>
+   <div class="prow"><div class="av avb" id="myAv"></div><input type="file" id="avFile" accept="image/*" class="hide"><div class="ptxt">
+   <input id="pName" data-ip="name"><div class="pfx"><span>@</span><input id="pUser" data-ip="username" autocomplete="off" autocapitalize="none"></div></div></div>
    <select id="pGender"><option value="" data-i="g_none"></option><option value="m" data-i="g_m"></option><option value="f" data-i="g_f"></option><option value="o" data-i="g_o"></option></select>
    <div class="lbl" data-i="birth"></div><input id="pBirth" type="date">
    <select id="pRegion"></select>
@@ -174,7 +235,7 @@ button.link:hover{background:none;box-shadow:none;color:var(--act)}
 <div id="mm" class="hide"><div class="card" id="mmc"></div></div>
 <div id="fmodal" class="hide"><div class="card"><h2 data-i="fwdto"></h2><div id="fList"></div><button id="fX" data-i="close"></button></div></div>
 <div id="toasts"></div>
-<div id="pview" class="hide"><div class="card"><div class="av avb" id="vAv" style="cursor:default"></div><h2 id="vName" style="text-align:center"></h2><div id="vInfo" class="lbl" style="white-space:pre-line;text-align:center"></div>
+<div id="pview" class="hide"><div class="card"><div class="prow"><div class="av avb" id="vAv" style="cursor:default"></div><div class="ptxt"><h2 id="vName"></h2><div id="vInfo" class="lbl" style="white-space:pre-line"></div></div></div>
  <div id="vMem" class="hide" style="display:flex;flex-direction:column;gap:8px;max-height:36vh;overflow:auto"></div><input id="vLink" readonly class="hide"><button id="vShare" class="hide" data-i="share"></button><button id="vAdd"></button><button id="vRen" data-i="rename"></button><button class="solid" id="vClose" data-i="close"></button></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -220,13 +281,13 @@ en:{login_t:'Sign in',reg_t:'Create account',email:'Email',pass:'Password (6+ ch
 /* Lanđȃ: переводите значения ниже (полный список ключей). Пустое или отсутствующее берется из English. */
 I18.xx={login_t:'Te',reg_t:'Xo te',email:'Ti xĩĕn ọt za ƀȃ',pass:'Mҽnh (ka 6 ki nọ̑xão)',pass2:'Na nanzang mҽnh',name:'Nȏ ƀȃ',
  signin:'Te ha nȃ',signup:'Xo te ha nȃ qu qánh',to_reg:'Ẻtgȃ ƀạn tatythẽan pȃlan? Xo te',to_login:'Lȏ tatythẽan pȃlan? Te',out:'Ƀȃ tezang',
- search:'Đadán ƀȃ nȏ ƀȃ hȃ ti xĩĕn ọt za ƀȃ',msg:'Ưngh xept',send:'Ha pȃzang',pick:'Mươ̑hĩẹc trảrõen, ƀan zạ̑́ kҽ hịch‘hĩẹc za plan.',
+ search:'Đadán ƀȃ nȏ ƀȃ hȃ ti xĩĕn ọt za ƀȃ',msg:'Ưngh xept',send:'Ha pȃzang',pick:'Mươ̑hĩẹc trảrõen, ƀan zạ̑́ kҽ hịch\'hĩẹc za plan.',
  nochat:'Ưngh xeptxão ha lõanzang. Xệ ha nȃ tatlȃ ọt.',nousers:'Não, lanxão ha lõanzang. Ԏm tynh dũong anthémxão xo te ha nȃhĩẹc.',
  service:'xervix',svc_acc:'Ho hanh ọt pȃlan',settings:'Ƀȃ xa tứng',theme:'Xȏ crantọn',dark:'Athĩen ọt',light:'Zi lan ğã̌o ọt',accent:'Dẽan a͋ nẽon',
  lang:'Ư tãou̇',close:'Xotȃzang',red:'Tȏ dẽan',blue:'Xȋ dẽan',green:'Nhỏ dẽan',yellow:'Rȃ́ dẽan',purple:'C͜lä̑ dẽan',
- e_fill:'Xệ ha nȃhĩẹc ti xĩĕn ọt za ƀȃ ý mҽnh ka 6 ki nọ̑xão.',e_name:'Xệ ha nȃhĩẹc nȏ ƀȃ.',e_match:'Mҽnhxão ƀạn att‘ractzang.',
- created:'Pȃlan ҽ̆ xa hạc‘hinh. Ngu đũ̉ȃlan‘hĩẹc Ti xĩĕn ọt za ƀȃ hȃ te ha nȃhĩẹc.',notsent:'Ƀạn ha pȃhinh: ',
- username:'nȏƀȃ_xonđҽr',notif:'Xi zynghxão đon ưngh xeptxão',ntext:'Показывать текст в уведомлениях',newmsg:'Новое сообщение',chats:'Zȃlanxão',contacts:'Контакты',newroom:'Новая группа или канал',group:'Группа',channel:'Канал',rtitle:'Название',members:'Участники (из контактов)',create:'Создать',
+ e_fill:'Введите почту и пароль от 6 символов.',e_name:'Введите имя.',e_match:'Пароли не совпадают.',
+ created:'Аккаунт создан. Подтвердите почту или войдите.',notsent:'Не отправлено: ',
+ username:'имя_пользователя',notif:'Уведомления о сообщениях',ntext:'Показывать текст в уведомлениях',newmsg:'Новое сообщение',chats:'Чаты',contacts:'Контакты',newroom:'Новая группа или канал',group:'Группа',channel:'Канал',rtitle:'Название',members:'Участники (из контактов)',create:'Создать',
  rename:'Переименовать контакт',addc:'Добавить в контакты',delc:'Удалить из контактов',addby:'Добавить по @username',imp:'Импорт из телефона',noimp:'Импорт контактов поддерживает Chrome на Android.',
  nf:'Пользователь не найден.',alias:'Имя контакта (видно только вам)',e_title:'Введите название.',imported:'Добавлено контактов: ',nocont:'Контактов пока нет.',share:'Поделиться ссылкой',reply:'Ответить',fwdb:'Переслать',fwdto:'Переслать в…',copy:'Копировать',pin:'Закрепить',unpin:'Открепить',delme:'Удалить у меня',delall:'Удалить у всех',
  readat:'Прочитано: ',notread:'Ещё не прочитано',role_owner:'владелец',role_admin:'админ',mkadm:'Сделать админом',rmadm:'Снять админа',copied:'Ссылка скопирована.',e_join:'Ссылка недействительна.',conf_t:'Подтвердите почту',conf_txt:'Мы отправили письмо на {e}. Откройте его и подтвердите адрес, затем нажмите «Войти».',conf_h:'Письмо не пришло? Проверьте папку «Спам».',
