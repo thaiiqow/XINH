@@ -58,6 +58,12 @@ button.link:hover{background:none;box-shadow:none;color:var(--act)}
 .m time{display:block;font-size:10px;color:var(--mt);margin-top:3px;text-align:right}
 .empty{margin:auto;color:var(--mt);text-align:center;padding:20px}
 #form{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--ln);background:var(--p)}
+.pfx{display:flex;align-items:center;background:var(--p2);border:1px solid var(--ln);border-radius:10px}.pfx:focus-within{border-color:var(--ac);box-shadow:var(--glow)}
+.pfx span{padding-left:14px;color:var(--act);font-weight:700}.pfx input{border:0;background:transparent;box-shadow:none!important;padding-left:2px}
+#toasts{position:fixed;top:calc(10px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:30;display:flex;flex-direction:column;gap:8px;width:calc(100% - 24px);max-width:380px}
+.toast{display:flex;gap:12px;align-items:center;background:var(--p);border:1px solid var(--ac);border-radius:14px;padding:10px 12px;box-shadow:var(--glow);cursor:pointer}
+.toast .av{width:40px;height:40px}.toast>div:last-child{min-width:0}.toast .nm{font-weight:700}
+.toast .sb{color:var(--mt);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .card{max-height:92vh;overflow:auto}.card>*{flex-shrink:0}
 .avb{width:84px;height:84px;font-size:32px;cursor:pointer;overflow:hidden;align-self:center}
 .av{overflow:hidden}.av img{width:100%;height:100%;object-fit:cover}
@@ -91,7 +97,7 @@ button.link:hover{background:none;box-shadow:none;color:var(--act)}
   <div class="logo">XINH</div>
   <h2 data-i="reg_t"></h2>
   <input id="rgName" data-ip="name" autocomplete="name" required>
-  <input id="rgUser" data-ip="username" autocomplete="off" autocapitalize="none" required>
+  <div class="pfx"><span>@</span><input id="rgUser" data-ip="username" autocomplete="off" autocapitalize="none" required></div>
   <input id="rgEmail" type="email" data-ip="email" autocomplete="email" required>
   <input id="rgPass" type="password" data-ip="pass" autocomplete="new-password" required>
   <input id="rgPass2" type="password" data-ip="pass2" autocomplete="new-password" required>
@@ -125,10 +131,10 @@ button.link:hover{background:none;box-shadow:none;color:var(--act)}
   <h2 data-i="settings"></h2>
   <div id="profBox" class="hide" style="display:flex;flex-direction:column;gap:10px">
    <div class="av avb" id="myAv"></div><input type="file" id="avFile" accept="image/*" class="hide">
-   <input id="pName" data-ip="name"><input id="pUser" data-ip="username" autocapitalize="none">
+   <input id="pName" data-ip="name"><div class="pfx"><span>@</span><input id="pUser" data-ip="username" autocomplete="off" autocapitalize="none"></div>
    <select id="pGender"><option value="" data-i="g_none"></option><option value="m" data-i="g_m"></option><option value="f" data-i="g_f"></option><option value="o" data-i="g_o"></option></select>
    <div class="lbl" data-i="birth"></div><input id="pBirth" type="date">
-   <input id="pRegion" data-ip="region">
+   <select id="pRegion"></select>
    <label class="chk"><input type="checkbox" id="pHide"><span data-i="hide_seen"></span></label>
    <div class="lbl" data-i="plink"></div><input id="pLink" readonly>
    <div class="err" id="pErr"></div><button class="solid" id="pSave" data-i="save"></button>
@@ -139,10 +145,13 @@ button.link:hover{background:none;box-shadow:none;color:var(--act)}
   <div class="seg" id="segAcc"></div>
   <div class="lbl" data-i="lang"></div>
   <select id="selLang"><option value="ru">Русский</option><option value="en">English</option><option value="xx">Lanđȃ</option></select>
+  <label class="chk"><input type="checkbox" id="nOn"><span data-i="notif"></span></label>
+  <label class="chk"><input type="checkbox" id="nTxt"><span data-i="ntext"></span></label>
   <button class="solid" id="mClose" data-i="close"></button>
  </div>
 </div>
 
+<div id="toasts"></div>
 <div id="pview" class="hide"><div class="card"><div class="av avb" id="vAv" style="cursor:default"></div><h2 id="vName" style="text-align:center"></h2><div id="vInfo" class="lbl" style="white-space:pre-line;text-align:center"></div><button class="solid" id="vClose" data-i="close"></button></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -162,7 +171,7 @@ ru:{login_t:'Вход',reg_t:'Регистрация',email:'Почта',pass:'�
  lang:'Язык',close:'Закрыть',red:'Красный',blue:'Синий',green:'Зеленый',yellow:'Желтый',purple:'Фиолетовый',
  e_fill:'Введите почту и пароль от 6 символов.',e_name:'Введите имя.',e_match:'Пароли не совпадают.',
  created:'Аккаунт создан. Подтвердите почту или войдите.',notsent:'Не отправлено: ',
- username:'Имя пользователя (без @)',conf_t:'Подтвердите почту',conf_txt:'Мы отправили письмо на {e}. Откройте его и подтвердите адрес, затем нажмите «Войти».',conf_h:'Письмо не пришло? Проверьте папку «Спам».',
+ username:'имя_пользователя',notif:'Уведомления о сообщениях',ntext:'Показывать текст в уведомлениях',newmsg:'Новое сообщение',conf_t:'Подтвердите почту',conf_txt:'Мы отправили письмо на {e}. Откройте его и подтвердите адрес, затем нажмите «Войти».',conf_h:'Письмо не пришло? Проверьте папку «Спам».',
  e_user:'Имя пользователя: 3-20 символов, латиница, цифры и _.',e_taken:'Это имя пользователя уже занято.',g_none:'Пол не указан',g_m:'Мужской',g_f:'Женский',g_o:'Другой',
  birth:'Дата рождения',region:'Регион проживания',hide_seen:'Скрыть время посещения',plink:'Ссылка на профиль',save:'Сохранить',saved:'Сохранено',
  online:'в сети',recent:'был(а) недавно',seen:'был(а) ',e_big:'Файл слишком большой.',e_mic:'Нет доступа к микрофону.'},
@@ -174,7 +183,7 @@ en:{login_t:'Sign in',reg_t:'Create account',email:'Email',pass:'Password (6+ ch
  lang:'Language',close:'Close',red:'Red',blue:'Blue',green:'Green',yellow:'Yellow',purple:'Purple',
  e_fill:'Enter your email and a password of 6+ characters.',e_name:'Enter your name.',e_match:'Passwords do not match.',
  created:'Account created. Confirm your email or sign in.',notsent:'Not sent: ',
- username:'Username (without @)',conf_t:'Confirm your email',conf_txt:'We sent an email to {e}. Open it, confirm your address, then press Sign in.',conf_h:'No email? Check your spam folder.',
+ username:'username',notif:'Message notifications',ntext:'Show text in notifications',newmsg:'New message',conf_t:'Confirm your email',conf_txt:'We sent an email to {e}. Open it, confirm your address, then press Sign in.',conf_h:'No email? Check your spam folder.',
  e_user:'Username: 3-20 characters, Latin letters, digits and _.',e_taken:'This username is taken.',g_none:'Gender not set',g_m:'Male',g_f:'Female',g_o:'Other',
  birth:'Date of birth',region:'Region',hide_seen:'Hide last seen time',plink:'Profile link',save:'Save',saved:'Saved',
  online:'online',recent:'last seen recently',seen:'last seen ',e_big:'File is too large.',e_mic:'No microphone access.'}
@@ -191,18 +200,18 @@ I18.xx=Object.assign({},I18.en,{
 
 /* ===== НАСТРОЙКИ ===== */
 const ACC={red:'#ff1f3d',blue:'#2d8cff',green:'#1fff7a',yellow:'#ffe600',purple:'#b44dff'};
-let S={mode:'dark',accent:'red',lang:'ru'};
+let S={mode:'dark',accent:'red',lang:'ru',notif:true,ntext:true};
 try{Object.assign(S,JSON.parse(localStorage.getItem('xinh')||'{}'))}catch(e){}
 const t=k=>(I18[S.lang]&&I18[S.lang][k])||I18.en[k]||k;
 function save(){try{localStorage.setItem('xinh',JSON.stringify(S))}catch(e){}}
 function applyAll(){
  const h=document.documentElement;h.dataset.mode=S.mode;h.dataset.accent=S.accent;h.lang=S.lang==='ru'?'ru':'en';
- document.querySelectorAll('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
+ buildRegions();document.querySelectorAll('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
  document.querySelectorAll('[data-ip]').forEach(e=>e.placeholder=t(e.dataset.ip));
  document.querySelectorAll('#segMode button').forEach(b=>b.classList.toggle('on',b.dataset.mode===S.mode));
  const sa=$('segAcc');sa.textContent='';
  Object.keys(ACC).forEach(k=>{const b=document.createElement('button');b.className='sw'+(k===S.accent?' on':'');b.style.setProperty('--c',ACC[k]);b.setAttribute('aria-label',t(k));b.title=t(k);b.onclick=()=>{S.accent=k;save();applyAll()};sa.append(b)});
- $('selLang').value=S.lang;
+ $('selLang').value=S.lang;$('nOn').checked=!!S.notif;$('nTxt').checked=!!S.ntext;
  if(me){renderList();peer?(renderMsgs(),setHead()):renderMsgs()}
 }
 document.querySelectorAll('#segMode button').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;save();applyAll()});
@@ -252,6 +261,7 @@ async function boot(u){
   if(msgs.some(x=>x.id===m.id))return;msgs.push(m);
   const other=m.sender_id===me.id?m.recipient_id:m.sender_id;
   if(m.sender_id!==me.id&&(!peer||peer.id!==other))unread.add(other);
+  if(m.sender_id!==me.id&&S.notif&&(!peer||peer.id!==other||document.hidden))notify(m,other);
   renderList();if(peer&&peer.id===other)renderMsgs();
   if(!users.some(x=>x.id===other))refreshUsers();
  }).subscribe();
@@ -327,7 +337,7 @@ $('pSave').onclick=async()=>{const un=$('pUser').value.trim().replace(/^@/,'').t
  await loadMe();$('pErr').textContent=t('saved')};
 function showProfile(){if(!peer)return;const u=peer,g={m:t('g_m'),f:t('g_f'),o:t('g_o')}[u.gender];
  setAv($('vAv'),u);$('vName').textContent=u.display_name;
- $('vInfo').textContent=[u.username?'@'+u.username:'',seenText(u),g||'',u.birthdate?t('birth')+': '+u.birthdate:'',u.region||''].filter(Boolean).join('\n');
+ $('vInfo').textContent=[u.username?'@'+u.username:'',seenText(u),g||'',u.birthdate?t('birth')+': '+u.birthdate:'',regName(u.region)].filter(Boolean).join('\n');
  $('pview').classList.remove('hide')}
 $('hav').onclick=showProfile;$('hnm').onclick=showProfile;
 $('vClose').onclick=()=>$('pview').classList.add('hide');
@@ -361,6 +371,30 @@ $('mic').onclick=async()=>{
   rec.onstop=()=>{st.getTracks().forEach(x=>x.stop());const ty=rec.mimeType||'audio/webm',ext=ty.includes('mp4')?'m4a':ty.includes('ogg')?'ogg':'webm';
    const f=new File(chunks,'voice.'+ext,{type:ty});rec=null;$('mic').classList.remove('rec');sendFile(f,'voice')};
   rec.start();$('mic').classList.add('rec')}catch(e){rec=null;alert(t('e_mic'))}};
+
+/* ===== УВЕДОМЛЕНИЯ, РЕГИОНЫ, USERNAME ===== */
+function toast(u,txt){const d=document.createElement('div');d.className='toast';
+ const av=document.createElement('div');av.className='av';setAv(av,u);
+ const w=document.createElement('div'),n=document.createElement('div'),x=document.createElement('div');
+ n.className='nm';n.textContent=(u&&u.display_name)||'XINH';x.className='sb';x.textContent=txt;w.append(n,x);d.append(av,w);
+ d.onclick=()=>{d.remove();if(u)openChat(u)};$('toasts').append(d);setTimeout(()=>d.remove(),5000)}
+function notify(m,other){const u=users.find(x=>x.id===other),txt=S.ntext?m.body:t('newmsg');
+ if(!document.hidden){toast(u,txt);return}
+ if('Notification' in window&&Notification.permission==='granted'){
+  const n=new Notification((u&&u.display_name)||'XINH',{body:txt,icon:(u&&u.avatar_url)||undefined,tag:other});
+  n.onclick=()=>{window.focus();if(u)openChat(u);n.close()}}}
+$('nOn').onchange=async e=>{S.notif=e.target.checked;save();if(S.notif&&'Notification' in window&&Notification.permission==='default')await Notification.requestPermission()};
+$('nTxt').onchange=e=>{S.ntext=e.target.checked;save()};
+[$('rgUser'),$('pUser')].forEach(i=>i.oninput=()=>{i.value=i.value.replace(/[^a-zA-Z0-9_]/g,'').toLowerCase()});
+const BAD=new Set(['EU','EZ','UN','QO','XA','XB','ZZ','AC','CP','CQ','DG','EA','IC','TA']);
+function regName(c){if(!c)return '';try{return new Intl.DisplayNames([S.lang==='ru'?'ru':'en'],{type:'region'}).of(c)||c}catch(e){return c}}
+function buildRegions(){const sel=$('pRegion'),v=sel.value,lg=S.lang==='ru'?'ru':'en';sel.textContent='';
+ const o0=document.createElement('option');o0.value='';o0.textContent=t('region');sel.append(o0);
+ try{const dn=new Intl.DisplayNames([lg],{type:'region'}),A='ABCDEFGHIJKLMNOPQRSTUVWXYZ',l=[];
+  for(const a of A)for(const b of A){const c=a+b;if(BAD.has(c))continue;const n=dn.of(c);if(n&&n!==c)l.push([c,n])}
+  l.sort((x,y)=>x[1].localeCompare(y[1],lg));
+  l.forEach(([c,n])=>{const o=document.createElement('option');o.value=c;o.textContent=n;sel.append(o)})}catch(e){}
+ sel.value=v}
 
 applyAll();
 </script>
