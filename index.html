@@ -34,7 +34,7 @@ button.link:hover{background:none;box-shadow:none;color:var(--act)}
 .sw{width:34px;height:34px;border-radius:50%;padding:0;flex:none;background:var(--c);border:2px solid transparent;box-shadow:0 0 12px var(--c)}
 .sw.on{border-color:var(--tx)}.sw:hover{background:var(--c)}
 .lbl{color:var(--mt);font-size:13px}
-#modal,#pview,#rmodal,#fmodal,#mm,#rset,#rpick{position:fixed;inset:0;z-index:20;background:var(--shade);display:flex;align-items:center;justify-content:center;padding:20px}
+#modal,#pview,#rmodal,#fmodal,#mm,#rset,#rpick,#pw,#pk,#stk{position:fixed;inset:0;z-index:20;background:var(--shade);display:flex;align-items:center;justify-content:center;padding:20px}
 #app{height:100%;display:flex}
 #side{width:320px;border-right:1px solid var(--ln);background:var(--p);display:flex;flex-direction:column;min-width:0}
 .top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px;border-bottom:1px solid var(--ln)}
@@ -100,7 +100,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display"
 background:radial-gradient(70% 45% at 12% 8%,color-mix(in srgb,var(--ac) 34%,transparent),transparent 70%),radial-gradient(60% 45% at 92% 88%,color-mix(in srgb,var(--ac) 24%,transparent),transparent 70%),var(--bg);background-attachment:fixed}
 #app,#main,#side{background:transparent}
 .m,input,select,.pfx,button,#head,#form,#rbar,#pin,.top,.card,.toast,.prow,.tabs2,#segMode,.mrow{background:var(--gl);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--gb);box-shadow:var(--gs)}
-#modal,#pview,#rmodal,#fmodal,#mm,#rset,#rpick{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#modal,#pview,#rmodal,#fmodal,#mm,#rset,#rpick,#pw,#pk,#stk{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .card{border-radius:32px;box-shadow:var(--gs),0 0 0 1px color-mix(in srgb,var(--ac) 30%,transparent),0 0 44px color-mix(in srgb,var(--ac) 20%,transparent)}
 input,select{border-radius:16px}
 select{-webkit-appearance:none;appearance:none;padding-right:38px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center}
@@ -116,6 +116,11 @@ button.solid:hover,#bNew:hover{background:linear-gradient(180deg,color-mix(in sr
 button.link{background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;border-radius:8px;padding:6px}
 .sw{border-radius:50%;padding:0;border:2px solid transparent;background:var(--c);box-shadow:0 0 12px var(--c),inset 0 1px 0 rgba(255,255,255,.5);-webkit-backdrop-filter:none;backdrop-filter:none}
 .sw.on{border-color:#fff}
+.seg2{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.seg2 button{flex:none;padding:6px 14px;font-size:13px}.seg2 button.on{background:var(--tn);border-color:var(--ac)}
+.m.st{background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:2px}.m.st::after{display:none}
+.m img.sticker{width:170px;max-width:60vw;height:auto;max-height:170px;object-fit:contain;border-radius:0}.m img.emoji{width:56px;height:56px;object-fit:contain;border-radius:0}
+.pk .thumbs{display:flex;gap:4px}.pk .thumbs img{width:32px;height:32px;object-fit:contain}
+.stkg .em img{width:100%;height:56px;object-fit:contain}
 #segAcc{display:flex;justify-content:space-between;gap:8px}#segAcc .sw{flex:none;width:36px;height:36px}
 #segMode,.tabs2{padding:4px;gap:4px;border-radius:999px;flex-wrap:nowrap}
 #segMode button,.tabs2 button{border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;background:transparent;color:var(--mt)}
@@ -179,7 +184,7 @@ button.link{background:none;border:0;box-shadow:none;-webkit-backdrop-filter:non
 #msgs>*{flex-shrink:0}
 @media(prefers-reduced-motion:no-preference){
 .card{animation:pop .4s cubic-bezier(.2,.9,.3,1.15)}
-#modal,#pview,#rmodal,#fmodal,#mm,#rset,#rpick{animation:fade .28s ease}
+#modal,#pview,#rmodal,#fmodal,#mm,#rset,#rpick,#pw,#pk,#stk{animation:fade .28s ease}
 .m.pop{animation:bub .45s cubic-bezier(.2,.9,.3,1.2)}
 .u{transition:background .25s ease,box-shadow .25s ease}
 @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.94)}}
@@ -188,6 +193,21 @@ button.link{background:none;border:0;box-shadow:none;-webkit-backdrop-filter:non
 @keyframes slide{from{opacity:0;transform:translateX(28px)}}
 @media(max-width:700px){#main{animation:slide .36s cubic-bezier(.2,.8,.2,1)}}
 }
+
+/* ===== ЭТАП 2: настройки ===== */
+#pw{z-index:60}#pk{z-index:40}#pw .card,#pk .card{max-width:360px}
+.pg{display:flex;flex-direction:column;gap:10px}
+.shead{display:flex;align-items:center;gap:10px}.shead h2{flex:1}#sBack{width:38px;height:38px;padding:0;line-height:1}
+.srow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border-radius:18px;padding:12px 16px;font-weight:600;color:var(--tx);background:var(--gl);border:1px solid var(--gb);box-shadow:var(--gs)}
+.srow span{white-space:pre-line}.srow .chev{margin-left:auto;color:var(--mt)}.srow.cur{border-color:var(--ac)}
+.srow .av{width:36px;height:36px;flex:none}
+.x{padding:4px 11px;font-size:12px;margin-left:auto;flex:none}
+.x2{position:absolute;top:-7px;right:-7px;width:20px;height:20px;padding:0;font-size:13px;line-height:1;border-radius:50%}
+.sec{margin-top:8px;text-transform:uppercase;letter-spacing:.06em;font-size:12px}
+.prv{display:flex;flex-direction:column;gap:6px}
+#pAbout{width:100%;resize:none;border-radius:16px;padding:12px 14px;font:inherit;color:inherit;background:var(--gl);border:1px solid var(--gb);outline:none}
+#pkList .av{width:32px;height:32px}
+#cList .sw,.sw{width:36px;height:36px}
 </style>
 </head>
 <body>
@@ -203,6 +223,7 @@ button.link{background:none;border:0;box-shadow:none;-webkit-backdrop-filter:non
   <div class="err" id="liErr"></div>
   <button class="solid" data-i="signin"></button>
   <button type="button" class="link" id="toReg" data-i="to_reg"></button>
+  <button type="button" class="link hide" id="liCancel" data-i="cancel"></button>
  </form>
 </div>
 
@@ -239,34 +260,60 @@ button.link{background:none;border:0;box-shadow:none;-webkit-backdrop-filter:non
   <div id="head" class="hide"><button id="back">←</button><div class="av" id="hav"></div><div><b id="hnm"></b><div id="hsb" style="color:var(--mt);font-size:12px"></div></div></div>
   <div id="pin" class="hide"></div><div id="msgs"></div>
   <div id="rbar" class="hide"><span id="rtxt"></span><button id="rx" type="button">✕</button></div>
-  <form id="form" class="hide"><div id="fmt"><button type="button" data-f="h">H</button><button type="button" data-f="b"><b>B</b></button><button type="button" data-f="i"><i>I</i></button><button type="button" data-f="u"><u>U</u></button><button type="button" data-f="s"><s>S</s></button><button type="button" data-f="m">M</button><button type="button" data-f="sp">▒</button><button type="button" data-f="a">🔗</button><button type="button" data-f="c">{ }</button></div><button type="button" class="ic" id="attach" aria-label="File">📎</button><input type="file" id="file" class="hide"><textarea id="txt" rows="1" data-ip="msg" autocomplete="off"></textarea><button type="button" class="ic" id="mic" aria-label="Voice">🎤</button><button class="solid" data-i="send"></button></form>
+  <form id="form" class="hide"><div id="fmt"><button type="button" data-f="h">H</button><button type="button" data-f="b"><b>B</b></button><button type="button" data-f="i"><i>I</i></button><button type="button" data-f="u"><u>U</u></button><button type="button" data-f="s"><s>S</s></button><button type="button" data-f="m">M</button><button type="button" data-f="sp">▒</button><button type="button" data-f="a">🔗</button><button type="button" data-f="c">{ }</button><button type="button" data-f="stk">🖼</button></div><button type="button" class="ic" id="attach" aria-label="File">📎</button><input type="file" id="file" class="hide"><textarea id="txt" rows="1" data-ip="msg" autocomplete="off"></textarea><button type="button" class="ic" id="mic" aria-label="Voice">🎤</button><button class="solid" id="sendBtn" data-i="send"></button></form>
  </section>
 </div>
 
-<div id="modal" class="hide">
- <div class="card">
-  <h2 data-i="settings"></h2>
+<div id="modal" class="hide"><div class="card" id="setcard">
+ <div class="shead"><button type="button" id="sBack" class="hide">←</button><h2 id="sTitle"></h2></div>
+ <div id="pg-hub" class="pg"></div>
+ <div id="pg-profile" class="pg hide">
+  <div class="prow"><div class="av avb" id="pvAv" style="cursor:default"></div><div class="ptxt"><h2 id="pvName"></h2><div id="pvInfo" class="lbl" style="white-space:pre-line"></div></div></div>
+  <div id="pvMusic"></div>
+  <button type="button" class="solid" id="pEdit" data-i="edit"></button>
   <div id="profBox" class="hide" style="display:flex;flex-direction:column;gap:10px">
-   <div class="prow"><div class="av avb" id="myAv"></div><input type="file" id="avFile" accept="image/*" class="hide"><div class="ptxt">
-   <input id="pName" data-ip="name"><div class="pfx"><span>@</span><input id="pUser" data-ip="username" autocomplete="off" autocapitalize="none"></div></div></div>
+   <div class="prow"><div class="av avb" id="myAv"></div><input type="file" id="avFile" accept="image/*" class="hide"><div class="ptxt"><input id="pName" data-ip="name"><div class="pfx"><span>@</span><input id="pUser" data-ip="username" autocomplete="off" autocapitalize="none"></div></div></div>
    <select id="pGender"><option value="" data-i="g_none"></option><option value="m" data-i="g_m"></option><option value="f" data-i="g_f"></option><option value="o" data-i="g_o"></option></select>
    <div class="lbl" data-i="birth"></div><input id="pBirth" type="date">
    <select id="pRegion"></select>
-   <label class="chk"><input type="checkbox" id="pHide"><span data-i="hide_seen"></span></label>
+   <textarea id="pAbout" rows="3" maxlength="200" data-ip="about_ph"></textarea>
+   <div class="chk"><button type="button" id="pMusicBtn" data-i="addmusic"></button><span id="pMusicName" class="lbl"></span><button type="button" id="pMusicDel" class="hide x">✕</button></div><input type="file" id="pMusicFile" accept="audio/*" class="hide">
    <div class="lbl" data-i="plink"></div><input id="pLink" readonly>
    <div class="err" id="pErr"></div><button class="solid" id="pSave" data-i="save"></button>
   </div>
+ </div>
+ <div id="pg-accounts" class="pg hide"><div id="acList" class="pg"></div><button type="button" class="solid" id="acAdd" data-i="addacc"></button></div>
+ <div id="pg-folders" class="pg hide"><div id="fdList" class="pg"></div><button type="button" class="solid" id="fdAdd" data-i="addfolder"></button></div>
+ <div id="pg-sessions" class="pg hide"><div id="seList" class="pg"></div><button type="button" id="seOthers" data-i="endothers"></button></div>
+ <div id="pg-notif" class="pg hide">
+  <label class="chk"><input type="checkbox" id="nOn"><span data-i="notif"></span></label>
+  <label class="chk"><input type="checkbox" id="nTxt"><span data-i="ntext"></span></label>
+  <label class="chk"><input type="checkbox" id="nDm"><span data-i="n_dm"></span></label>
+  <label class="chk"><input type="checkbox" id="nGr"><span data-i="n_gr"></span></label>
+  <label class="chk"><input type="checkbox" id="nCh"><span data-i="n_ch"></span></label>
+  <label class="chk"><input type="checkbox" id="sOn"><span data-i="snd_on"></span></label>
+  <select id="sTone"><option value="glass" data-i="sn_glass"></option><option value="pop" data-i="sn_pop"></option><option value="chime" data-i="sn_chime"></option></select>
+  <label class="chk"><input type="checkbox" id="sSent"><span data-i="snd_sent"></span></label>
+  <label class="chk"><input type="checkbox" id="vOn"><span data-i="vib"></span></label>
+  <button type="button" id="sTest" data-i="snd_test"></button>
+ </div>
+ <div id="pg-privacy" class="pg hide"></div>
+ <div id="pg-loc" class="pg hide">
   <div class="lbl" data-i="theme"></div>
   <div class="seg" id="segMode"><button data-mode="dark" data-i="dark"></button><button data-mode="light" data-i="light"></button></div>
   <div class="lbl" data-i="accent"></div>
   <div class="seg" id="segAcc"></div>
+  <div class="lbl" data-i="mycolors"></div>
+  <div id="cList" style="display:flex;gap:10px;flex-wrap:wrap"></div>
+  <div class="chk"><input type="color" id="cCol" value="#ff1f3d" style="width:60px;height:46px;padding:3px"><button type="button" id="cAdd" data-i="savecolor"></button></div>
   <div class="lbl" data-i="lang"></div>
   <select id="selLang"><option value="ru">Русский</option><option value="en">English</option><option value="xx">Lanđȃ</option></select>
-  <label class="chk"><input type="checkbox" id="nOn"><span data-i="notif"></span></label>
-  <label class="chk"><input type="checkbox" id="nTxt"><span data-i="ntext"></span></label>
-  <button class="solid" id="mClose" data-i="close"></button>
  </div>
-</div>
+ <div id="pg-stickers" class="pg hide"></div>
+ <div id="pg-currency" class="pg hide"></div>
+ <div id="pg-about" class="pg hide"></div>
+ <button class="solid" id="mClose" data-i="close"></button>
+</div></div>
 
 <div id="rmodal" class="hide"><div class="card"><h2 data-i="newroom"></h2>
  <select id="rKind"><option value="group" data-i="group"></option><option value="channel" data-i="channel"></option></select>
@@ -287,9 +334,12 @@ button.link{background:none;border:0;box-shadow:none;-webkit-backdrop-filter:non
  <div id="sReact" style="display:flex;flex-direction:column;gap:8px"></div>
  <div class="err" id="sErr"></div><button class="solid" id="sSave" data-i="save"></button><button id="sX" data-i="close"></button></div></div>
 <div id="rpick" class="hide"><div class="card"><div id="rpg" style="display:flex;flex-direction:column;gap:8px"></div><button id="rpx" data-i="close"></button></div></div>
+<div id="pw" class="hide"><div class="card"><h2 id="pwT"></h2><input id="pwIn" type="password" autocomplete="off"><div class="err" id="pwErr"></div><button class="solid" id="pwOk" data-i="ok"></button><button id="pwX" data-i="cancel"></button></div></div>
+<div id="pk" class="hide"><div class="card"><h2 id="pkT"></h2><input id="pkName" class="hide"><div id="pkList" style="display:flex;flex-direction:column;gap:8px"></div><button class="solid" id="pkOk" data-i="save"></button><button id="pkX" data-i="cancel"></button></div></div>
+<div id="stk" class="hide"><div class="card"><div id="stkTabs" class="seg2"></div><div id="stkGrid" class="egrid"></div><button id="stkX" data-i="close"></button></div></div>
 <div id="toasts"></div>
 <div id="pview" class="hide"><div class="card"><div class="prow"><div class="av avb" id="vAv" style="cursor:default"></div><div class="ptxt"><h2 id="vName"></h2><div id="vInfo" class="lbl" style="white-space:pre-line"></div></div></div>
- <div id="vMem" class="hide" style="display:flex;flex-direction:column;gap:8px;max-height:36vh;overflow:auto"></div><input id="vLink" readonly class="hide"><button id="vShare" class="hide" data-i="share"></button><button id="vSetBtn" class="hide" data-i="rset"></button><button id="vAdd"></button><button id="vRen" data-i="rename"></button><button class="solid" id="vClose" data-i="close"></button></div></div>
+ <div id="vMem" class="hide" style="display:flex;flex-direction:column;gap:8px;max-height:36vh;overflow:auto"></div><input id="vLink" readonly class="hide"><button id="vShare" class="hide" data-i="share"></button><div id="vMusic" class="hide"></div><button id="vSetBtn" class="hide" data-i="rset"></button><button id="vBlock"></button><button id="vLock"></button><button id="vAdd"></button><button id="vRen" data-i="rename"></button><button class="solid" id="vClose" data-i="close"></button></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
@@ -340,28 +390,28 @@ I18.xx={login_t:'Te',reg_t:'Xo te',email:'Ti xĩĕn ọt za ƀȃ',pass:'Mҽnh (k
  lang:'Ư tãou̇',close:'Xotȃzang',red:'Tȏ dẽan',blue:'Xȋ dẽan',green:'Nhỏ dẽan',yellow:'Rȃ́ dẽan',purple:'C͜lä̑ dẽan',
  e_fill:'Введите почту и пароль от 6 символов.',e_name:'Введите имя.',e_match:'Пароли не совпадают.',
  created:'Аккаунт создан. Подтвердите почту или войдите.',notsent:'Не отправлено: ',
- username:'имя_пользователя',notif:'Уведомления о сообщениях',ntext:'Показывать текст в уведомлениях',newmsg:'Новое сообщение',chats:'Zȃlanxão',contacts:'Trảrõenxão',newroom:'X͜cȃ xom pҽ̣t hȃ ԏĕu̇',group:'Xom pҽ̣txão',channel:'Ԏ̑ĕu̇',rtitle:'Nȏ ƀȃ',members:'Zilanxão (xa **trảrõenxão**)',create:'Xa hạc‘anh',
+ username:'имя_пользователя',notif:'Уведомления о сообщениях',ntext:'Показывать текст в уведомлениях',newmsg:'Новое сообщение',chats:'Zȃlanxão',contacts:'Trảrõenxão',newroom:'X͜cȃ xom pҽ̣t hȃ ԏĕu̇',group:'Xom pҽ̣txão',channel:'Ԏ̑ĕu̇',rtitle:'Nȏ ƀȃ',members:'Zilanxão (xa **trảrõenxão**)',create:'Xa hạc‘anh',
  rename:'Переименовать контакт',addc:'Добавить в контакты',delc:'Удалить из контактов',addby:'Добавить по @username',imp:'Импорт из телефона',noimp:'Импорт контактов поддерживает Chrome на Android.',
  nf:'Пользователь не найден.',alias:'Имя контакта (видно только вам)',e_title:'Введите название.',imported:'Добавлено контактов: ',nocont:'Контактов пока нет.',share:'Поделиться ссылкой',reply:'Ответить',fwdb:'Переслать',fwdto:'Переслать в…',copy:'Копировать',pin:'Закрепить',unpin:'Открепить',delme:'Удалить у меня',delall:'Удалить у всех',
- readat:'Xȃ ԏ̃ĕm‘hinh: ',notread:'Xoprátọm ƀạn xȃ ԏ̃ĕm‘hinh',role_owner:'zãҽlan',role_admin:'đȃhȃmȃlan',mkadm:'Đalate͆n đȃhȃmȃlan',rmadm:'Ŏu̇ tenhh đȃhȃmȃlan',copied:'Ling ĕ xaƀịt‘hinh.',e_join:'Ling ƀạn đoxtâch.',conf_t:'Подтвердите почту',conf_txt:'Мы отправили письмо на {e}. Откройте его и подтвердите адрес, затем нажмите «Войти».',conf_h:'Письмо не пришло? Проверьте папку «Спам».',
- e_user:'Username: 3-20 ki nọ̑xão, latĩĕn, ğa hȃxão ý _.',e_taken:'Ynh đão @username lȏ ĕ na minh.',g_none:'X͜gȏham ƀạn tȏ̋‘hinh',g_m:'Ỵ́ngh ọt',g_f:'Zanh ọt',g_o:'Ƀạn nhȃ̉',
- birth:'Đan cạ͋n gȃzĩẹt',region:'Lão ơ đão ly̑zang',hide_seen:'Qõanh ȋm polȃhan',plink:'Ling xạ́ profíl',save:'Cxang tĩem',saved:'Cxang tĩem‘hinh',
- online:'tȏ́ zơng',recent:'lỹen‘hinh ƀạn zacôtưnh',seen:'lỹen‘hinh ',e_big:'Файл слишком большой.',e_mic:'Нет доступа к микрофону.',today:'Đan tách',yday:'Đan lỹen',dbyday:'Ƀa đan lỹen',call:'Amơu̇',cgroups:'Xom pҽ̣txão',cbots:'Zĩo xȏxão',cchannels:'Ԏ̑ĕu̇xão',pubq:'Er zãotơngh ọt (ƀạ̑ @username)',prot:'An toán tҽ̑ contĩ̈́ent',protd:'Запрет пересылки, копирования и сохранения',rset:'Ƀȃ xa tứng',reactions:'Za hȏ ọt rakaxão',sall:'Mươ̑ amơu̇',snone:'Ŏu̇ tenhh amơu̇',rusern:'nȏ ƀȃ',e_ruser:'Username: 3-30 ki nọ̑xão, latĩĕn, ğa hȃxão ý _.',e_rtaken:'Ynh đão @username lȏ ĕ na minh.',rg0:'Emou̇x͜hȃxão ý lanzĩenxão',rg1:'D͜gҽxtxão',rg2:'Zo ƀanãoxão ý ƀȇxão',rg3:'Qȃ zinghxão ý zing',rg4:'Crungxão ý qŭ̑'};
+ readat:'Xȃ ԏ̃ĕm‘hinh: ',notread:'Xoprátọm ƀạn xȃ ԏ̃ĕm‘hinh',role_owner:'zãҽlan',role_admin:'đȃhȃmȃlan',mkadm:'Đalate͆n đȃhȃmȃlan',rmadm:'Ŏu̇ tenhh đȃhȃmȃlan',copied:'Ling ĕ xaƀịt‘hinh.',e_join:'Ling ƀạn đoxtâch.',conf_t:'Подтвердите почту',conf_txt:'Мы отправили письмо на {e}. Откройте его и подтвердите адрес, затем нажмите «Войти».',conf_h:'Письмо не пришло? Проверьте папку «Спам».',
+ e_user:'Username: 3-20 ki nọ̑xão, latĩĕn, ğa hȃxão ý _.',e_taken:'Ynh đão @username lȏ ĕ na minh.',g_none:'X͜gȏham ƀạn tȏ̋‘hinh',g_m:'Ỵ́ngh ọt',g_f:'Zanh ọt',g_o:'Ƀạn nhȃ̉',
+ birth:'Đan cạ͋n gȃzĩẹt',region:'Lão ơ đão ly̑zang',hide_seen:'Qõanh ȋm polȃhan',plink:'Ling xạ́ profíl',save:'Cxang tĩem',saved:'Cxang tĩem‘hinh',
+ online:'tȏ́ zơng',recent:'lỹen‘hinh ƀạn zacôtưnh',seen:'lỹen‘hinh ',e_big:'Файл слишком большой.',e_mic:'Нет доступа к микрофону.',today:'Đan tách',yday:'Đan lỹen',dbyday:'Ƀa đan lỹen',call:'Amơu̇',cgroups:'Xom pҽ̣txão',cbots:'Zĩo xȏxão',cchannels:'Ԏ̑ĕu̇xão',pubq:'Er zãotơngh ọt (ƀạ̑ @username)',prot:'An toán tҽ̑ contĩ̈́ent',protd:'Запрет пересылки, копирования и сохранения',rset:'Ƀȃ xa tứng',reactions:'Za hȏ ọt rakaxão',sall:'Mươ̑ amơu̇',snone:'Ŏu̇ tenhh amơu̇',rusern:'nȏ ƀȃ',e_ruser:'Username: 3-30 ki nọ̑xão, latĩĕn, ğa hȃxão ý _.',e_rtaken:'Ynh đão @username lȏ ĕ na minh.',rg0:'Emou̇x͜hȃxão ý lanzĩenxão',rg1:'D͜gҽxtxão',rg2:'Zo ƀanãoxão ý ƀȇxão',rg3:'Qȃ zinghxão ý zing',rg4:'Crungxão ý qŭ̑'};
 
 /* ===== НАСТРОЙКИ ===== */
 const ACC={red:'#ff1f3d',blue:'#2d8cff',green:'#1fff7a',yellow:'#ffe600',purple:'#b44dff'};
-let S={mode:'dark',accent:'red',lang:'ru',notif:true,ntext:true};
+let S={mode:'dark',accent:'red',lang:'ru',notif:true,ntext:true,n_dm:true,n_gr:true,n_ch:true,snd:true,tone:'glass',sSent:false,vib:true,lockAfter:0,custom:[]};
 try{Object.assign(S,JSON.parse(localStorage.getItem('xinh')||'{}'))}catch(e){}
 const t=k=>(I18[S.lang]&&I18[S.lang][k])||I18.en[k]||k;
 function save(){try{localStorage.setItem('xinh',JSON.stringify(S))}catch(e){}}
 function applyAll(){
- const h=document.documentElement;h.dataset.mode=S.mode;h.dataset.accent=S.accent;h.lang=S.lang==='ru'?'ru':'en';
+ const h=document.documentElement;h.dataset.mode=S.mode;if((S.accent||'')[0]==='#'){h.dataset.accent='custom';h.style.setProperty('--ac',S.accent)}else{h.dataset.accent=S.accent;h.style.removeProperty('--ac')}h.lang=S.lang==='ru'?'ru':'en';
  buildRegions();document.querySelectorAll('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
  document.querySelectorAll('[data-ip]').forEach(e=>e.placeholder=t(e.dataset.ip));
  document.querySelectorAll('#segMode button').forEach(b=>b.classList.toggle('on',b.dataset.mode===S.mode));
  const sa=$('segAcc');sa.textContent='';
  Object.keys(ACC).forEach(k=>{const b=document.createElement('button');b.className='sw'+(k===S.accent?' on':'');b.style.setProperty('--c',ACC[k]);b.setAttribute('aria-label',t(k));b.title=t(k);b.onclick=()=>{S.accent=k;save();applyAll()};sa.append(b)});
- $('selLang').value=S.lang;$('nOn').checked=!!S.notif;$('nTxt').checked=!!S.ntext;
+ $('selLang').value=S.lang;syncSet();refreshSet();
  if(me){renderList();peer?(renderMsgs(),setHead()):renderMsgs()}
 }
 document.querySelectorAll('#segMode button').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;save();applyAll()});
@@ -394,31 +444,32 @@ $('fReg').onsubmit=async e=>{e.preventDefault();
 $('out').onclick=()=>sb.auth.signOut();
 
 sb.auth.onAuthStateChange((_e,s)=>{ // без await внутри колбэка
- if(s&&s.user){if(!me||me.id!==s.user.id)setTimeout(()=>boot(s.user),0)}
+ if(s&&s.user){upAcct(s);if(!me||me.id!==s.user.id)setTimeout(()=>boot(s.user),0)}
  else{me=null;peer=null;prof=null;$('profBox').classList.add('hide');if(chan){sb.removeChannel(chan);chan=null}showAuth('login')}
 });
 
 async function boot(u){
- me=u;$('authLogin').classList.add('hide');$('authReg').classList.add('hide');$('authConfirm').classList.add('hide');$('gear').classList.add('hide');
+ me=u;resetForBoot();$('authLogin').classList.add('hide');$('authReg').classList.add('hide');$('authConfirm').classList.add('hide');$('gear').classList.add('hide');
  $('app').classList.remove('hide','chat');$('who').textContent=u.email;
+ await cloudGate();
  const[{data:us},{data:ms}]=await Promise.all([
-  sb.from('profiles').select('*').neq('id',u.id).order('display_name').limit(300),
+  sb.rpc('profiles_view'),
   sb.from('messages').select('*').order('created_at').limit(1000)]);
- users=us||[];msgs=ms||[];renderList();renderMsgs();await loadMe();await loadRooms();await loadRx();await joinPending();beat();clearInterval(window.hb);window.hb=setInterval(beat,60000);
+ users=(us||[]).filter(x=>x.id!==u.id);msgs=ms||[];renderList();renderMsgs();await loadMe();await loadRooms();await loadRx();await loadExtra();await joinPending();beat();clearInterval(window.hb);window.hb=setInterval(beat,60000);
  const qu=new URLSearchParams(location.search).get('u'),pu=qu&&users.find(x=>x.username===qu.toLowerCase());if(pu)openChat(pu);
  chan=sb.channel('m-'+u.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>{
   const m=p.new;if(!m.room_id&&m.sender_id!==me.id&&m.recipient_id!==me.id)return;
   if(msgs.some(x=>x.id===m.id))return;msgs.push(m);
   const other=m.room_id?'r'+m.room_id:(m.sender_id===me.id?m.recipient_id:m.sender_id);if(m.room_id&&!rooms.some(x=>x.id===other))loadRooms();
   if(m.sender_id!==me.id&&(!peer||peer.id!==other))unread.add(other);
-  if(m.sender_id!==me.id&&S.notif&&(!peer||peer.id!==other||document.hidden))notify(m,other);
+  if(m.sender_id!==me.id&&S[kindOf(m)]!==false){fx();if(S.notif&&(!peer||peer.id!==other||document.hidden))notify(m,other)}
   if(!m.room_id&&m.sender_id!==me.id&&peer&&peer.id===other&&!document.hidden)sb.rpc('mark_read',{pid:other}).then(()=>{});
   renderList();if(peer&&peer.id===other)renderMsgs();
   if(!m.room_id&&!users.some(x=>x.id===other))refreshUsers();
  }).on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages'},p=>{const i=msgs.findIndex(x=>x.id===p.new.id);if(i>=0){msgs[i]=p.new;renderList();if(peer)renderMsgs()}})
  .on('postgres_changes',{event:'DELETE',schema:'public',table:'messages'},p=>{msgs=msgs.filter(x=>x.id!==p.old.id);renderList();if(peer)renderMsgs()}).on('postgres_changes',{event:'*',schema:'public',table:'message_reactions'},p=>rxEv(p)).subscribe();
 }
-async function refreshUsers(){const{data}=await sb.from('profiles').select('*').neq('id',me.id).order('display_name').limit(300);users=data||[];if(peer){peer=users.find(x=>x.id===peer.id)||peer;setHead()}renderList()}
+async function refreshUsers(){const{data}=await sb.rpc('profiles_view');users=(data||[]).filter(x=>x.id!==me.id);if(peer){peer=users.find(x=>x.id===peer.id)||peer;setHead()}renderList()}
 
 /* ===== ЧАТ ===== */
 function last(id){for(let i=msgs.length-1;i>=0;i--){const m=msgs[i];if(m.room_id?('r'+m.room_id===id):(m.sender_id===id||m.recipient_id===id))return m}}
@@ -430,7 +481,7 @@ function renderList(){
  if(tab==='cont'){const b=document.createElement('button');b.textContent=t('imp');b.style.cssText='margin:8px 14px 0;width:calc(100% - 28px)';b.onclick=importContacts;box.append(b);base=users.filter(u=>u.id in conts)}
  else{base=q?[...rooms,...users]:[...rooms,...users.filter(u=>last(u.id)||(u.id in conts))];
   if(cat==='groups')base=base.filter(u=>u.room&&u.kind==='group');else if(cat==='channels')base=base.filter(u=>u.room&&u.kind==='channel');
-  else if(cat==='bots')base=base.filter(u=>u.is_bot);else if(cat==='contacts')base=users.filter(u=>u.id in conts)}
+  else if(cat==='bots')base=base.filter(u=>u.is_bot);else if(cat==='contacts')base=users.filter(u=>u.id in conts);else if(cat[0]==='f'){const f=folders.find(x=>'f'+x.id===cat);base=[...rooms,...users].filter(u=>f&&f.chat_ids.includes(u.id))}}
  base.filter(u=>!q||(dn(u)+' '+(u.email||'')+' '+(u.username||'')).toLowerCase().includes(q))
  .sort((a,b)=>new Date(last(b.id)?.created_at||0)-new Date(last(a.id)?.created_at||0))
  .forEach(u=>{
@@ -439,7 +490,7 @@ function renderList(){
   const w=document.createElement('div');w.style.minWidth=0;
   const n=document.createElement('div');n.className='nm';n.textContent=dn(u);
   if(u.is_service||u.room){const b=document.createElement('span');b.className='badge';b.textContent=t(u.room?u.kind:'service');n.append(b)}
-  const s=document.createElement('div');s.className='sb';s.textContent=last(u.id)?.body||(u.room?t(u.kind):(u.username?'@'+u.username:''));
+  const s=document.createElement('div');s.className='sb';s.textContent=(isLocked(u.id)?'🔒':last(u.id)?.body)||(u.room?t(u.kind):(u.username?'@'+u.username:''));
   w.append(n,s);d.append(av,w);
   if(unread.has(u.id)){const x=document.createElement('div');x.className='dot';d.append(x)}
   d.onclick=()=>openChat(u);box.append(d);
@@ -448,21 +499,21 @@ function renderList(){
 }
 $('search').oninput=()=>{renderList();pubSearch()};
 
-function openChat(u){peer=u;unread.delete(u.id);$('app').classList.add('chat');
+async function openChat(u){if(!(await chatGate(u)))return;peer=u;unread.delete(u.id);$('app').classList.add('chat');
  $('head').classList.remove('hide');$('form').classList.toggle('hide',!!(u.room&&u.kind==='channel'&&u.role!=='owner'&&u.role!=='admin'));
  reply=null;showReply();if(!u.room)sb.rpc('mark_read',{pid:u.id}).then(()=>{});setHead();renderList();renderMsgs();$('txt').focus()}
 $('back').onclick=()=>{$('app').classList.remove('chat');peer=null;$('head').classList.add('hide');$('form').classList.add('hide');renderList();renderMsgs()};
 
 function renderMsgs(){
  const box=$('msgs'),sw=lastPeer!==(peer&&peer.id),keep=box.scrollHeight-box.scrollTop-box.clientHeight<120||sw;lastPeer=peer&&peer.id;box.textContent='';
- const l=peer?msgs.filter(m=>!hid.has(m.id)&&(peer.room?m.room_id===peer.rid:(!m.room_id&&(m.sender_id===peer.id||m.recipient_id===peer.id)))):[];
+ const l=peer?msgs.filter(m=>!hid.has(m.id)&&alive(m)&&(peer.room?m.room_id===peer.rid:(!m.room_id&&(m.sender_id===peer.id||m.recipient_id===peer.id)))):[];
  const pm=l.filter(m=>m.pinned).pop(),pb=$('pin');pb.classList.toggle('hide',!pm);
  if(pm){pb.textContent='📌 '+(pm.body||'').slice(0,80);pb.onclick=()=>{const e=box.querySelector('[data-id="'+pm.id+'"]');if(e)e.scrollIntoView({block:'center'})}}
  if(!l.length){const e=document.createElement('div');e.className='empty';e.textContent=t(peer?'nochat':'pick');box.append(e);return}
  let lastDay='';l.forEach(m=>{const dk=new Date(m.created_at).toDateString();if(dk!==lastDay){lastDay=dk;const sp=document.createElement('div'),s2=document.createElement('span');sp.className='dsep';s2.textContent=dayLabel(m.created_at);sp.append(s2);box.append(sp)}
-  const own=m.sender_id===me.id,d=document.createElement('div');d.className='m'+(own?' me':'')+((!sw&&!seenMsg.has(m.id))?' pop':'');seenMsg.add(m.id);d.dataset.id=m.id;
+  const own=m.sender_id===me.id,d=document.createElement('div');d.className='m'+(own?' me':'')+((!sw&&!seenMsg.has(m.id))?' pop':'')+((m.kind==='sticker'||m.kind==='emoji')?' st':'');seenMsg.add(m.id);d.dataset.id=m.id;
   if(peer.room&&peer.kind==='group'&&!own){const w=document.createElement('div');w.className='who';w.textContent=dn(users.find(x=>x.id===m.sender_id)||{display_name:''});d.append(w)}
-  if(m.fwd){const f=document.createElement('div');f.className='who';f.textContent='↪ '+m.fwd;d.append(f)}
+  if(m.fwd){const f=document.createElement('div');f.className='who';f.textContent='↪ '+m.fwd;const au=users.find(x=>x.id===m.fwd_from);if(au&&au.fwd_ok){f.style.cursor='pointer';f.onclick=e=>{e.stopPropagation();openChat(au)}}d.append(f)}
   if(m.reply_to){const q=msgs.find(x=>x.id===m.reply_to),w=document.createElement('div');w.className='quote';w.textContent=q?(q.body||'').slice(0,80):'…';
    w.onclick=()=>{const e=box.querySelector('[data-id="'+m.reply_to+'"]');if(e)e.scrollIntoView({block:'center'})};d.append(w)}
   fill(d,m);rxBar(d,m);const tm=document.createElement('time');
@@ -473,7 +524,7 @@ function renderMsgs(){
 $('form').onsubmit=async e=>{e.preventDefault();
  const body=$('txt').value.trim();if(!body||!peer)return;$('txt').value='';
  const{data,error}=await sb.from('messages').insert({...tgt(peer),body,...(reply?{reply_to:reply.id}:{})}).select().single();
- if(error){alert(t('notsent')+error.message);$('txt').value=body;return}
+ if(error){alert(t('notsent')+errTxt(error));$('txt').value=body;return}
  sent();if(!msgs.some(x=>x.id===data.id)){msgs.push(data);renderList();renderMsgs()}
 };
 
@@ -483,12 +534,16 @@ $('confGo').onclick=()=>showAuth('login');
 function seenText(u){if(u.is_service)return t('svc_acc');if(u.hide_seen||!u.last_seen)return t('recent');const d=new Date(u.last_seen);
  return Date.now()-d<150000?t('online'):t('seen')+d.toLocaleString(S.lang==='ru'?'ru':'en',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
 function setAv(el,u){el.textContent='';if(u&&u.avatar_url){const i=document.createElement('img');i.src=u.avatar_url;i.alt='';el.append(i)}else el.textContent=((u&&u.display_name)||'?')[0].toUpperCase()}
-function setHead(){if(!peer)return;setAv($('hav'),peer);$('hnm').textContent=dn(peer);$('hsb').textContent=peer.room?(peer.username?'@'+peer.username:t(peer.kind))+(peer.protect?' · 🔒':''):seenText(peer)}
-async function beat(){if(!me)return;await sb.from('profiles').update({last_seen:new Date().toISOString()}).eq('id',me.id);refreshUsers()}
+function setHead(){if(!peer)return;setAv($('hav'),peer);$('hnm').textContent=dn(peer);$('hsb').textContent=peer.room?(peer.username?'@'+peer.username:t(peer.kind))+(peer.protect?' · 🔒':''):seenText(peer);sendLabel()}
+async function beat(){if(!me)return;await sb.from('profiles').update({last_seen:new Date().toISOString()}).eq('id',me.id);refreshUsers();touch()}
 async function loadMe(){const{data}=await sb.from('profiles').select('*').eq('id',me.id).single();prof=data;fillProf()}
-function fillProf(){if(!prof)return;$('profBox').classList.remove('hide');setAv($('myAv'),prof);$('pName').value=prof.display_name||'';$('pUser').value=prof.username||'';
- $('pGender').value=prof.gender||'';$('pBirth').value=prof.birthdate||'';$('pRegion').value=prof.region||'';$('pHide').checked=!!prof.hide_seen;
- $('pLink').value=prof.username?location.origin+location.pathname+'?u='+prof.username:''}
+function fillProf(){if(!prof)return;setAv($('myAv'),prof);setAv($('pvAv'),prof);$('pName').value=prof.display_name||'';$('pUser').value=prof.username||'';
+ $('pGender').value=prof.gender||'';$('pBirth').value=prof.birthdate||'';$('pRegion').value=prof.region||'';$('pAbout').value=prof.about||'';
+ $('pLink').value=prof.username?location.origin+location.pathname+'?u='+prof.username:'';
+ $('pMusicName').textContent=prof.music_name||'';$('pMusicDel').classList.toggle('hide',!prof.music_url);
+ const g={m:t('g_m'),f:t('g_f'),o:t('g_o')}[prof.gender];$('pvName').textContent=prof.display_name||'';
+ $('pvInfo').textContent=[prof.username?'@'+prof.username:'',me?me.email:'',g||'',prof.birthdate?t('birth')+': '+prof.birthdate:'',regName(prof.region),prof.about||''].filter(Boolean).join('\n');
+ const pm=$('pvMusic');pm.textContent='';if(prof.music_url)pm.append(player({id:'pmine'+prof.music_url,file_url:prof.music_url,file_name:prof.music_name||''}));updAcctMeta()}
 $('pLink').onclick=e=>{e.target.select();if(navigator.clipboard)navigator.clipboard.writeText(e.target.value)};
 $('myAv').onclick=()=>$('avFile').click();
 $('avFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||!me)return;
@@ -499,12 +554,12 @@ $('avFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f
 $('pSave').onclick=async()=>{const un=$('pUser').value.trim().replace(/^@/,'').toLowerCase(),nm=$('pName').value.trim();
  if(!nm){$('pErr').textContent=t('e_name');return}
  if(!/^[a-z0-9_]{3,20}$/.test(un)){$('pErr').textContent=t('e_user');return}
- const{error}=await sb.from('profiles').update({display_name:nm,username:un,gender:$('pGender').value||null,birthdate:$('pBirth').value||null,region:$('pRegion').value.trim()||null,hide_seen:$('pHide').checked}).eq('id',me.id);
+ const{error}=await sb.from('profiles').update({display_name:nm,username:un,gender:$('pGender').value||null,birthdate:$('pBirth').value||null,region:$('pRegion').value.trim()||null,about:$('pAbout').value.trim()||null}).eq('id',me.id);
  if(error){$('pErr').textContent=error.code==='23505'?t('e_taken'):error.message;return}
- await loadMe();$('pErr').textContent=t('saved')};
+ await loadMe();$('pErr').textContent=t('saved');$('profBox').classList.add('hide');$('pEdit').classList.remove('hide')};
 function showProfile(){if(!peer)return;const u=peer,g={m:t('g_m'),f:t('g_f'),o:t('g_o')}[u.gender];
  setAv($('vAv'),u);$('vName').textContent=u.display_name;
- $('vInfo').textContent=[u.username?'@'+u.username:'',seenText(u),g||'',u.birthdate?t('birth')+': '+u.birthdate:'',regName(u.region)].filter(Boolean).join('\n');
+ $('vInfo').textContent=[u.username?'@'+u.username:'',seenText(u),g||'',u.birthdate?t('birth')+': '+u.birthdate:'',regName(u.region),u.about||''].filter(Boolean).join('\n');
  $('pview').classList.remove('hide')}
 $('hav').onclick=showProfile;$('hnm').onclick=showProfile;
 $('vClose').onclick=()=>$('pview').classList.add('hide');
@@ -514,6 +569,7 @@ function fill(d,m){const k=m.kind||'text';if(k==='text'){rich(d,m.body);return}
  let e;
  if(k==='image'){e=document.createElement('img');e.src=m.file_url;e.loading='lazy';e.alt='';e.draggable=false;if(peer&&peer.protect)e.oncontextmenu=ev=>ev.preventDefault()}
  else if(k==='video'){e=document.createElement('video');e.src=m.file_url;e.controls=true;e.preload='metadata';e.playsInline=true;if(peer&&peer.protect){e.controlsList='nodownload';e.disablePictureInPicture=true;e.oncontextmenu=ev=>ev.preventDefault()}}
+ else if(k==='sticker'||k==='emoji'){e=document.createElement('img');e.src=m.file_url;e.alt='';e.draggable=false;e.className=k}
  else if(k==='audio'){e=player(m)}
  else if(k==='voice'){e=document.createElement('audio');e.src=m.file_url;e.controls=true;e.preload='metadata';
   }
@@ -523,11 +579,11 @@ async function sendFile(f,kind){
  if(!peer||!f)return;if(f.size>26214400){alert(t('e_big'));return}
  const path=me.id+'/'+Date.now()+'.'+((f.name.split('.').pop()||'bin').replace(/\W/g,'').slice(0,8)||'bin');
  const{error:e1}=await sb.storage.from('xinh').upload(path,f,{contentType:(f.type||'application/octet-stream').split(';')[0]});
- if(e1){alert(t('notsent')+e1.message);return}
+ if(e1){alert(t('notsent')+errTxt(e1));return}
  const url=sb.storage.from('xinh').getPublicUrl(path).data.publicUrl,ty=f.type||'';
  if(!kind)kind=ty.startsWith('image/')?'image':ty.startsWith('video/')?'video':ty.startsWith('audio/')?'audio':'file';
  const{data,error}=await sb.from('messages').insert({...tgt(peer),...(reply?{reply_to:reply.id}:{}),body:kind==='voice'?'🎤':'📎 '+f.name,kind,file_url:url,file_name:f.name}).select().single();
- if(error){alert(t('notsent')+error.message);return}
+ if(error){alert(t('notsent')+errTxt(error));return}
  sent();if(!msgs.some(x=>x.id===data.id)){msgs.push(data);renderList();renderMsgs()}}
 $('attach').onclick=()=>$('file').click();
 $('file').onchange=e=>{const f=e.target.files[0];e.target.value='';sendFile(f)};
@@ -546,7 +602,7 @@ function toast(u,txt){const d=document.createElement('div');d.className='toast';
  const w=document.createElement('div'),n=document.createElement('div'),x=document.createElement('div');
  n.className='nm';n.textContent=(u?dn(u):'XINH');x.className='sb';x.textContent=txt;w.append(n,x);d.append(av,w);
  d.onclick=()=>{d.remove();if(u)openChat(u)};$('toasts').append(d);setTimeout(()=>d.remove(),5000)}
-function notify(m,other){const u=users.find(x=>x.id===other)||rooms.find(x=>x.id===other),txt=S.ntext?m.body:t('newmsg');
+function notify(m,other){const u=users.find(x=>x.id===other)||rooms.find(x=>x.id===other),txt=S.ntext&&!isLocked(other)?m.body:t('newmsg');
  if(!document.hidden){toast(u,txt);return}
  if('Notification' in window&&Notification.permission==='granted'){
   const n=new Notification((u?dn(u):'XINH'),{body:txt,icon:(u&&u.avatar_url)||undefined,tag:other});
@@ -575,16 +631,17 @@ async function addContact(u,alias){const{error}=await sb.rpc('save_contact',{cid
  if(!error){conts[u.id]=alias||'';renderList();if(peer&&peer.id===u.id)setHead()}return !error}
 async function addByName(){const n=(prompt(t('addby'))||'').trim().replace(/^@/,'').toLowerCase();if(!n)return;
  let u=users.find(x=>x.username===n);
- if(!u){const{data}=await sb.from('profiles').select('*').eq('username',n).maybeSingle();u=data;if(u&&u.id!==me.id)users.push(u)}
+ if(!u){const{data}=await sb.rpc('profiles_view',{uname:n});u=data&&data[0];if(u&&u.id!==me.id)users.push(u)}
  if(!u||u.id===me.id){alert(t('nf'));return}await addContact(u,'')}
 async function importContacts(){if(!('contacts' in navigator&&navigator.contacts.select)){alert(t('noimp'));return}
  try{const l=await navigator.contacts.select(['name','email'],{multiple:true});let n=0;
-  for(const c of l)for(const em of (c.email||[])){const{data}=await sb.from('profiles').select('*').eq('email',em.trim().toLowerCase()).maybeSingle();
+  for(const c of l)for(const em of (c.email||[])){const{data:uid}=await sb.rpc('find_by_email',{em:em.trim().toLowerCase()});const data=uid&&(users.find(x=>x.id===uid)||((await sb.rpc('profiles_view',{ids:[uid]})).data||[])[0]);
    if(data&&data.id!==me.id){if(!users.some(x=>x.id===data.id))users.push(data);if(await addContact(data,(c.name&&c.name[0])||''))n++;break}}
   alert(t('imported')+n)}catch(e){}}
 const _sp=showProfile;
 showProfile=function(){if(!peer)return;_sp();const r=!!peer.room,ic=peer.id in conts;
- $('vAdd').classList.toggle('hide',r);$('vLink').classList.toggle('hide',!r||!!peer.pub);$('vShare').classList.toggle('hide',!r||!!peer.pub);$('vSetBtn').classList.toggle('hide',!(r&&(peer.role==='owner'||peer.role==='admin')));$('vMem').classList.toggle('hide',!r);if(r)renderMembers();
+ $('vAdd').classList.toggle('hide',r);$('vLink').classList.toggle('hide',!r||!!peer.pub);$('vShare').classList.toggle('hide',!r||!!peer.pub);$('vSetBtn').classList.toggle('hide',!(r&&(peer.role==='owner'||peer.role==='admin')));$('vBlock').classList.toggle('hide',r);if(!r)$('vBlock').textContent=t(blocked.has(peer.id)?'unblock':'block');$('vLock').textContent=t(isLocked(peer.id)?'unlockchat':'lockchat');
+ const mu=!r&&peer.music_url;$('vMusic').classList.toggle('hide',!mu);$('vMusic').textContent='';if(mu)$('vMusic').append(player({id:'pm'+peer.id+peer.music_url,file_url:peer.music_url,file_name:peer.music_name||''}));$('vMem').classList.toggle('hide',!r);if(r)renderMembers();
  if(r&&peer.invite)$('vLink').value=location.origin+location.pathname+'?j='+peer.invite;$('vRen').classList.toggle('hide',r||!ic);
  if(r)$('vInfo').textContent=[t(peer.kind),peer.username?'@'+peer.username:'',peer.protect?'🔒 '+t('prot'):''].filter(Boolean).join('\n');else $('vAdd').textContent=t(ic?'delc':'addc')};
 $('hav').onclick=$('hnm').onclick=showProfile;
@@ -656,15 +713,15 @@ function fwdPick(m){const box=$('fList');box.textContent='';
   const av=document.createElement('div');av.className='av';setAv(av,u);const n=document.createElement('div');n.className='nm';n.textContent=dn(u);d.append(av,n);
   d.onclick=async()=>{$('fmodal').classList.add('hide');
    const nm=m.sender_id===me.id?((prof&&prof.display_name)||'XINH'):dn(users.find(x=>x.id===m.sender_id)||{display_name:'XINH'});
-   const{data,error}=await sb.from('messages').insert({...tgt(u),body:m.body,kind:m.kind||'text',file_url:m.file_url||null,file_name:m.file_name||null,fwd:nm}).select().single();
-   if(error){alert(t('notsent')+error.message);return}
+   const{data,error}=await sb.from('messages').insert({...tgt(u),body:m.body,kind:m.kind||'text',file_url:m.file_url||null,file_name:m.file_name||null,fwd:nm,fwd_from:m.fwd_from||m.sender_id}).select().single();
+   if(error){alert(t('notsent')+errTxt(error));return}
    if(!msgs.some(x=>x.id===data.id)){msgs.push(data);renderList();if(peer&&peer.id===u.id)renderMsgs()}};
   box.append(d)});
  $('fmodal').classList.remove('hide')}
 $('fX').onclick=()=>$('fmodal').classList.add('hide');
 async function renderMembers(){const box=$('vMem'),r=peer;box.textContent='';if(!r||!r.room)return;
  const ms=[...(mem[r.rid]||[])],rk=x=>x.role==='owner'?0:x.role==='admin'?1:2,miss=ms.map(x=>x.user_id).filter(id=>id!==me.id&&!users.some(u=>u.id===id));
- if(miss.length){const{data}=await sb.from('profiles').select('*').in('id',miss);(data||[]).forEach(u=>users.push(u))}
+ if(miss.length){const{data}=await sb.rpc('profiles_view',{ids:miss});(data||[]).forEach(u=>users.push(u))}
  ms.sort((a,b)=>rk(a)-rk(b)).forEach(x=>{const u=x.user_id===me.id?{id:me.id,display_name:(prof&&prof.display_name)||''}:users.find(y=>y.id===x.user_id);
   const row=document.createElement('div');row.className='mrow';const n=document.createElement('span');n.textContent=u?dn(u):'…';
   if(x.role!=='member'){const b=document.createElement('span');b.className='badge';b.textContent=t('role_'+x.role);n.append(b)}row.append(n);
@@ -703,7 +760,7 @@ function rich(el,txt){
   p.split('\n').forEach(ln=>{const h=/^(#{1,3})\s+(.+)$/.exec(ln);if(h){flush();const e=document.createElement('div');e.className='h'+h[1].length;inline(e,h[2]);el.append(e)}else buf.push(ln)});flush()})}
 
 const FM={b:['**','**'],i:['*','*'],u:['__','__'],s:['~~','~~'],m:['`','`'],sp:['||','||'],c:['```\n','\n```'],h:['# ',''],a:['[','](https://)']};
-document.querySelectorAll('#fmt button').forEach(b=>b.onclick=()=>{const[L,R]=FM[b.dataset.f],el=$('txt'),a=el.selectionStart,e=el.selectionEnd,v=el.value,sel=v.slice(a,e)||(S.lang==='ru'?'текст':'text');
+document.querySelectorAll('#fmt button').forEach(b=>b.onclick=()=>{if(b.dataset.f==='stk'){openStk();return}const[L,R]=FM[b.dataset.f],el=$('txt'),a=el.selectionStart,e=el.selectionEnd,v=el.value,sel=v.slice(a,e)||(S.lang==='ru'?'текст':'text');
  el.value=v.slice(0,a)+L+sel+R+v.slice(e);el.focus();el.setSelectionRange(a+L.length,a+L.length+sel.length);autoSize()});
 function autoSize(){const e=$('txt');e.style.height='auto';e.style.height=Math.min(e.scrollHeight,120)+'px'}
 $('txt').addEventListener('input',autoSize);
@@ -773,6 +830,223 @@ const shield=()=>{const on=!!(peer&&peer.protect)&&document.hidden;$('msgs').cla
 document.addEventListener('visibilitychange',shield);window.addEventListener('blur',()=>{if(peer&&peer.protect){$('msgs').classList.add('shield')}});window.addEventListener('focus',shield);
 $('msgs').addEventListener('contextmenu',e=>{if(peer&&peer.protect)e.preventDefault()});
 document.addEventListener('keyup',e=>{if(e.key==='PrintScreen'&&peer&&peer.protect){try{navigator.clipboard.writeText('')}catch(_){}}});
+
+/* ===== ЭТАП 2: НАСТРОЙКИ ===== */
+const VER='1.2.0';
+const T2={
+ru:{edit:'Изменить',cancel:'Отмена',ok:'ОК',s_profile:'Профиль',s_accounts:'Аккаунты',s_folders:'Папки',s_sessions:'Сеансы',s_notif:'Уведомления и звуки',s_privacy:'Конфиденциальность',s_loc:'Локализация',s_currency:'Моя валюта',s_about:'О приложении',
+ addacc:'Добавить аккаунт',addfolder:'Создать папку',editfolder:'Папка',fname:'Название папки',endothers:'Завершить все остальные сеансы',thisdev:'это устройство',endsess:'Завершить',sess_end:'Этот сеанс был завершён на другом устройстве.',
+ n_dm:'Личные чаты',n_gr:'Группы',n_ch:'Каналы',snd_on:'Звук входящих сообщений',snd_sent:'Звук отправки',vib:'Вибрация',snd_test:'Проверить звук',sn_glass:'Стекло',sn_pop:'Щелчок',sn_chime:'Перезвон',
+ mycolors:'Мои цвета',savecolor:'Сохранить цвет',about_ph:'О себе',addmusic:'Музыка в профиле',
+ pv_email:'Почта',pv_emailnote:'Видна только вам',pv_blocked:'Заблокированные',pv_none:'Пусто.',unblock:'Разблокировать',block:'Заблокировать',
+ pv_pass:'Код-пароль приложения',pass_on:'Код-пароль включён',pass_off:'Код-пароль выключен',setpass:'Установить код-пароль',changepass:'Изменить код-пароль',disablepass:'Отключить',la0:'Блокировать сразу',la1:'Через 1 минуту',la5:'Через 5 минут',la60:'Через 1 час',
+ pv_cloud:'Облачный пароль аккаунта',cloud_on:'Запрашивается при входе на любом устройстве',cloud_off:'Не установлен',setcloud:'Установить облачный пароль',changecloud:'Изменить облачный пароль',removecloud:'Удалить облачный пароль',
+ pv_chatpw:'Пароли на чаты',lockchat:'Пароль на чат',unlockchat:'Снять пароль с чата',pv_auto:'Автоудаление сообщений',off:'Выключено',u_day:'дн.',u_week:'нед.',u_month:'мес.',u_year:'год',
+ pv_vis:'Кто видит',pv_seen:'Время последнего посещения',pv_photo:'Фотографии профиля',pv_about:'О себе',pv_birthday:'День рождения',pv_music:'Музыка в профиле',pv_fwd:'Пересылка сообщений (переход в мой профиль)',
+ v_all:'Все',v_contacts:'Контакты',v_nobody:'Никто',exc_deny:'Исключения: кто не увидит',exc_allow:'Исключения: кто увидит всегда',
+ pv_incoming:'Входящие сообщения',in_all:'От всех',in_contacts:'Только от контактов',in_paid:'За валюту',in_price:'Цена сообщения',pv_invites:'Приглашения в группы и каналы',inv_all:'Все',inv_contacts:'Контакты',inv_link:'Только по ссылке или @',
+ enterpass:'Введите код-пароль',wrongpass:'Неверный пароль. Повторите',newpass:'Новый пароль (от 4 символов)',repeatpass:'Повторите пароль',pass_short:'Минимум 4 символа.',enterpass_cloud:'Введите облачный пароль',enterpass_chat:'Пароль на чат',
+ e_blocked:'Один из вас заблокировал другого.',e_contacts:'Этот пользователь принимает сообщения только от контактов.',e_funds:'Недостаточно Ỻ для отправки платного сообщения.',
+ cur_bal:'Баланс',cur_buy:'Пополнение',cur_code:'Код пополнения',cur_redeem:'Активировать код',cur_ok:'Зачислено. Баланс:',e_code:'Неверный или уже использованный код.',cur_note:'Оплата банковской картой пока не подключена: валюта пополняется кодами. Платные сообщения списывают Ỻ у отправителя и зачисляют получателю.',
+ ab_ver:'Версия',ab1:'XINH — мессенджер: личные чаты, группы и каналы, файлы, фото, видео, голосовые, реакции, контакты.',ab2:'Хранение: данные и файлы лежат в Supabase. Файлы до 25 МБ доступны по закрытой длинной ссылке.',
+ ab3:'Защита: код-пароль и пароли на чаты работают на этом устройстве, облачный пароль проверяется сервером при входе. Сквозное шифрование не используется.',ab4:'Ограничения браузера: запретить скриншоты и push-уведомления при закрытом приложении веб-версия не может.',ab5:'Все настройки приложения хранятся на устройстве, настройки приватности и профиль — в вашем аккаунте.'},
+en:{edit:'Edit',cancel:'Cancel',ok:'OK',s_profile:'Profile',s_accounts:'Accounts',s_folders:'Folders',s_sessions:'Sessions',s_notif:'Notifications & sounds',s_privacy:'Privacy',s_loc:'Appearance & language',s_currency:'My currency',s_about:'About',
+ addacc:'Add account',addfolder:'Create folder',editfolder:'Folder',fname:'Folder name',endothers:'End all other sessions',thisdev:'this device',endsess:'End',sess_end:'This session was ended from another device.',
+ n_dm:'Private chats',n_gr:'Groups',n_ch:'Channels',snd_on:'Incoming message sound',snd_sent:'Sent sound',vib:'Vibration',snd_test:'Test sound',sn_glass:'Glass',sn_pop:'Pop',sn_chime:'Chime',
+ mycolors:'My colors',savecolor:'Save color',about_ph:'About me',addmusic:'Profile music',
+ pv_email:'Email',pv_emailnote:'Visible only to you',pv_blocked:'Blocked users',pv_none:'Empty.',unblock:'Unblock',block:'Block',
+ pv_pass:'App passcode',pass_on:'Passcode is on',pass_off:'Passcode is off',setpass:'Set passcode',changepass:'Change passcode',disablepass:'Turn off',la0:'Lock immediately',la1:'After 1 minute',la5:'After 5 minutes',la60:'After 1 hour',
+ pv_cloud:'Cloud password',cloud_on:'Asked on sign-in on any device',cloud_off:'Not set',setcloud:'Set cloud password',changecloud:'Change cloud password',removecloud:'Remove cloud password',
+ pv_chatpw:'Chat passwords',lockchat:'Password for chat',unlockchat:'Remove chat password',pv_auto:'Auto-delete messages',off:'Off',u_day:'d',u_week:'w',u_month:'mo',u_year:'year',
+ pv_vis:'Who can see',pv_seen:'Last seen',pv_photo:'Profile photos',pv_about:'About me',pv_birthday:'Birthday',pv_music:'Profile music',pv_fwd:'Forwarded messages (link to my profile)',
+ v_all:'Everyone',v_contacts:'Contacts',v_nobody:'Nobody',exc_deny:'Exceptions: who will not see',exc_allow:'Exceptions: who always sees',
+ pv_incoming:'Incoming messages',in_all:'From everyone',in_contacts:'Contacts only',in_paid:'For currency',in_price:'Message price',pv_invites:'Group & channel invites',inv_all:'Everyone',inv_contacts:'Contacts',inv_link:'Link or @ only',
+ enterpass:'Enter passcode',wrongpass:'Wrong password. Try again',newpass:'New password (4+ characters)',repeatpass:'Repeat password',pass_short:'At least 4 characters.',enterpass_cloud:'Enter cloud password',enterpass_chat:'Chat password',
+ e_blocked:'One of you has blocked the other.',e_contacts:'This user accepts messages from contacts only.',e_funds:'Not enough Ỻ to send a paid message.',
+ cur_bal:'Balance',cur_buy:'Top up',cur_code:'Top-up code',cur_redeem:'Redeem code',cur_ok:'Credited. Balance:',e_code:'Invalid or already used code.',cur_note:'Card payments are not connected yet: the balance is topped up with codes. Paid messages charge the sender and credit the recipient.',
+ ab_ver:'Version',ab1:'XINH is a messenger: private chats, groups and channels, files, photos, video, voice, reactions, contacts.',ab2:'Storage: data and files live in Supabase. Files up to 25 MB are served from private long links.',
+ ab3:'Protection: the passcode and chat passwords work on this device, the cloud password is checked by the server at sign-in. End-to-end encryption is not used.',ab4:'Browser limits: a web app cannot block screenshots or deliver push notifications while closed.',ab5:'App settings are stored on this device; privacy settings and profile are stored in your account.'},
+xx:{/* переводите здесь новые ключи Lanđȃ (по умолчанию берутся русские) */}};
+Object.assign(I18.ru,T2.ru);Object.assign(I18.en,T2.en);I18.xx=Object.assign({},T2.ru,I18.xx,T2.xx);
+const T3={ru:{s_stickers:'Стикеры и эмодзи',stk_packs:'Стикерпаки',emo_packs:'Эмодзипаки',newpack_s:'Создать стикерпак',newpack_e:'Создать эмодзипак',packname:'Название набора',delpack:'Удалить набор целиком?',delstk:'Удалить этот стикер?',addstk:'Добавить картинки',stk_hint:'Нажмите на картинку, чтобы удалить её из набора. Стикеры отправляются кнопкой 🖼 над полем ввода.',official:'Официальные'},
+ en:{s_stickers:'Stickers & emoji',stk_packs:'Sticker packs',emo_packs:'Emoji packs',newpack_s:'Create sticker pack',newpack_e:'Create emoji pack',packname:'Pack name',delpack:'Delete the whole pack?',delstk:'Delete this sticker?',addstk:'Add images',stk_hint:'Tap an image to remove it from the pack. Stickers are sent with the 🖼 button above the input.',official:'Official'}};
+Object.assign(I18.ru,T3.ru);Object.assign(I18.en,T3.en);I18.xx=Object.assign({},T3.ru,I18.xx);
+
+const H=(tag,p,...k)=>{const e=document.createElement(tag);if(p)Object.assign(e,p);k.flat().forEach(x=>e.append(x));return e};
+const SEL=(o,v,f)=>{const e=H('select');o.forEach(([a,l])=>e.append(H('option',{value:a,textContent:l})));e.value=v;e.onchange=()=>f(e.value);return e};
+const BLD={};let curPg='hub',addMode=false,folders=[],blocked=new Set();
+const PG=['hub','profile','accounts','folders','sessions','notif','privacy','loc','stickers','currency','about'];
+function goPage(k){curPg=k;PG.forEach(p=>$('pg-'+p).classList.toggle('hide',p!==k));$('sBack').classList.toggle('hide',k==='hub');
+ $('sTitle').textContent=t(k==='hub'?'settings':'s_'+k);if(BLD[k])BLD[k]();$('setcard').scrollTop=0}
+function refreshSet(){if(!$('modal').classList.contains('hide'))goPage(curPg)}
+$('sBack').onclick=()=>goPage('hub');
+$('gear').onclick=$('gear2').onclick=()=>{goPage('hub');$('modal').classList.remove('hide')};
+BLD.hub=()=>{const b=$('pg-hub');b.textContent='';
+ [['profile','👤'],['accounts','👥'],['folders','🗂'],['sessions','💻'],['notif','🔔'],['privacy','🔒'],['loc','🎨'],['stickers','🖼'],['currency','Ỻ'],['about','ℹ️']].filter(([k])=>me||k==='loc'||k==='about')
+ .forEach(([k,i])=>b.append(H('button',{type:'button',className:'srow',onclick:()=>goPage(k)},H('span',{textContent:i}),H('span',{textContent:t('s_'+k)}),H('span',{className:'chev',textContent:'›'}))))};
+
+/* --- общие окна: пароль и выбор --- */
+function askPw(title,cancel=true){return new Promise(res=>{$('pwT').textContent=title;const i=$('pwIn');i.value='';$('pwErr').textContent='';$('pwX').classList.toggle('hide',!cancel);$('pw').classList.remove('hide');setTimeout(()=>i.focus(),60);
+ const done=v=>{$('pw').classList.add('hide');res(v)};$('pwOk').onclick=()=>done(i.value);$('pwX').onclick=()=>done(null);i.onkeydown=e=>{if(e.key==='Enter')done(i.value)}})}
+function pick(o){return new Promise(res=>{$('pkT').textContent=o.title;const n=$('pkName');n.classList.toggle('hide',o.name==null);n.value=o.name||'';n.placeholder=o.nameph||'';
+ const box=$('pkList');box.textContent='';
+ o.items.forEach(it=>{const c=H('input',{type:'checkbox',checked:o.sel.has(it.id)});c.onchange=()=>c.checked?o.sel.add(it.id):o.sel.delete(it.id);const av=H('div',{className:'av'});setAv(av,it.u);box.append(H('label',{className:'chk'},c,av,H('span',{textContent:it.label})))});
+ if(!o.items.length)box.append(H('div',{className:'lbl',textContent:t('nocont')}));
+ const done=v=>{$('pk').classList.add('hide');res(v)};$('pkOk').onclick=()=>done({name:n.value,sel:o.sel});$('pkX').onclick=()=>done(null);$('pk').classList.remove('hide')})}
+const sha=async x=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('xinh:'+x)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+const errTxt=e=>({blocked:t('e_blocked'),contacts_only:t('e_contacts'),insufficient:t('e_funds')}[e&&e.message]||(e&&e.message)||'');
+
+/* --- профиль --- */
+BLD.profile=()=>{fillProf();$('profBox').classList.add('hide');$('pEdit').classList.remove('hide')};
+$('pEdit').onclick=()=>{$('profBox').classList.remove('hide');$('pEdit').classList.add('hide')};
+$('pMusicBtn').onclick=()=>$('pMusicFile').click();
+$('pMusicFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>10485760){$('pErr').textContent=t('e_big');return}
+ const path=me.id+'/music_'+Date.now()+'.'+(f.name.split('.').pop()||'mp3').replace(/\W/g,'').slice(0,5);
+ const{error}=await sb.storage.from('xinh').upload(path,f,{contentType:(f.type||'audio/mpeg').split(';')[0]});if(error){$('pErr').textContent=error.message;return}
+ await sb.from('profiles').update({music_url:sb.storage.from('xinh').getPublicUrl(path).data.publicUrl,music_name:f.name.replace(/\.[^.]+$/,'')}).eq('id',me.id);await loadMe()};
+$('pMusicDel').onclick=async()=>{await sb.from('profiles').update({music_url:null,music_name:null}).eq('id',me.id);await loadMe()};
+
+/* --- аккаунты (до 3) --- */
+const ACK='xinh_accts',getAcc=()=>{try{return JSON.parse(localStorage.getItem(ACK)||'[]')}catch(e){return[]}},setAcc=a=>{try{localStorage.setItem(ACK,JSON.stringify(a))}catch(e){}};
+function upAcct(ss){if(!ss||!ss.user)return;const a=getAcc(),i=a.findIndex(x=>x.id===ss.user.id);
+ if(i>=0){a[i].at=ss.access_token;a[i].rt=ss.refresh_token;a[i].email=ss.user.email}else if(a.length<3)a.push({id:ss.user.id,email:ss.user.email,at:ss.access_token,rt:ss.refresh_token,name:ss.user.email,av:null});setAcc(a)}
+function updAcctMeta(){if(!me||!prof)return;const a=getAcc(),i=a.findIndex(x=>x.id===me.id);if(i>=0){a[i].name=prof.display_name||a[i].email;a[i].av=prof.avatar_url||null;setAcc(a)}}
+BLD.accounts=()=>{const b=$('acList');b.textContent='';const a=getAcc();
+ a.forEach(x=>{const av=H('div',{className:'av'});setAv(av,{display_name:x.name,avatar_url:x.av});const cur=me&&x.id===me.id;
+  b.append(H('div',{className:'srow'+(cur?' cur':''),onclick:()=>switchAcc(x.id)},av,H('span',{textContent:(x.name||x.email)+(cur?' ✓':'')}),H('button',{type:'button',className:'x',textContent:'✕',onclick:e=>{e.stopPropagation();dropAcc(x.id)}})))});
+ $('acAdd').classList.toggle('hide',a.length>=3)};
+async function switchAcc(id){if(me&&id===me.id)return;const x=getAcc().find(y=>y.id===id);if(!x)return;
+ const{error}=await sb.auth.setSession({access_token:x.at,refresh_token:x.rt});if(error){setAcc(getAcc().filter(y=>y.id!==id));alert(error.message);BLD.accounts();return}$('modal').classList.add('hide')}
+async function dropAcc(id){const a=getAcc().filter(x=>x.id!==id);setAcc(a);
+ if(me&&id===me.id){await sb.auth.signOut({scope:'local'});if(a[0])await switchAcc(a[0].id)}else BLD.accounts()}
+$('out').onclick=()=>dropAcc(me.id);
+$('acAdd').onclick=()=>{addMode=true;$('modal').classList.add('hide');showAuth('login');$('liCancel').classList.remove('hide')};
+$('liCancel').onclick=()=>{addMode=false;$('liCancel').classList.add('hide');$('authLogin').classList.add('hide');$('gear').classList.add('hide');$('app').classList.remove('hide')};
+function resetForBoot(){if(chan){sb.removeChannel(chan);chan=null}peer=null;msgs=[];users=[];rooms=[];rx={};folders=[];blocked=new Set();addMode=false;$('liCancel').classList.add('hide')}
+
+/* --- папки --- */
+const chatItems=()=>[...rooms,...users.filter(u=>last(u.id)||(u.id in conts))].map(u=>({id:u.id,label:dn(u),u}));
+function buildCats(){const c=$('cats');c.querySelectorAll('.fc').forEach(e=>e.remove());
+ folders.forEach(f=>{const b=H('button',{type:'button',className:'fc'+(cat==='f'+f.id?' on':''),textContent:'🗂 '+f.name,onclick:()=>{cat='f'+f.id;renderList()}});b.dataset.cat='f'+f.id;c.append(b)})}
+async function loadExtra(){const[{data:f},{data:b}]=await Promise.all([sb.from('chat_folders').select('*').order('id'),sb.from('blocks').select('blocked')]);
+ folders=f||[];blocked=new Set((b||[]).map(x=>x.blocked));buildCats();touch()}
+BLD.folders=()=>{const b=$('fdList');b.textContent='';
+ folders.forEach(f=>b.append(H('div',{className:'srow'},H('span',{style:'flex:1',textContent:'🗂 '+f.name+' ('+f.chat_ids.length+')'}),H('button',{type:'button',className:'x',textContent:'✎',onclick:()=>editFolder(f)}),
+  H('button',{type:'button',className:'x',textContent:'✕',onclick:async()=>{await sb.rpc('delete_folder',{fid:f.id});if(cat==='f'+f.id)cat='all';await loadExtra();BLD.folders();renderList()}}))))};
+async function editFolder(f){const r=await pick({title:t('editfolder'),name:f?f.name:'',nameph:t('fname'),items:chatItems(),sel:new Set(f?f.chat_ids:[])});if(!r)return;
+ if(!r.name.trim()){alert(t('e_title'));return}
+ const{error}=await sb.rpc('save_folder',{fid:f?f.id:null,nm:r.name.trim(),ids:[...r.sel]});if(error)return alert(error.message);await loadExtra();BLD.folders();renderList()}
+$('fdAdd').onclick=()=>editFolder(null);
+
+/* --- сеансы --- */
+const devName=()=>{const u=navigator.userAgent,b=/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/Chrome\//.test(u)?'Chrome':/Firefox\//.test(u)?'Firefox':/Safari\//.test(u)?'Safari':'Browser',
+ o=/iPhone|iPad/.test(u)?'iOS':/Android/.test(u)?'Android':/Windows/.test(u)?'Windows':/Mac OS/.test(u)?'macOS':/Linux/.test(u)?'Linux':'';return b+(o?' · '+o:'')};
+const mySid=()=>{const k='xinh_sid_'+me.id;let v=null;try{v=localStorage.getItem(k);if(!v){v=(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random());localStorage.setItem(k,v)}}catch(e){v=v||'tmp'}return v};
+async function touch(){if(!me)return;const{data,error}=await sb.rpc('touch_session',{sid:mySid(),dev:devName()});if(!error&&data===true){alert(t('sess_end'));dropAcc(me.id)}}
+BLD.sessions=async()=>{const b=$('seList');b.textContent='…';const{data}=await sb.from('sessions_app').select('*').eq('revoked',false).order('last_seen',{ascending:false});b.textContent='';
+ (data||[]).forEach(x=>{const cur=x.id===mySid();b.append(H('div',{className:'srow'},H('span',{style:'flex:1',textContent:'💻 '+x.device+(cur?' · '+t('thisdev'):'')+'\n'+new Date(x.last_seen).toLocaleString(loc(),{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}),
+  cur?'':H('button',{type:'button',className:'x',textContent:t('endsess'),onclick:async()=>{await sb.rpc('revoke_session',{sid:x.id});BLD.sessions()}})))})};
+$('seOthers').onclick=async()=>{await sb.rpc('revoke_others',{sid:mySid()});BLD.sessions()};
+
+/* --- уведомления и звуки --- */
+let AC;const tone=(f,d,t0=0,ty='sine',v=.08)=>{try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain(),n=AC.currentTime+t0;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(0,n);g.gain.linearRampToValueAtTime(v,n+.01);g.gain.exponentialRampToValueAtTime(.0001,n+d);o.connect(g);g.connect(AC.destination);o.start(n);o.stop(n+d+.02)}catch(e){}};
+const SND={glass:()=>{tone(880,.25);tone(1320,.3,.08)},pop:()=>tone(520,.12,0,'triangle',.1),chime:()=>{tone(660,.2);tone(880,.2,.12);tone(1100,.3,.24)}};
+function fx(){if(S.snd)(SND[S.tone]||SND.glass)();if(S.vib&&navigator.vibrate)navigator.vibrate(60)}
+const kindOf=m=>!m.room_id?'n_dm':((rooms.find(x=>x.rid===m.room_id)||{}).kind==='channel'?'n_ch':'n_gr');
+function syncSet(){[['nOn','notif'],['nTxt','ntext'],['nDm','n_dm'],['nGr','n_gr'],['nCh','n_ch'],['sOn','snd'],['sSent','sSent'],['vOn','vib']].forEach(([i,k])=>{const e=$(i);e.checked=!!S[k];
+  e.onchange=async ev=>{S[k]=ev.target.checked;save();if(k==='notif'&&S.notif&&'Notification' in window&&Notification.permission==='default')await Notification.requestPermission()}});
+ $('sTone').value=S.tone;$('sTone').onchange=e=>{S.tone=e.target.value;save();SND[S.tone]()};$('sTest').onclick=()=>fx();buildCustom();sendLabel()}
+const _sent=sent;sent=function(){_sent();if(S.sSent&&S.snd)SND.pop()};
+
+/* --- цвета --- */
+function buildCustom(){const b=$('cList');b.textContent='';(S.custom||[]).forEach(c=>{const w=H('div',{style:'position:relative'});
+ const sw=H('button',{type:'button',className:'sw'+(S.accent===c?' on':''),onclick:()=>{S.accent=c;save();applyAll()}});sw.style.setProperty('--c',c);
+ w.append(sw,H('button',{type:'button',className:'x2',textContent:'×',onclick:()=>{S.custom=S.custom.filter(y=>y!==c);if(S.accent===c)S.accent='red';save();applyAll()}}));b.append(w)})}
+$('cAdd').onclick=()=>{const c=$('cCol').value.toLowerCase();S.custom=S.custom||[];if(!S.custom.includes(c)&&S.custom.length<12)S.custom.push(c);S.accent=c;save();applyAll()};
+
+/* --- блокировки, пароли, приватность --- */
+$('vBlock').onclick=async()=>{if(!peer||peer.room)return;const b=blocked.has(peer.id);const{error}=await sb.rpc(b?'unblock_user':'block_user',{uid:peer.id});if(error)return alert(error.message);b?blocked.delete(peer.id):blocked.add(peer.id);showProfile()};
+const CPK='xinh_chatpw',cpw=()=>{try{return JSON.parse(localStorage.getItem(CPK)||'{}')}catch(e){return{}}},unlocked=new Set(),isLocked=id=>!!(me&&cpw()[me.id+':'+id]);
+async function chatGate(u){const m=cpw(),k=me.id+':'+u.id;if(!m[k]||unlocked.has(u.id))return true;let first=true;
+ for(let i=0;i<5;i++){const v=await askPw(t(first?'enterpass_chat':'wrongpass'));first=false;if(v===null)return false;if(await sha(v)===m[k]){unlocked.add(u.id);return true}}return false}
+$('vLock').onclick=async()=>{if(!peer)return;const k=me.id+':'+peer.id,m=cpw();
+ if(m[k]){const v=await askPw(t('enterpass_chat'));if(v===null)return;if(await sha(v)!==m[k]){alert(t('wrongpass'));return}delete m[k];unlocked.delete(peer.id)}
+ else{const a=await askPw(t('newpass'));if(a===null)return;if(a.length<4){alert(t('pass_short'));return}const b=await askPw(t('repeatpass'));if(a!==b){alert(t('e_match'));return}m[k]=await sha(a);unlocked.add(peer.id)}
+ localStorage.setItem(CPK,JSON.stringify(m));showProfile();renderList()};
+let locking=false,hiddenAt=0;
+async function lockGate(){const h=localStorage.getItem('xinh_pass');if(!h||locking)return;locking=true;let first=true;
+ while(true){const v=await askPw(t(first?'enterpass':'wrongpass'),false);first=false;if(v!==null&&await sha(v)===h)break}locking=false}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)hiddenAt=Date.now();else if(localStorage.getItem('xinh_pass')&&Date.now()-hiddenAt>=(S.lockAfter||0)*1000&&hiddenAt)lockGate()});
+async function setPass(){const h=localStorage.getItem('xinh_pass');if(h){const o=await askPw(t('enterpass'));if(o===null)return;if(await sha(o)!==h){alert(t('wrongpass'));return}}
+ const a=await askPw(t('newpass'));if(a===null)return;if(a.length<4){alert(t('pass_short'));return}const b=await askPw(t('repeatpass'));if(a!==b){alert(t('e_match'));return}localStorage.setItem('xinh_pass',await sha(a));BLD.privacy()}
+async function offPass(){const h=localStorage.getItem('xinh_pass'),o=await askPw(t('enterpass'));if(o===null)return;if(await sha(o)!==h){alert(t('wrongpass'));return}localStorage.removeItem('xinh_pass');BLD.privacy()}
+async function cloudGate(){const{data:has}=await sb.rpc('has_cloud_pw');if(!has)return;const k='xinh_cl_'+me.id;if(sessionStorage.getItem(k))return;let first=true;
+ while(true){const v=await askPw(t(first?'enterpass_cloud':'wrongpass'),false);first=false;if(v===null)continue;const{data:ok}=await sb.rpc('check_cloud_pw',{pw:v});if(ok){sessionStorage.setItem(k,'1');return}}}
+async function setCloud(has){let op=null;if(has){op=await askPw(t('enterpass_cloud'));if(op===null)return}
+ const a=await askPw(t('newpass'));if(a===null)return;if(a.length<4){alert(t('pass_short'));return}const c=await askPw(t('repeatpass'));if(a!==c){alert(t('e_match'));return}
+ const{error}=await sb.rpc('set_cloud_pw',{op,np:a});if(error)return alert(t('wrongpass'));sessionStorage.setItem('xinh_cl_'+me.id,'1');BLD.privacy()}
+async function rmCloud(){const op=await askPw(t('enterpass_cloud'));if(op===null)return;const{error}=await sb.rpc('remove_cloud_pw',{op});if(error)return alert(t('wrongpass'));BLD.privacy()}
+const alive=m=>{const d=prof&&prof.autodelete_days;return !d||Date.now()-new Date(m.created_at)<d*864e5};
+const ADO=()=>[[0,t('off')],...[1,2,3,4,5,6].map(n=>[n,n+' '+t('u_day')]),...[1,2,3,4].map(n=>[7*n,n+' '+t('u_week')]),...Array.from({length:11},(_,i)=>[30*(i+1),(i+1)+' '+t('u_month')]),[365,'1 '+t('u_year')]];
+async function savePrefs(p){const{error}=await sb.from('profiles').update(p).eq('id',me.id);if(error){alert(error.message);return false}Object.assign(prof,p);return true}
+const upPriv=(k,c)=>savePrefs({privacy:{...(prof.privacy||{}),[k]:c}});
+const userItems=()=>users.map(u=>({id:u.id,label:dn(u),u}));
+BLD.privacy=async()=>{if(!prof)return;const{data:cl}=await sb.rpc('has_cloud_pw');const b=$('pg-privacy');b.textContent='';const pr=prof.privacy||{};
+ const sec=k=>b.append(H('div',{className:'lbl sec',textContent:t(k)})),note=k=>b.append(H('div',{className:'lbl',textContent:t(k)})),btn=(k,f)=>b.append(H('button',{type:'button',textContent:t(k),onclick:f}));
+ sec('pv_email');b.append(H('div',{className:'srow'},H('span',{textContent:'✉️ '+(me?me.email:'')+'\n'+t('pv_emailnote')})));
+ sec('pv_blocked');if(!blocked.size)note('pv_none');
+ [...blocked].forEach(id=>{const u=users.find(x=>x.id===id);b.append(H('div',{className:'srow'},H('span',{style:'flex:1',textContent:u?dn(u):id}),H('button',{type:'button',className:'x',textContent:t('unblock'),onclick:async()=>{const{error}=await sb.rpc('unblock_user',{uid:id});if(error)return alert(error.message);blocked.delete(id);BLD.privacy()}})))});
+ sec('pv_pass');const has=!!localStorage.getItem('xinh_pass');note(has?'pass_on':'pass_off');btn(has?'changepass':'setpass',setPass);
+ if(has){btn('disablepass',offPass);b.append(SEL([[0,t('la0')],[60,t('la1')],[300,t('la5')],[3600,t('la60')]],S.lockAfter||0,v=>{S.lockAfter=+v;save()}))}
+ sec('pv_cloud');note(cl?'cloud_on':'cloud_off');btn(cl?'changecloud':'setcloud',()=>setCloud(!!cl));if(cl)btn('removecloud',rmCloud);
+ sec('pv_chatpw');const cm=cpw(),keys=Object.keys(cm).filter(k=>k.startsWith(me.id+':'));if(!keys.length)note('pv_none');
+ keys.forEach(k=>{const id=k.split(':')[1],u=[...rooms,...users].find(x=>x.id===id);b.append(H('div',{className:'srow'},H('span',{style:'flex:1',textContent:'🔒 '+(u?dn(u):id)}),
+  H('button',{type:'button',className:'x',textContent:t('unlockchat'),onclick:async()=>{const v=await askPw(t('enterpass_chat'));if(v===null)return;if(await sha(v)!==cm[k]){alert(t('wrongpass'));return}delete cm[k];localStorage.setItem(CPK,JSON.stringify(cm));unlocked.delete(id);BLD.privacy();renderList()}})))});
+ sec('pv_auto');b.append(SEL(ADO(),prof.autodelete_days||0,async v=>{await savePrefs({autodelete_days:+v||null});renderMsgs()}));
+ sec('pv_vis');['seen','photo','about','birthday','music','fwd'].forEach(k=>{const c=pr[k]||{v:'all',ex:[]};
+  b.append(H('div',{className:'prv'},H('div',{className:'lbl',textContent:t('pv_'+k)}),SEL([['all',t('v_all')],['contacts',t('v_contacts')],['nobody',t('v_nobody')]],c.v||'all',async v=>{await upPriv(k,{v,ex:c.ex||[]});BLD.privacy()}),
+   H('button',{type:'button',textContent:t(c.v==='all'?'exc_deny':'exc_allow')+' ('+(c.ex||[]).length+')',onclick:async()=>{const r=await pick({title:t('pv_'+k),items:userItems(),sel:new Set(c.ex||[])});if(!r)return;await upPriv(k,{v:c.v||'all',ex:[...r.sel]});BLD.privacy()}})))});
+ sec('pv_incoming');b.append(SEL([['all',t('in_all')],['contacts',t('in_contacts')],['paid',t('in_paid')]],prof.msg_policy||'all',async v=>{await savePrefs({msg_policy:v});BLD.privacy()}));
+ if(prof.msg_policy==='paid'){const pi=H('input',{type:'number',min:1,max:100000,value:prof.msg_price||1});pi.onchange=()=>savePrefs({msg_price:Math.max(1,Math.min(100000,+pi.value||1))});b.append(H('div',{className:'lbl',textContent:t('in_price')+', Ỻ'}),pi)}
+ if(prof.msg_policy&&prof.msg_policy!=='all')btn('exc_allow',async()=>{const r=await pick({title:t('exc_allow'),items:userItems(),sel:new Set(prof.msg_ex||[])});if(!r)return;await savePrefs({msg_ex:[...r.sel]})});
+ sec('pv_invites');b.append(SEL([['all',t('inv_all')],['contacts',t('inv_contacts')],['link',t('inv_link')]],prof.invite_policy||'all',v=>savePrefs({invite_policy:v})))};
+
+/* --- валюта и «О приложении» --- */
+function sendLabel(){const b=$('sendBtn');if(!b)return;b.textContent=(peer&&!peer.room&&peer.msg_policy==='paid'&&!peer.msg_free&&peer.msg_price>0)?t('msg')+' ('+peer.msg_price+')Ỻ':t('send')}
+BLD.currency=async()=>{const b=$('pg-currency');b.textContent='';const{data:bal}=await sb.rpc('my_balance');
+ b.append(H('div',{className:'prow'},H('div',{className:'av avb',textContent:'Ỻ',style:'cursor:default'}),H('div',{className:'ptxt'},H('h2',{textContent:(bal||0)+' Ỻ'}),H('div',{className:'lbl',textContent:t('cur_bal')}))));
+ b.append(H('div',{className:'lbl sec',textContent:t('cur_buy')}));const inp=H('input',{placeholder:t('cur_code'),autocapitalize:'characters'});
+ b.append(inp,H('button',{type:'button',className:'solid',textContent:t('cur_redeem'),onclick:async()=>{const{data,error}=await sb.rpc('redeem_code',{c:inp.value.trim()});if(error){alert(t('e_code'));return}alert(t('cur_ok')+' '+data+' Ỻ');BLD.currency()}}),H('div',{className:'lbl',textContent:t('cur_note')}))};
+BLD.about=()=>{const b=$('pg-about');b.textContent='';
+ b.append(H('div',{className:'prow'},H('div',{className:'logo',textContent:'X',style:'font-size:40px;padding:0 8px'}),H('div',{className:'ptxt'},H('h2',{textContent:'XINH'}),H('div',{className:'lbl',textContent:t('ab_ver')+' '+VER}))));
+ ['ab1','ab2','ab3','ab4','ab5'].forEach(k=>b.append(H('div',{className:'srow'},H('span',{textContent:t(k)}))))};
+
+/* --- стикеры и эмодзи --- */
+let packs=[],stks=[];
+async function loadPacks(){const[{data:p},{data:x}]=await Promise.all([sb.from('sticker_packs').select('*').order('id'),sb.from('stickers').select('*').order('id')]);packs=p||[];stks=x||[]}
+async function newPack(kind){const n=(prompt(t('packname'))||'').trim();if(!n)return;const{data,error}=await sb.rpc('create_pack',{ttl:n,k:kind});if(error)return alert(error.message);await loadPacks();await addStickers({id:data})}
+async function addStickers(p){const inp=H('input',{type:'file',accept:'image/*',multiple:true});
+ inp.onchange=async()=>{for(const f of inp.files){if(f.size>2097152){alert(t('e_big'));continue}
+  const path=me.id+'/stk_'+Date.now()+'_'+Math.floor(Math.random()*1e6)+'.'+(f.name.split('.').pop()||'png').replace(/\W/g,'').slice(0,5);
+  const{error}=await sb.storage.from('xinh').upload(path,f,{contentType:f.type||'image/png'});if(error){alert(error.message);continue}
+  await sb.rpc('add_sticker',{pid:p.id,u:sb.storage.from('xinh').getPublicUrl(path).data.publicUrl})}BLD.stickers()};inp.click()}
+BLD.stickers=async()=>{await loadPacks();const b=$('pg-stickers');b.textContent='';
+ b.append(H('div',{className:'lbl',textContent:t('stk_hint')}));
+ [['sticker','stk_packs','newpack_s'],['emoji','emo_packs','newpack_e']].forEach(([k,lbl,nb])=>{b.append(H('div',{className:'lbl sec',textContent:t(lbl)}));const L=packs.filter(p=>p.kind===k);if(!L.length)b.append(H('div',{className:'lbl',textContent:t('pv_none')}));
+  L.forEach(p=>{const mine=p.owner===me.id,items=stks.filter(x=>x.pack_id===p.id);
+   const row=H('div',{className:'srow pk'},H('div',{className:'thumbs'},items.slice(0,3).map(x=>H('img',{src:x.url,alt:''}))),H('span',{style:'flex:1',textContent:(p.is_official?'✓ ':'')+p.title+' ('+items.length+')'}));
+   if(mine)row.append(H('button',{type:'button',className:'x',textContent:'＋',onclick:()=>addStickers(p)}),H('button',{type:'button',className:'x',textContent:'✕',onclick:async()=>{if(!confirm(t('delpack')))return;await sb.rpc('delete_pack',{pid:p.id});BLD.stickers()}}));
+   b.append(row);
+   if(mine&&items.length){const g=H('div',{className:'egrid stkg'});items.forEach(x=>g.append(H('button',{type:'button',className:'em',style:'padding:0;opacity:1',onclick:async()=>{if(!confirm(t('delstk')))return;await sb.rpc('delete_sticker',{sid:x.id});BLD.stickers()}},H('img',{src:x.url,alt:''}))));b.append(g)}});
+  b.append(H('button',{type:'button',className:'solid',textContent:t(nb),onclick:()=>newPack(k)}))})};
+async function openStk(){if(!peer)return;await loadPacks();const tabs=$('stkTabs'),g=$('stkGrid');tabs.textContent='';g.textContent='';
+ const show=p=>{g.textContent='';stks.filter(x=>x.pack_id===p.id).forEach(x=>g.append(H('button',{type:'button',className:'em',style:'padding:0;opacity:1',onclick:()=>{$('stk').classList.add('hide');sendSticker(x.url,p.kind)}},H('img',{src:x.url,alt:'',style:'width:100%;height:56px;object-fit:contain'}))));[...tabs.children].forEach(c=>c.classList.toggle('on',c.dataset.id==p.id))};
+ packs.forEach(p=>{const b=H('button',{type:'button',textContent:(p.is_official?'✓ ':'')+p.title});b.dataset.id=p.id;b.onclick=()=>show(p);tabs.append(b)});
+ if(packs.length)show(packs[0]);else g.append(H('div',{className:'lbl',textContent:t('pv_none')}));$('stk').classList.remove('hide')}
+$('stkX').onclick=()=>$('stk').classList.add('hide');
+async function sendSticker(url,kind){if(!peer)return;const{data,error}=await sb.from('messages').insert({...tgt(peer),...(reply?{reply_to:reply.id}:{}),body:'🖼',kind,file_url:url,file_name:'sticker'}).select().single();
+ if(error){alert(t('notsent')+errTxt(error));return}sent();if(!msgs.some(x=>x.id===data.id)){msgs.push(data);renderList();renderMsgs()}}
+if(localStorage.getItem('xinh_pass'))lockGate();
 
 applyAll();
 </script>
