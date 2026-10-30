@@ -282,7 +282,8 @@ button.link{background:none;border:0;box-shadow:none;-webkit-backdrop-filter:non
    <div class="lbl" data-i="birth"></div><input id="pBirth" type="date">
    <select id="pRegion"></select>
    <textarea id="pAbout" rows="3" maxlength="200" data-ip="about_ph"></textarea>
-   <div class="chk"><button type="button" id="pMusicBtn" data-i="addmusic"></button><span id="pMusicName" class="lbl"></span><button type="button" id="pMusicDel" class="hide x">✕</button></div><input type="file" id="pMusicFile" accept="audio/*" class="hide">
+   <div class="lbl" data-i="pv_music"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="pMusicBtn" data-i="uploadmusic"></button><button type="button" id="pMusicPick" data-i="pickmusic"></button></div>
+   <div class="chk"><span id="pMusicName" class="lbl" style="flex:1"></span><button type="button" id="pMusicDel" class="hide x">✕</button></div><input type="file" id="pMusicFile" accept=".mp3,.wav,.ogg,.oga,.opus,.m4a,.aac,.flac,.wma,.aif,.aiff,audio/mpeg,audio/wav,audio/x-wav,audio/ogg,audio/mp4,audio/aac,audio/flac" class="hide">
    <div class="lbl" data-i="plink"></div><input id="pLink" readonly>
    <div class="err" id="pErr"></div><button class="solid" id="pSave" data-i="save"></button>
   </div>
@@ -590,7 +591,7 @@ async function sendFile(f,kind){
  const{error:e1}=await sb.storage.from('xinh').upload(path,f,{contentType:(f.type||'application/octet-stream').split(';')[0]});
  if(e1){alert(t('notsent')+errTxt(e1));return}
  const url=sb.storage.from('xinh').getPublicUrl(path).data.publicUrl,ty=f.type||'';
- if(!kind)kind=ty.startsWith('image/')?'image':ty.startsWith('video/')?'video':ty.startsWith('audio/')?'audio':'file';
+ if(!kind)kind=AUDIO_RE.test(f.name)?'audio':ty.startsWith('image/')?'image':ty.startsWith('video/')?'video':ty.startsWith('audio/')?'audio':'file';
  const{data,error}=await sb.from('messages').insert({...tgt(peer),...(reply?{reply_to:reply.id}:{}),body:kind==='voice'?'🎤':'📎 '+f.name,kind,file_url:url,file_name:f.name}).select().single();
  if(error){alert(t('notsent')+errTxt(error));return}
  sent();if(!msgs.some(x=>x.id===data.id)){msgs.push(data);renderList();renderMsgs()}}
@@ -927,9 +928,13 @@ const errTxt=e=>({blocked:t('e_blocked'),contacts_only:t('e_contacts'),insuffici
 BLD.profile=()=>{fillProf();$('profBox').classList.add('hide');$('pEdit').classList.remove('hide')};
 $('pEdit').onclick=()=>{$('profBox').classList.remove('hide');$('pEdit').classList.add('hide')};
 $('pMusicBtn').onclick=()=>$('pMusicFile').click();
-$('pMusicFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>10485760){$('pErr').textContent=t('e_big');return}
- const path=me.id+'/music_'+Date.now()+'.'+(f.name.split('.').pop()||'mp3').replace(/\W/g,'').slice(0,5);
- const{error}=await sb.storage.from('xinh').upload(path,f,{contentType:(f.type||'audio/mpeg').split(';')[0]});if(error){$('pErr').textContent=error.message;return}
+$('pMusicFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+ const ext=(f.name.split('.').pop()||'').toLowerCase();
+ if(!AUDIO_RE.test('.'+ext)||(f.type||'').startsWith('video/')&&!/^(ogg|oga|opus)$/.test(ext)){$('pErr').textContent=t('e_music');return}
+ if(f.size>10485760){$('pErr').textContent=t('e_big');return}
+ $('pErr').textContent='';
+ const path=me.id+'/music_'+Date.now()+'.'+ext.replace(/\W/g,'').slice(0,5);
+ const{error}=await sb.storage.from('xinh').upload(path,f,{contentType:AUDIO_MIME[ext]||'audio/mpeg'});if(error){$('pErr').textContent=error.message;return}
  await sb.from('profiles').update({music_url:sb.storage.from('xinh').getPublicUrl(path).data.publicUrl,music_name:f.name.replace(/\.[^.]+$/,'')}).eq('id',me.id);await loadMe()};
 $('pMusicDel').onclick=async()=>{await sb.from('profiles').update({music_url:null,music_name:null}).eq('id',me.id);await loadMe()};
 
@@ -1204,6 +1209,26 @@ RSP.perms=(b,r)=>{const C=(k,v)=>H('input',{type:'checkbox',checked:v!==false}),
   saveBtn(async()=>{const{error}=await flags(r,{psend:cs.checked,pmedia:cm.checked,pinvite:pi.checked,ppin:pp.checked,ptag:pt.checked,price:Math.max(0,Math.min(100000,+pr.value||0))});if(error){err.textContent=error.message;return}await loadRooms();formPerm(peer);sendLabel();err.textContent=t('saved')}))};
 RSP.del=(b,r)=>{b.append(H('div',{className:'lbl',textContent:t('del_room_conf')}),H('button',{type:'button',className:'solid',textContent:t('del_room'),onclick:async()=>{if(!confirm(t('del_room_conf')))return;
  const{error}=await sb.rpc('delete_room',{rid:r.rid});if(error)return alert(error.message);$('rs').classList.add('hide');$('back').click();await loadRooms()}}))};
+
+/* --- музыка профиля: загрузить файл или выбрать из чатов --- */
+const AUDIO_RE=/\.(mp3|wav|ogg|oga|opus|m4a|aac|flac|wma|aiff?)$/i,VIDEO_RE=/\.(mp4|m4v|mov|webm|mkv|avi|3gp)$/i;
+const AUDIO_MIME={mp3:'audio/mpeg',wav:'audio/wav',ogg:'audio/ogg',oga:'audio/ogg',opus:'audio/ogg',m4a:'audio/mp4',aac:'audio/aac',flac:'audio/flac',wma:'audio/x-ms-wma',aif:'audio/aiff',aiff:'audio/aiff'};
+const T5={ru:{e_music:'Нужен аудиофайл: MP3, WAV, OGG, M4A, AAC или FLAC. Видео (MP4 и др.) не подходит.',uploadmusic:'Загрузить файл',pickmusic:'Выбрать из чатов',musicpick_t:'Музыка из ваших чатов'},en:{e_music:'An audio file is required: MP3, WAV, OGG, M4A, AAC or FLAC. Video (MP4 etc.) is not allowed.',uploadmusic:'Upload a file',pickmusic:'Choose from chats',musicpick_t:'Music from your chats'}};
+Object.assign(I18.ru,T5.ru);Object.assign(I18.en,T5.en);T5.xx={e_music:'Нужен аудиофайл: MP3, WAV, OGG, M4A, AAC или FLAC. Видео (MP4 и др.) не подходит.',uploadmusic:'Загрузить файл',pickmusic:'Выбрать из чатов',musicpick_t:'Музыка из ваших чатов'};I18.xx=Object.assign({},T5.ru,I18.xx,T5.xx);
+let prevA=null;const stopPrev=()=>{if(prevA){prevA.pause();prevA=null}};
+function pickOne(title,rows){return new Promise(res=>{$('cmT').textContent=title;const b=$('cmBody');b.textContent='';
+ if(!rows.length)b.append(H('div',{className:'lbl',textContent:t('sec_empty')}));
+ rows.forEach(r=>b.append(H('div',{className:'srow',onclick:()=>{stopPrev();$('cm').classList.add('hide');res(r)}},H('span',{textContent:'🎵'}),
+  H('span',{style:'flex:1;min-width:0',textContent:r.label+(r.sub?'\n'+r.sub:'')}),
+  r.preview?H('button',{type:'button',className:'x',textContent:'▶',onclick:e=>{e.stopPropagation();const on=prevA&&prevA.src===r.preview&&!prevA.paused;stopPrev();if(!on){prevA=new Audio(r.preview);prevA.play().catch(()=>{})}}}):'')));
+ $('cmX').onclick=()=>{stopPrev();$('cm').classList.add('hide');res(null)};$('cm').classList.remove('hide')})}
+function chatNameOf(m){if(m.room_id){const r=rooms.find(x=>x.rid===m.room_id);return r?dn(r):''}
+ if(m.sender_id===me.id&&m.recipient_id===me.id)return t('cloud');const id=m.sender_id===me.id?m.recipient_id:m.sender_id,u=users.find(x=>x.id===id);return u?dn(u):''}
+async function pickMusic(){const seen=new Set(),rows=[];
+ msgs.filter(m=>m.file_url&&!hid.has(m.id)&&((m.kind==='audio'&&!VIDEO_RE.test(m.file_name||''))||(m.kind==='file'&&AUDIO_RE.test(m.file_name||'')))).slice().reverse().forEach(m=>{if(seen.has(m.file_url))return;seen.add(m.file_url);const nm=(m.file_name||'').replace(/\.[^.]+$/,'');rows.push({label:nm||'—',sub:chatNameOf(m),url:m.file_url,name:nm,preview:m.file_url})});
+ const r=await pickOne(t('musicpick_t'),rows);if(!r)return;
+ const{error}=await sb.from('profiles').update({music_url:r.url,music_name:r.name}).eq('id',me.id);if(error){$('pErr').textContent=error.message;return}await loadMe()}
+$('pMusicPick').onclick=pickMusic;
 
 applyAll();
 </script>
