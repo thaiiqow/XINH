@@ -1329,5 +1329,82 @@ openChat=async function(u){if(!peer||peer.id!==u.id)clear();return _oc(u)};
 $('back').addEventListener('click',clear);
 })();
 </script>
+<script>
+(()=>{
+Object.assign(I18.ru,{net_conn:'соединение…',net_upd:'обновление…'});
+Object.assign(I18.en,{net_conn:'connecting…',net_upd:'updating…'});
+
+let net=navigator.onLine?'ok':'conn',syncing=false,pch=null,pt=null,raw={};
+const lbl=()=>t(net==='conn'?'net_conn':'net_upd');
+function paint(){
+ if(me&&$('who'))$('who').textContent=net==='ok'?me.email:lbl();
+ if(peer)setHead();
+}
+function setNet(v){net=v;paint()}
+
+/* в шапке чата вместо «был(а)…» */
+const _sh=setHead;
+setHead=function(){_sh();
+ if(net!=='ok'&&peer&&!peer.room&&!peer.cloud)$('hsb').textContent=lbl()};
+
+/* полная пересинхронизация */
+async function resync(){
+ if(!me||syncing||!navigator.onLine)return;syncing=true;
+ try{
+  const[a,b]=await Promise.all([sb.rpc('profiles_view'),
+   sb.from('messages').select('*').order('created_at',{ascending:false}).limit(1000)]);
+  if(a.error||b.error)return;
+  const old=new Set(msgs.map(m=>m.id)),ms=(b.data||[]).reverse(),ids=new Set((a.data||[]).map(x=>x.id));
+  users=[...(a.data||[]).filter(x=>x.id!==me.id),...users.filter(x=>!ids.has(x.id)&&x.id!==me.id)];
+  ms.forEach(m=>{if(old.has(m.id)||m.comment_of||m.sender_id===me.id)return;
+   const o=m.room_id?'r'+m.room_id:m.sender_id;if(!peer||peer.id!==o)unread.add(o)});
+  msgs=ms;
+  await Promise.all([loadRooms(),loadRx()]);
+  if(peer){peer=users.find(x=>x.id===peer.id)||rooms.find(x=>x.id===peer.id)||peer;setHead()}
+  renderList();renderMsgs();
+  if(peer&&!peer.room&&!peer.cloud&&!document.hidden)sb.rpc('mark_read',{pid:peer.id}).then(()=>{});
+ }catch(e){}finally{syncing=false}
+}
+async function cycle(min){
+ setNet('upd');const t0=Date.now();await resync();
+ await new Promise(r=>setTimeout(r,Math.max(0,min-(Date.now()-t0))));
+ if(navigator.onLine)setNet('ok');
+}
+
+/* смена аватарки / имени собеседников в реальном времени */
+const key=o=>[o.display_name,o.avatar_url,o.username,o.about,o.music_url].join('|');
+function subProf(){
+ if(pch){sb.removeChannel(pch);pch=null}
+ pch=sb.channel('p-'+me.id).on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},p=>{
+  const n=p.new;if(!me||!n||n.id===me.id)return;let ch;
+  if(raw[n.id]===undefined){const u=users.find(x=>x.id===n.id);ch=!u||key(u)!==key(n)}else ch=raw[n.id]!==key(n);
+  raw[n.id]=key(n);if(!ch)return;
+  clearTimeout(pt);pt=setTimeout(async()=>{await refreshUsers();renderMsgs()},400);
+ }).subscribe();
+}
+
+/* запуск приложения: «обновление…» 2 секунды */
+const _boot=boot;
+boot=async function(u){
+ net=navigator.onLine?'upd':'conn';raw={};
+ const p=_boot(u);setTimeout(paint,0);await p;subProf();
+ setTimeout(()=>{if(net==='upd')setNet('ok')},2000);
+};
+
+/* сеть */
+addEventListener('offline',()=>setNet('conn'));
+addEventListener('online',()=>cycle(1500));
+
+/* возврат в приложение */
+let hAt=0;
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden){hAt=Date.now();return}
+ if(me&&hAt&&Date.now()-hAt>5000&&navigator.onLine)cycle(1200);
+});
+
+/* страховка: если realtime отвалился, подтягиваем всё сами */
+setInterval(()=>{if(me&&!document.hidden&&navigator.onLine&&(!chan||chan.state!=='joined'))resync()},20000);
+})();
+</script>
 </body>
 </html>
