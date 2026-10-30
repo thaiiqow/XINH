@@ -1575,5 +1575,148 @@ const _bp=BLD.profile;BLD.profile=()=>{_bp();const l=profStories(me.id);pvSt.cla
  pvSt.onclick=()=>{$('modal').classList.add('hide');openStories(l,0)}};
 })();
 </script>
+<style>
+#rinf{position:fixed;inset:0;z-index:27;background:var(--shade);display:flex;align-items:center;justify-content:center;padding:20px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#chbar{display:flex;gap:8px;margin:8px 12px calc(10px + env(safe-area-inset-bottom))}
+#chbar button{flex:1}
+.ta{width:100%;resize:none;border-radius:16px;padding:12px 14px;font:inherit;color:inherit;background:var(--gl);border:1px solid var(--gb);outline:none}
+</style>
+<script>
+(()=>{
+const NT={
+ru:{sub:'Подписаться',join:'Вступить',mute:'Выключить звук',unmute:'Включить звук',unsub:'Отписаться',leave:'Покинуть группу',
+ unsub_conf:'Отписаться от канала?',leave_conf:'Выйти из группы?',owner_leave:'Владелец не может выйти. Удалите чат в настройках.',
+ ri_edit:'Изменить название, описание, фото',ri_desc:'Описание',ri_rmav:'Убрать фото',room_nf:'Не найдено.'},
+en:{sub:'Subscribe',join:'Join',mute:'Mute',unmute:'Unmute',unsub:'Unsubscribe',leave:'Leave group',
+ unsub_conf:'Unsubscribe from this channel?',leave_conf:'Leave this group?',owner_leave:'The owner cannot leave. Delete the chat in settings.',
+ ri_edit:'Edit title, description, photo',ri_desc:'Description',ri_rmav:'Remove photo',room_nf:'Not found.'}};
+Object.assign(I18.ru,NT.ru);Object.assign(I18.en,NT.en);Object.assign(I18.xx,NT.ru);
+
+/* ---------- вспомогательное ---------- */
+const cnt={},cntT={};
+const plural=(n,f)=>{const a=n%100,b=n%10;return a>10&&a<20?f[2]:b===1?f[0]:b>1&&b<5?f[1]:f[2]};
+const cntTxt=n=>S.lang==='ru'?n+' '+plural(n,['участник','участника','участников']):n+(n===1?' member':' members');
+const curN=r=>r.preview?r.cnt:cnt[r.rid];
+const myRow=r=>(mem[r.rid]||[]).find(y=>y.user_id===me.id);
+const myMuted=r=>!!(myRow(r)||{}).muted;
+window.isMuted=m=>{if(!m.room_id||!me)return false;const x=(mem[m.room_id]||[]).find(y=>y.user_id===me.id);return !!(x&&x.muted)};
+const mapRoom=x=>({id:'r'+x.id,rid:x.id,room:true,preview:true,kind:x.kind,owner:x.owner,username:x.username,pub:x.is_public,protect:x.protect,
+ react:x.allowed_reactions,verified:x.verified,hist:x.history_visible,disc:x.discussion,perm_send:x.perm_send,perm_media:x.perm_media,
+ perm_invite:x.perm_invite,perm_pin:x.perm_pin,perm_tag:x.perm_tag,msg_price:x.msg_price,role:'guest',display_name:x.title,
+ description:x.description,avatar_url:x.avatar_url,cnt:Number(x.cnt)||0});
+async function upImg(f,pre){const ext=((f.name.split('.').pop()||'jpg').replace(/\W/g,'').slice(0,5))||'jpg',path=me.id+'/'+pre+Date.now()+'.'+ext;
+ const{error}=await sb.storage.from('xinh').upload(path,f,{contentType:f.type||'image/jpeg'});if(error)throw error;
+ return sb.storage.from('xinh').getPublicUrl(path).data.publicUrl}
+
+function paintSub(){if(!peer||!peer.room)return;const n=curN(peer);$('hsb').textContent=(n==null?t(peer.kind):cntTxt(n))+(peer.protect?' · 🔒':'')}
+function paintInfo(){const r=peer;if(!r||!r.room)return;const n=curN(r);
+ $('vInfo').textContent=[r.description,n==null?'':cntTxt(n),r.username?'@'+r.username:'',r.protect?'🔒 '+t('prot'):''].filter(Boolean).join('\n')}
+async function fetchCnt(r,force){if(!r||!r.room||r.preview)return;const k=r.rid;if(!force&&cntT[k]&&Date.now()-cntT[k]<15000)return;cntT[k]=Date.now();
+ const{data,error}=await sb.rpc('room_member_count',{rid:k});if(error||typeof data!=='number')return;cnt[k]=data;
+ if(peer&&peer.rid===k){paintSub();if(!$('pview').classList.contains('hide'))paintInfo()}}
+setInterval(()=>{if(peer&&peer.room&&!peer.preview&&!document.hidden)fetchCnt(peer,true)},30000);
+
+/* ---------- подтягиваем описание и аватар комнат ---------- */
+const _lr=loadRooms;
+loadRooms=async function(){await _lr();
+ try{const{data}=await sb.from('rooms').select('id,description,avatar_url'),m={};(data||[]).forEach(x=>m[x.id]=x);
+  rooms.forEach(r=>{const x=m[r.rid];if(x){r.description=x.description;r.avatar_url=x.avatar_url}});
+  if(peer&&peer.room&&!peer.preview){peer=rooms.find(x=>x.id===peer.id)||peer;setHead()}renderList()}catch(e){}};
+
+/* ---------- нижняя панель: Подписаться / Звук ---------- */
+const bar=H('div',{id:'chbar',className:'hide'});$('form').after(bar);
+function updBar(){const r=peer;bar.textContent='';let show=false;
+ if(r&&r.room){
+  if(r.preview){show=true;bar.append(H('button',{type:'button',className:'solid',textContent:t(r.kind==='channel'?'sub':'join'),onclick:subscribe}))}
+  else if(r.kind==='channel'&&!isStaff(r)){show=true;const mu=myMuted(r);
+   bar.append(H('button',{type:'button',textContent:(mu?'🔕 ':'🔔 ')+t(mu?'unmute':'mute'),onclick:()=>toggleMute(r)}))}}
+ bar.classList.toggle('hide',!show)}
+async function toggleMute(r){const mine=myRow(r),v=!(mine&&mine.muted);
+ const{error}=await sb.rpc('set_room_muted',{rid:r.rid,v});if(error)return alert(error.message);
+ if(mine)mine.muted=v;setHead();if(!$('pview').classList.contains('hide'))showProfile()}
+async function subscribe(){const r=peer;if(!r||!r.preview)return;
+ const{data:id,error}=await sb.rpc('join_public',{uname:r.username});if(error)return alert(error.message);
+ $('pview').classList.add('hide');await loadRooms();const o=rooms.find(x=>x.rid===id)||rooms.find(x=>x.rid===r.rid);if(o)await openChat(o)}
+
+const _sh2=setHead;
+setHead=function(){_sh2();if(peer&&peer.room){paintSub();fetchCnt(peer)}updBar()};
+$('back').addEventListener('click',updBar);
+
+/* ---------- просмотр публичного канала без вступления ---------- */
+async function openPreview(uname){
+ const{data:info,error}=await sb.rpc('preview_public_room',{uname});if(error||!info)return alert(t('room_nf'));
+ const r=mapRoom(info),{data:ms}=await sb.rpc('preview_room_messages',{rid:r.rid});
+ const have=new Set(msgs.map(x=>x.id));let add=false;(ms||[]).forEach(m=>{if(!have.has(m.id)){msgs.push(m);add=true}});
+ if(add)msgs.sort((a,b)=>a.created_at<b.created_at?-1:1);
+ await openChat(r)}
+let pt2;
+pubSearch=function(){clearTimeout(pt2);const q=$('search').value.trim().toLowerCase().replace(/^@/,'');
+ if(!/^[a-z0-9_]{3,40}_(group|channel)$/.test(q))return;
+ pt2=setTimeout(async()=>{const{data}=await sb.rpc('find_public_room',{uname:q});const r=data&&data[0];if(!r||rooms.some(x=>x.rid===r.id))return;
+  const d=H('div',{className:'u'}),av=H('div',{className:'av'});setAv(av,{display_name:r.title,avatar_url:r.avatar_url});
+  d.append(av,H('div',{style:'min-width:0'},H('div',{className:'nm',textContent:r.title}),H('div',{className:'sb',textContent:'@'+r.username})));
+  d.onclick=()=>openPreview(r.username);$('list').prepend(d)},300)};
+const _oc2=openChat;
+openChat=async function(u){await _oc2(u);if(peer&&peer.id===u.id&&u.preview)$('form').classList.add('hide');updBar()};
+const _om=openMenu;openMenu=function(m){if(peer&&peer.preview)return;_om(m)};
+
+/* ---------- профиль канала/группы ---------- */
+const vEdit=H('button',{type:'button',className:'hide'}),vMute=H('button',{type:'button',className:'hide'}),vLeave=H('button',{type:'button',className:'hide'});
+$('vSetBtn').after(vEdit,vMute,vLeave);
+const _sp9=showProfile;
+showProfile=function(){_sp9();const r=peer;
+ if(!r||!r.room){[vEdit,vMute,vLeave].forEach(b=>b.classList.add('hide'));return}
+ const staff=isStaff(r);paintInfo();fetchCnt(r,true);
+ if(r.preview){$('vSetBtn').classList.add('hide');$('vLock').classList.add('hide')}
+ vEdit.textContent=t('ri_edit');vEdit.classList.toggle('hide',!staff);
+ vMute.classList.toggle('hide',!!r.preview);vMute.textContent=(myMuted(r)?'🔕 ':'🔔 ')+t(myMuted(r)?'unmute':'mute');
+ vLeave.classList.toggle('hide',!!r.preview||r.role==='owner');vLeave.textContent=t(r.kind==='channel'?'unsub':'leave');
+ /* участников видно: в группе всем, в канале только владельцу и админам */
+ const showM=!r.preview&&(r.kind==='group'||staff);$('vMem').classList.toggle('hide',!showM);if(showM)renderMembers()};
+$('hav').onclick=$('hnm').onclick=showProfile;
+vMute.onclick=()=>peer&&toggleMute(peer);
+vLeave.onclick=async()=>{const r=peer;if(!r||!r.room)return;if(!confirm(t(r.kind==='channel'?'unsub_conf':'leave_conf')))return;
+ const{error}=await sb.rpc('leave_room',{rid:r.rid});if(error)return alert(error.message==='owner_cannot_leave'?t('owner_leave'):error.message);
+ $('pview').classList.add('hide');$('back').click();await loadRooms()};
+
+/* ---------- изменение названия, описания, аватарки ---------- */
+const ed=H('div',{id:'rinf',className:'hide'});document.body.append(ed);
+const closeEd=()=>{ed.classList.add('hide');ed.textContent=''};
+vEdit.onclick=()=>{if(peer&&isStaff(peer))openInfo(peer)};
+function openInfo(r){ed.textContent='';let av=r.avatar_url||null,file=null,url=null;
+ const avb=H('div',{className:'av avb'}),ti=H('input',{value:r.display_name||'',maxLength:64,placeholder:t('rtitle')}),
+  de=H('textarea',{className:'ta',rows:4,maxLength:255,placeholder:t('ri_desc')}),err=H('div',{className:'err'}),
+  fi=H('input',{type:'file',accept:'image/*',className:'hide'});de.value=r.description||'';
+ const paint=()=>{avb.textContent='';if(url||av)avb.append(H('img',{src:url||av,alt:''}));else avb.textContent=(ti.value||'?')[0].toUpperCase()};paint();
+ ti.oninput=()=>{if(!url&&!av)paint()};avb.onclick=()=>fi.click();
+ fi.onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f||!(f.type||'').startsWith('image/'))return;
+  if(f.size>5242880){err.textContent=t('e_big');return}err.textContent='';if(url)URL.revokeObjectURL(url);file=f;url=URL.createObjectURL(f);paint()};
+ const rm=H('button',{type:'button',textContent:t('ri_rmav'),onclick:()=>{if(url)URL.revokeObjectURL(url);url=null;file=null;av=null;paint()}});
+ const go=H('button',{type:'button',className:'solid',textContent:t('save')});
+ go.onclick=async()=>{const title=ti.value.trim();if(!title){err.textContent=t('e_title');return}go.disabled=true;err.textContent='…';
+  try{const u=file?await upImg(file,'room_'):av;
+   const{error}=await sb.rpc('update_room_info',{rid:r.rid,ttl:title,descr:de.value.trim(),av:u});if(error)throw error;
+   await loadRooms();closeEd();if(!$('pview').classList.contains('hide'))showProfile()}
+  catch(e){err.textContent=e.message||'error';go.disabled=false}};
+ ed.append(H('div',{className:'card'},H('h2',{textContent:t('ri_edit')}),avb,fi,rm,ti,de,err,go,H('button',{type:'button',textContent:t('cancel'),onclick:closeEd})));
+ ed.classList.remove('hide')}
+
+/* ---------- описание и аватарка при создании ---------- */
+const rd=H('textarea',{className:'ta',rows:3,maxLength:255}),rav=H('div',{className:'av avb'}),rfi=H('input',{type:'file',accept:'image/*',className:'hide'});
+let rfile=null,rurl=null;
+const paintRav=()=>{rav.textContent='';if(rurl)rav.append(H('img',{src:rurl,alt:''}));else rav.textContent='📷'};
+$('rTitle').before(rav,rfi);$('rTitle').after(rd);paintRav();
+rav.onclick=()=>rfi.click();
+rfi.onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f||!(f.type||'').startsWith('image/')||f.size>5242880)return;
+ if(rurl)URL.revokeObjectURL(rurl);rfile=f;rurl=URL.createObjectURL(f);paintRav()};
+$('bNew').addEventListener('click',()=>{if(tab==='cont')return;rd.placeholder=t('ri_desc')});
+const _rg=$('rGo').onclick;
+$('rGo').onclick=async()=>{const before=new Set(rooms.map(x=>x.rid)),d=rd.value.trim(),f=rfile;await _rg();
+ const nr=rooms.find(x=>!before.has(x.rid));if(!nr)return;
+ if(d||f){try{const u=f?await upImg(f,'room_'):null;
+  const{error}=await sb.rpc('update_room_info',{rid:nr.rid,ttl:nr.display_name,descr:d,av:u});if(error)throw error;await loadRooms()}catch(e){alert(e.message||'error')}}
+ rd.value='';rfile=null;if(rurl)URL.revokeObjectURL(rurl);rurl=null;paintRav()};
+})();
+</script>
 </body>
 </html>
