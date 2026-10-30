@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>XINH</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><text x='50' y='72' font-size='70' text-anchor='middle' fill='red' font-family='Arial' font-weight='bold'>X</text></svg>">
 <style>
 :root{--ac:#ff1f3d;--glow:0 0 8px color-mix(in srgb,var(--ac) 70%,transparent),0 0 22px color-mix(in srgb,var(--ac) 35%,transparent)}
@@ -2217,6 +2220,23 @@ seenText=function(u){if(u.is_service)return t('svc_acc');if(u.hide_seen||!u.last
 const _aa=applyAll;
 applyAll=function(){_aa();document.documentElement.lang=LOC[S.lang]||'en'};
 applyAll();
+})();
+</script>
+<script>
+(()=>{
+const VAPID='BHjy9W1crBCCAFcV7C4Ppg1jP-bZJP9zGYYd-vtW6rlChtrf9tDxkDEK-QyILRargmaRQhUv2drKEieB-lpKEnA';
+const b64=s=>{const p='='.repeat((4-s.length%4)%4),r=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from([...r].map(c=>c.charCodeAt(0)))};
+async function enablePush(){
+ if(!('serviceWorker' in navigator)||!('PushManager' in window))return alert('Добавьте сайт на экран «Домой» и откройте с иконки.');
+ const reg=await navigator.serviceWorker.register('sw.js');
+ if(await Notification.requestPermission()!=='granted')return;
+ const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64(VAPID)});
+ const j=sub.toJSON();
+ const{error}=await sb.from('push_subscriptions').upsert({endpoint:j.endpoint,user_id:me.id,sub:j});
+ alert(error?error.message:'Уведомления включены');
+}
+const b=document.createElement('button');b.type='button';b.textContent='🔔 Push на iPhone';b.onclick=enablePush;
+document.getElementById('pg-notif').append(b);
 })();
 </script>
 </body>
