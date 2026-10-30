@@ -756,7 +756,7 @@ function player(m){if(pc[m.id])return pc[m.id];
 
 /* ===== МЕНЮ СООБЩЕНИЙ, УЧАСТНИКИ ===== */
 let mem={},hid=new Set(),reply=null,lastPeer=null;
-const loc=()=>S.lang==='ru'?'ru':'en';
+const loc=()=>({ru:'ru',vi:'vi',zh:'zh-CN',be:'be'}[S.lang]||'en');
 const tgt=p=>p.room?{sender_id:me.id,room_id:p.rid}:{sender_id:me.id,recipient_id:p.id};
 function showReply(){$('rbar').classList.toggle('hide',!reply);if(reply)$('rtxt').textContent='↩ '+(reply.body||'').slice(0,80)}
 function sent(){reply=null;showReply();autoSize()}
@@ -1641,7 +1641,7 @@ Object.assign(I18.ru,NT.ru);Object.assign(I18.en,NT.en);Object.assign(I18.xx,NT.
 /* ---------- вспомогательное ---------- */
 const cnt={},cntT={};
 const plural=(n,f)=>{const a=n%100,b=n%10;return a>10&&a<20?f[2]:b===1?f[0]:b>1&&b<5?f[1]:f[2]};
-const cntTxt=n=>S.lang==='ru'?n+' '+plural(n,['участник','участника','участников']):n+(n===1?' member':' members');
+const cntTxt=n=>S.lang==='vi'?n+' thành viên':S.lang==='zh'?n+' 位成员':(S.lang==='ru'||S.lang==='be')?n+' '+plural(n,S.lang==='ru'?['участник','участника','участников']:['удзельнік','удзельнікі','удзельнікаў']):n+(n===1?' member':' members');
 const curN=r=>r.preview?r.cnt:cnt[r.rid];
 const myRow=r=>(mem[r.rid]||[]).find(y=>y.user_id===me.id);
 const myMuted=r=>!!(myRow(r)||{}).muted;
@@ -2023,6 +2023,200 @@ player=function(m){if(pc[m.id])return pc[m.id];
  a.onplay=()=>b.textContent='❚❚';a.onpause=()=>b.textContent='▶';a.onended=()=>{b.textContent='▶';bi.style.width='0'};
  a.ontimeupdate=()=>{bi.style.width=(a.duration?a.currentTime/a.duration*100:0)+'%'};
  return w};
+})();
+</script>
+<script>
+(()=>{
+const L={};
+
+/* ================= TIẾNG VIỆT ================= */
+L.vi={login_t:'Đăng nhập',reg_t:'Đăng ký',email:'Email',pass:'Mật khẩu (từ 6 ký tự)',pass2:'Nhập lại mật khẩu',name:'Tên',
+signin:'Đăng nhập',signup:'Tạo tài khoản',to_reg:'Chưa có tài khoản? Đăng ký',to_login:'Đã có tài khoản? Đăng nhập',out:'Đăng xuất',
+search:'Tìm theo tên hoặc email',msg:'Tin nhắn',send:'→',pick:'Chọn một liên hệ để bắt đầu trò chuyện.',
+nochat:'Chưa có tin nhắn. Hãy nhắn trước nhé.',nousers:'Chưa có ai. Hãy mời bạn bè đăng ký.',
+service:'dịch vụ',svc_acc:'tài khoản dịch vụ',settings:'Cài đặt',theme:'Giao diện',dark:'Tối',light:'Sáng',accent:'Màu neon',
+lang:'Ngôn ngữ',close:'Đóng',red:'Đỏ',blue:'Xanh dương',green:'Xanh lá',yellow:'Vàng',purple:'Tím',
+e_fill:'Nhập email và mật khẩu từ 6 ký tự.',e_name:'Nhập tên.',e_match:'Mật khẩu không khớp.',
+created:'Đã tạo tài khoản. Hãy xác nhận email hoặc đăng nhập.',notsent:'Chưa gửi được: ',
+username:'tên_người_dùng',notif:'Thông báo tin nhắn',ntext:'Hiện nội dung trong thông báo',newmsg:'Tin nhắn mới',chats:'Trò chuyện',contacts:'Liên hệ',
+newroom:'Nhóm hoặc kênh mới',group:'Nhóm',channel:'Kênh',rtitle:'Tiêu đề',members:'Thành viên (từ liên hệ)',create:'Tạo',
+rename:'Đổi tên liên hệ',addc:'Thêm vào liên hệ',delc:'Xóa khỏi liên hệ',addby:'Thêm bằng @username',imp:'Nhập từ điện thoại',noimp:'Nhập liên hệ chỉ hỗ trợ Chrome trên Android.',
+nf:'Không tìm thấy người dùng.',alias:'Tên liên hệ (chỉ bạn thấy)',e_title:'Nhập tiêu đề.',imported:'Đã thêm liên hệ: ',nocont:'Chưa có liên hệ.',share:'Chia sẻ liên kết',
+reply:'Trả lời',fwdb:'Chuyển tiếp',fwdto:'Chuyển tiếp đến…',copy:'Sao chép',pin:'Ghim',unpin:'Bỏ ghim',delme:'Xóa ở phía tôi',delall:'Xóa với mọi người',
+readat:'Đã đọc: ',notread:'Chưa đọc',role_owner:'chủ sở hữu',role_admin:'quản trị viên',mkadm:'Đặt làm quản trị viên',rmadm:'Gỡ quản trị viên',
+copied:'Đã sao chép liên kết.',e_join:'Liên kết không hợp lệ.',conf_t:'Xác nhận email',conf_txt:'Chúng tôi đã gửi email đến {e}. Hãy mở thư, xác nhận địa chỉ rồi nhấn «Đăng nhập».',conf_h:'Không thấy thư? Hãy kiểm tra thư mục spam.',
+e_user:'Tên người dùng: 3-20 ký tự, chữ Latin, số và _.',e_taken:'Tên người dùng này đã được sử dụng.',g_none:'Chưa chọn giới tính',g_m:'Nam',g_f:'Nữ',g_o:'Khác',
+birth:'Ngày sinh',region:'Khu vực sinh sống',hide_seen:'Ẩn lần truy cập gần nhất',plink:'Liên kết hồ sơ',save:'Lưu',saved:'Đã lưu',
+online:'trực tuyến',recent:'truy cập gần đây',seen:'truy cập lúc ',e_big:'Tệp quá lớn.',e_mic:'Không có quyền dùng micro.',today:'Hôm nay',yday:'Hôm qua',dbyday:'Hôm kia',
+call:'Tất cả',cgroups:'Nhóm',cbots:'Bot',cchannels:'Kênh',pubq:'Công khai (theo @username)',prot:'Bảo vệ nội dung',protd:'Cấm chuyển tiếp, sao chép và lưu',rset:'Cài đặt',
+reactions:'Biểu cảm được phép',sall:'Chọn tất cả',snone:'Bỏ chọn tất cả',rusern:'tên',e_ruser:'Username: 3-30 ký tự, chữ Latin, số và _.',e_rtaken:'@username này đã được sử dụng.',
+rg0:'Cảm xúc và nhân vật',rg1:'Cử chỉ',rg2:'Sinh vật và động vật',rg3:'Cây cối và thiên nhiên',rg4:'Đồ vật và đồ ăn',
+/* T2 */
+edit:'Sửa',cancel:'Hủy',ok:'OK',s_profile:'Hồ sơ',s_accounts:'Tài khoản',s_folders:'Thư mục',s_sessions:'Phiên đăng nhập',s_notif:'Thông báo và âm thanh',s_privacy:'Quyền riêng tư',s_loc:'Giao diện và ngôn ngữ',s_currency:'Tiền tệ của tôi',s_about:'Giới thiệu',
+addacc:'Thêm tài khoản',addfolder:'Tạo thư mục',editfolder:'Thư mục',fname:'Tên thư mục',endothers:'Kết thúc tất cả phiên khác',thisdev:'thiết bị này',endsess:'Kết thúc',sess_end:'Phiên này đã bị kết thúc từ thiết bị khác.',
+n_dm:'Trò chuyện riêng',n_gr:'Nhóm',n_ch:'Kênh',snd_on:'Âm thanh tin nhắn đến',snd_sent:'Âm thanh khi gửi',vib:'Rung',snd_test:'Thử âm thanh',sn_glass:'Thủy tinh',sn_pop:'Tách',sn_chime:'Chuông',
+mycolors:'Màu của tôi',savecolor:'Lưu màu',about_ph:'Giới thiệu bản thân',addmusic:'Nhạc trong hồ sơ',
+pv_email:'Email',pv_emailnote:'Chỉ mình bạn thấy',pv_blocked:'Người dùng bị chặn',pv_none:'Trống.',unblock:'Bỏ chặn',block:'Chặn',
+pv_pass:'Mã khóa ứng dụng',pass_on:'Mã khóa đang bật',pass_off:'Mã khóa đang tắt',setpass:'Đặt mã khóa',changepass:'Đổi mã khóa',disablepass:'Tắt',la0:'Khóa ngay',la1:'Sau 1 phút',la5:'Sau 5 phút',la60:'Sau 1 giờ',
+pv_cloud:'Mật khẩu đám mây',cloud_on:'Được hỏi khi đăng nhập trên mọi thiết bị',cloud_off:'Chưa đặt',setcloud:'Đặt mật khẩu đám mây',changecloud:'Đổi mật khẩu đám mây',removecloud:'Xóa mật khẩu đám mây',
+pv_chatpw:'Mật khẩu cuộc trò chuyện',lockchat:'Đặt mật khẩu cho cuộc trò chuyện',unlockchat:'Gỡ mật khẩu cuộc trò chuyện',pv_auto:'Tự động xóa tin nhắn',off:'Tắt',u_day:'ngày',u_week:'tuần',u_month:'tháng',u_year:'năm',
+pv_vis:'Ai có thể xem',pv_seen:'Lần truy cập gần nhất',pv_photo:'Ảnh hồ sơ',pv_about:'Giới thiệu bản thân',pv_birthday:'Sinh nhật',pv_music:'Nhạc trong hồ sơ',pv_fwd:'Tin nhắn chuyển tiếp (liên kết đến hồ sơ của tôi)',
+v_all:'Mọi người',v_contacts:'Liên hệ',v_nobody:'Không ai',exc_deny:'Ngoại lệ: ai sẽ không thấy',exc_allow:'Ngoại lệ: ai luôn thấy',
+pv_incoming:'Tin nhắn đến',in_all:'Từ mọi người',in_contacts:'Chỉ từ liên hệ',in_paid:'Tính phí',in_price:'Giá mỗi tin nhắn',pv_invites:'Lời mời vào nhóm và kênh',inv_all:'Mọi người',inv_contacts:'Liên hệ',inv_link:'Chỉ qua liên kết hoặc @',
+enterpass:'Nhập mã khóa',wrongpass:'Sai mật khẩu. Thử lại',newpass:'Mật khẩu mới (từ 4 ký tự)',repeatpass:'Nhập lại mật khẩu',pass_short:'Tối thiểu 4 ký tự.',enterpass_cloud:'Nhập mật khẩu đám mây',enterpass_chat:'Mật khẩu cuộc trò chuyện',
+e_blocked:'Không thể gửi tin nhắn cho người dùng này.',e_contacts:'Người dùng này chỉ nhận tin nhắn từ liên hệ.',e_funds:'Không đủ Ỻ để gửi tin nhắn có phí.',
+cur_bal:'Số dư',cur_buy:'Nạp tiền',cur_code:'Mã nạp',cur_redeem:'Kích hoạt mã',cur_ok:'Đã cộng. Số dư:',e_code:'Mã sai hoặc đã được sử dụng.',cur_note:'Chưa hỗ trợ thanh toán bằng thẻ ngân hàng: số dư được nạp bằng mã. Tin nhắn có phí trừ Ỻ của người gửi và cộng cho người nhận.',
+ab_ver:'Phiên bản',ab1:'XINH là ứng dụng nhắn tin: trò chuyện riêng, nhóm và kênh, tệp, ảnh, video, tin nhắn thoại, biểu cảm, liên hệ.',ab2:'Lưu trữ: dữ liệu và tệp nằm trên Supabase. Tệp đến 25 MB được phục vụ qua liên kết dài riêng tư.',
+ab3:'Bảo vệ: mã khóa và mật khẩu cuộc trò chuyện hoạt động trên thiết bị này, mật khẩu đám mây được máy chủ kiểm tra khi đăng nhập. Không dùng mã hóa đầu cuối.',ab4:'Giới hạn của trình duyệt: ứng dụng web không thể chặn chụp màn hình hay gửi thông báo đẩy khi đã đóng.',ab5:'Cài đặt ứng dụng lưu trên thiết bị này; quyền riêng tư và hồ sơ lưu trong tài khoản của bạn.',
+/* T3 */
+s_stickers:'Sticker và emoji',stk_packs:'Bộ sticker',emo_packs:'Bộ emoji',newpack_s:'Tạo bộ sticker',newpack_e:'Tạo bộ emoji',packname:'Tên bộ',delpack:'Xóa toàn bộ bộ này?',delstk:'Xóa sticker này?',addstk:'Thêm ảnh',stk_hint:'Chạm vào ảnh để xóa khỏi bộ. Sticker được gửi bằng nút 🖼 phía trên ô nhập.',official:'Chính thức',
+/* T4 */
+cloud:'Đám mây',cloud_sub:'Kho lưu trữ cá nhân: tin nhắn, tệp và ghi chú',tocloud:'Lưu vào Đám mây',verified:'Tài khoản đã xác minh',delchat:'Xóa cuộc trò chuyện',delchat_me:'Xóa ở phía tôi',delchat_all:'Xóa với mọi người',delchat_conf:'Xóa cuộc trò chuyện với cả hai người? Không thể hoàn tác.',
+sec_media:'Phương tiện',sec_voice:'Tin nhắn thoại',sec_links:'Liên kết',sec_common:'Nhóm chung',sec_empty:'Chưa có gì ở đây.',rs_menu_ch:'Cài đặt kênh',rs_menu_gr:'Cài đặt nhóm',
+rs_type:'Loại',rs_disc:'Thảo luận',rs_react:'Biểu cảm',rs_admins:'Quản trị',rs_subs:'Người đăng ký',rs_bans:'Danh sách đen',rs_del:'Xóa',rs_hist:'Lịch sử trò chuyện',rs_members:'Thành viên',rs_perms:'Quyền hạn',
+comments:'Bình luận',cmt_ph:'Bình luận',cmt_on:'Bật bình luận',cmt_off:'Tắt bình luận',disc_on:'Bình luận dưới bài đăng',disc_hint:'Khi bật, bài đăng sẽ có nút bình luận. Bạn có thể tắt bình luận cho từng bài trong menu của bài đó.',
+hist_on:'Thành viên mới xem được lịch sử trò chuyện',adm_add:'Thêm quản trị viên',members_add:'Thêm thành viên',ban_add:'Thêm vào danh sách đen',bans_none:'Danh sách đen trống.',unban:'Gỡ',kick_conf:'Xóa khỏi danh sách thành viên?',ban_conf:'Cấm người dùng này tham gia?',
+my_tag:'Thẻ của tôi trong nhóm này',tag_ph:'thẻ (tối đa 24 ký tự)',perm_send:'Thành viên có thể nhắn tin',perm_media:'Thành viên có thể gửi ảnh và video',perm_invite:'Thành viên có thể thêm người khác',perm_pin:'Thành viên có thể ghim tin nhắn',perm_tag:'Thành viên có thể đổi thẻ của mình',
+perm_price:'Giá mỗi tin nhắn của thành viên, Ỻ (0 = miễn phí)',del_room:'Xóa vĩnh viễn',del_room_conf:'Xóa vĩnh viễn cùng toàn bộ tin nhắn?',added:'Đã thêm: ',only_owner:'Các cài đặt này chỉ dành cho chủ sở hữu.',e_no_media:'Thành viên không được gửi ảnh và video trong nhóm này.',e_banned:'Bạn bị cấm tham gia.',
+/* T5 + album + net */
+e_music:'Cần tệp âm thanh: MP3, WAV, OGG, M4A, AAC hoặc FLAC. Không dùng video (MP4, v.v.).',uploadmusic:'Tải tệp lên',pickmusic:'Chọn từ cuộc trò chuyện',musicpick_t:'Nhạc từ các cuộc trò chuyện của bạn',
+album_max:'Tối đa 9 tệp đính kèm trong một tin nhắn.',net_conn:'đang kết nối…',net_upd:'đang cập nhật…',
+/* stories */
+st_new:'Tin mới',st_pick:'Chọn ảnh hoặc video',st_text:'Chữ trên tin',st_cap:'Mô tả dưới tin',st_music:'Nhạc',st_dur:'Người khác thấy trong',st_prof:'Hiện trong hồ sơ (vẫn còn sau khi hết hạn)',st_pub:'Đăng',st_my:'Của tôi',st_stories:'Tin',st_del:'Xóa tin này?',st_h:'giờ',st_nomedia:'Hãy chọn ảnh hoặc video.',st_noaud:'Cần tệp âm thanh.',st_inprof:'Trong hồ sơ',st_myst:'Tin của tôi',st_uploadmus:'Tệp',st_pickmus:'Từ cuộc trò chuyện',
+/* channels */
+sub:'Đăng ký',join:'Tham gia',mute:'Tắt tiếng',unmute:'Bật tiếng',unsub:'Hủy đăng ký',leave:'Rời nhóm',unsub_conf:'Hủy đăng ký kênh này?',leave_conf:'Rời khỏi nhóm này?',owner_leave:'Chủ sở hữu không thể rời đi. Hãy xóa cuộc trò chuyện trong cài đặt.',
+ri_edit:'Sửa tên, mô tả, ảnh',ri_desc:'Mô tả',ri_rmav:'Xóa ảnh',room_nf:'Không tìm thấy.',
+/* birthdays, statuses, music */
+bd_tom:'Ngày mai là sinh nhật của «{n}»!',bd_today:'Hôm nay là sinh nhật của «{n}».',st_typing:'đang nhập…',st_voice:'đang ghi âm…',st_choose:'đang chọn tệp…',st_upload:'đang gửi tệp…',
+mu_t:'Nhạc',mu_title:'Tên bài',mu_artist:'Nghệ sĩ (không bắt buộc)',mu_cover:'Ảnh bìa',mu_rm:'Xóa ảnh bìa',mu_send:'Gửi'};
+
+/* ================= 简体中文 ================= */
+L.zh={login_t:'登录',reg_t:'注册',email:'邮箱',pass:'密码（至少 6 位）',pass2:'确认密码',name:'姓名',
+signin:'登录',signup:'创建账号',to_reg:'没有账号？注册',to_login:'已有账号？登录',out:'退出',
+search:'按名称或邮箱搜索',msg:'消息',send:'→',pick:'选择一位联系人开始聊天。',
+nochat:'还没有消息，先打个招呼吧。',nousers:'这里还没有人，邀请朋友来注册吧。',
+service:'服务',svc_acc:'服务账号',settings:'设置',theme:'主题',dark:'深色',light:'浅色',accent:'霓虹颜色',
+lang:'语言',close:'关闭',red:'红色',blue:'蓝色',green:'绿色',yellow:'黄色',purple:'紫色',
+e_fill:'请输入邮箱和至少 6 位的密码。',e_name:'请输入姓名。',e_match:'两次密码不一致。',
+created:'账号已创建。请验证邮箱或直接登录。',notsent:'发送失败：',
+username:'用户名',notif:'消息通知',ntext:'在通知中显示内容',newmsg:'新消息',chats:'聊天',contacts:'联系人',
+newroom:'新建群组或频道',group:'群组',channel:'频道',rtitle:'名称',members:'成员（来自联系人）',create:'创建',
+rename:'重命名联系人',addc:'添加到联系人',delc:'从联系人中删除',addby:'通过 @用户名 添加',imp:'从手机导入',noimp:'仅 Android 版 Chrome 支持导入联系人。',
+nf:'未找到用户。',alias:'联系人名称（仅自己可见）',e_title:'请输入名称。',imported:'已添加联系人：',nocont:'暂无联系人。',share:'分享链接',
+reply:'回复',fwdb:'转发',fwdto:'转发到…',copy:'复制',pin:'置顶',unpin:'取消置顶',delme:'仅为我删除',delall:'为所有人删除',
+readat:'已读：',notread:'尚未读取',role_owner:'所有者',role_admin:'管理员',mkadm:'设为管理员',rmadm:'取消管理员',
+copied:'链接已复制。',e_join:'邀请链接无效。',conf_t:'验证邮箱',conf_txt:'我们已向 {e} 发送了邮件。请打开邮件验证地址，然后点击“登录”。',conf_h:'没收到邮件？请检查垃圾邮件文件夹。',
+e_user:'用户名：3-20 个字符，仅限拉丁字母、数字和下划线。',e_taken:'该用户名已被占用。',g_none:'未设置性别',g_m:'男',g_f:'女',g_o:'其他',
+birth:'出生日期',region:'所在地区',hide_seen:'隐藏最后在线时间',plink:'个人主页链接',save:'保存',saved:'已保存',
+online:'在线',recent:'最近在线',seen:'最后在线 ',e_big:'文件太大。',e_mic:'无法使用麦克风。',today:'今天',yday:'昨天',dbyday:'前天',
+call:'全部',cgroups:'群组',cbots:'机器人',cchannels:'频道',pubq:'公开（通过 @用户名）',prot:'内容保护',protd:'禁止转发、复制和保存',rset:'设置',
+reactions:'允许的表情回应',sall:'全选',snone:'全部取消',rusern:'名称',e_ruser:'用户名：3-30 个字符，仅限拉丁字母、数字和下划线。',e_rtaken:'该 @用户名 已被占用。',
+rg0:'表情与角色',rg1:'手势',rg2:'生物与动物',rg3:'植物与自然',rg4:'物品与食物',
+edit:'编辑',cancel:'取消',ok:'确定',s_profile:'个人资料',s_accounts:'账号',s_folders:'文件夹',s_sessions:'登录设备',s_notif:'通知与声音',s_privacy:'隐私',s_loc:'外观与语言',s_currency:'我的货币',s_about:'关于',
+addacc:'添加账号',addfolder:'新建文件夹',editfolder:'文件夹',fname:'文件夹名称',endothers:'结束所有其他会话',thisdev:'本设备',endsess:'结束',sess_end:'此会话已在另一台设备上被结束。',
+n_dm:'私聊',n_gr:'群组',n_ch:'频道',snd_on:'收到消息的声音',snd_sent:'发送声音',vib:'振动',snd_test:'测试声音',sn_glass:'玻璃',sn_pop:'啵',sn_chime:'风铃',
+mycolors:'我的颜色',savecolor:'保存颜色',about_ph:'个人简介',addmusic:'主页音乐',
+pv_email:'邮箱',pv_emailnote:'仅自己可见',pv_blocked:'已屏蔽的用户',pv_none:'空。',unblock:'取消屏蔽',block:'屏蔽',
+pv_pass:'应用密码锁',pass_on:'密码锁已开启',pass_off:'密码锁已关闭',setpass:'设置密码锁',changepass:'更改密码锁',disablepass:'关闭',la0:'立即锁定',la1:'1 分钟后',la5:'5 分钟后',la60:'1 小时后',
+pv_cloud:'云密码',cloud_on:'在任何设备登录时都会询问',cloud_off:'未设置',setcloud:'设置云密码',changecloud:'更改云密码',removecloud:'删除云密码',
+pv_chatpw:'聊天密码',lockchat:'为聊天设置密码',unlockchat:'移除聊天密码',pv_auto:'自动删除消息',off:'关闭',u_day:'天',u_week:'周',u_month:'个月',u_year:'年',
+pv_vis:'谁可以看到',pv_seen:'最后在线时间',pv_photo:'头像照片',pv_about:'个人简介',pv_birthday:'生日',pv_music:'主页音乐',pv_fwd:'转发的消息（链接到我的主页）',
+v_all:'所有人',v_contacts:'联系人',v_nobody:'没有人',exc_deny:'例外：谁看不到',exc_allow:'例外：谁始终能看到',
+pv_incoming:'收到的消息',in_all:'来自所有人',in_contacts:'仅来自联系人',in_paid:'付费',in_price:'每条消息价格',pv_invites:'群组和频道邀请',inv_all:'所有人',inv_contacts:'联系人',inv_link:'仅限链接或 @',
+enterpass:'输入密码锁',wrongpass:'密码错误，请重试',newpass:'新密码（至少 4 位）',repeatpass:'重复密码',pass_short:'至少 4 个字符。',enterpass_cloud:'输入云密码',enterpass_chat:'聊天密码',
+e_blocked:'无法向该用户发送消息。',e_contacts:'该用户只接收联系人的消息。',e_funds:'Ỻ 余额不足，无法发送付费消息。',
+cur_bal:'余额',cur_buy:'充值',cur_code:'充值码',cur_redeem:'兑换充值码',cur_ok:'已到账。余额：',e_code:'充值码无效或已被使用。',cur_note:'尚未接入银行卡支付：余额通过充值码充值。付费消息会扣除发送者的 Ỻ 并记入接收者。',
+ab_ver:'版本',ab1:'XINH 是一款即时通讯应用：私聊、群组和频道、文件、照片、视频、语音、表情回应、联系人。',ab2:'存储：数据和文件保存在 Supabase。25 MB 以内的文件通过私有长链接提供。',
+ab3:'保护：密码锁和聊天密码在本设备上生效，云密码在登录时由服务器验证。不使用端到端加密。',ab4:'浏览器限制：网页版无法禁止截屏，应用关闭时也无法接收推送通知。',ab5:'应用设置保存在本设备；隐私设置和个人资料保存在你的账号中。',
+s_stickers:'贴纸与表情包',stk_packs:'贴纸包',emo_packs:'表情包',newpack_s:'创建贴纸包',newpack_e:'创建表情包',packname:'包名称',delpack:'删除整个包？',delstk:'删除这张贴纸？',addstk:'添加图片',stk_hint:'点击图片可将其从包中删除。贴纸通过输入框上方的 🖼 按钮发送。',official:'官方',
+cloud:'云端',cloud_sub:'你的个人空间：消息、文件和笔记',tocloud:'保存到云端',verified:'已认证账号',delchat:'删除聊天',delchat_me:'仅为我删除',delchat_all:'为所有人删除',delchat_conf:'为双方删除此对话？此操作无法撤销。',
+sec_media:'媒体',sec_voice:'语音',sec_links:'链接',sec_common:'共同群组',sec_empty:'这里还没有内容。',rs_menu_ch:'频道设置',rs_menu_gr:'群组设置',
+rs_type:'类型',rs_disc:'讨论',rs_react:'表情回应',rs_admins:'管理员',rs_subs:'订阅者',rs_bans:'黑名单',rs_del:'删除',rs_hist:'聊天记录',rs_members:'成员',rs_perms:'权限',
+comments:'评论',cmt_ph:'评论',cmt_on:'开启评论',cmt_off:'关闭评论',disc_on:'帖子下方评论',disc_hint:'开启后，帖子下方会出现评论按钮。你可以在单个帖子的菜单中关闭它的评论。',
+hist_on:'新成员可以查看聊天记录',adm_add:'添加管理员',members_add:'添加成员',ban_add:'加入黑名单',bans_none:'黑名单为空。',unban:'移除',kick_conf:'从成员中移除？',ban_conf:'禁止该用户加入？',
+my_tag:'我在本群的标签',tag_ph:'标签（最多 24 个字符）',perm_send:'成员可以发送消息',perm_media:'成员可以发送照片和视频',perm_invite:'成员可以添加他人',perm_pin:'成员可以置顶消息',perm_tag:'成员可以修改自己的标签',
+perm_price:'成员每条消息的价格，Ỻ（0 为免费）',del_room:'永久删除',del_room_conf:'永久删除并清除所有消息？',added:'已添加：',only_owner:'这些设置仅所有者可用。',e_no_media:'本群成员不能发送照片和视频。',e_banned:'你已被禁止加入。',
+e_music:'需要音频文件：MP3、WAV、OGG、M4A、AAC 或 FLAC。不支持视频（MP4 等）。',uploadmusic:'上传文件',pickmusic:'从聊天中选择',musicpick_t:'来自你聊天的音乐',
+album_max:'每条消息最多 9 个附件。',net_conn:'连接中…',net_upd:'更新中…',
+st_new:'新动态',st_pick:'选择照片或视频',st_text:'动态上的文字',st_cap:'动态下方说明',st_music:'音乐',st_dur:'对他人可见时长',st_prof:'显示在主页（到期后仍保留）',st_pub:'发布',st_my:'我的',st_stories:'动态',st_del:'删除这条动态？',st_h:'小时',st_nomedia:'请选择照片或视频。',st_noaud:'需要音频文件。',st_inprof:'在主页',st_myst:'我的动态',st_uploadmus:'文件',st_pickmus:'从聊天中选',
+sub:'订阅',join:'加入',mute:'静音',unmute:'取消静音',unsub:'取消订阅',leave:'退出群组',unsub_conf:'取消订阅此频道？',leave_conf:'退出此群组？',owner_leave:'所有者无法退出。请在设置中删除聊天。',
+ri_edit:'编辑名称、简介、头像',ri_desc:'简介',ri_rmav:'移除头像',room_nf:'未找到。',
+bd_tom:'明天是「{n}」的生日！',bd_today:'今天是「{n}」的生日。',st_typing:'正在输入…',st_voice:'正在录音…',st_choose:'正在选择媒体…',st_upload:'正在发送媒体…',
+mu_t:'音乐',mu_title:'标题',mu_artist:'歌手（可选）',mu_cover:'封面',mu_rm:'移除封面',mu_send:'发送'};
+
+/* ================= БЕЛАРУСКАЯ ================= */
+L.be={login_t:'Уваход',reg_t:'Рэгістрацыя',email:'Пошта',pass:'Пароль (ад 6 сімвалаў)',pass2:'Паўтарыце пароль',name:'Імя',
+signin:'Увайсці',signup:'Стварыць акаўнт',to_reg:'Няма акаўнта? Рэгістрацыя',to_login:'Ужо ёсць акаўнт? Увайсці',out:'Выйсці',
+search:'Пошук па імені або пошце',msg:'Паведамленне',send:'→',pick:'Абярыце кантакт, каб пачаць перапіску.',
+nochat:'Паведамленняў пакуль няма. Напішыце першымі.',nousers:'Пакуль нікога няма. Запрасіце сяброў зарэгістравацца.',
+service:'сэрвіс',svc_acc:'службовы акаўнт',settings:'Налады',theme:'Тэма',dark:'Цёмная',light:'Светлая',accent:'Колер неону',
+lang:'Мова',close:'Закрыць',red:'Чырвоны',blue:'Сіні',green:'Зялёны',yellow:'Жоўты',purple:'Фіялетавы',
+e_fill:'Увядзіце пошту і пароль ад 6 сімвалаў.',e_name:'Увядзіце імя.',e_match:'Паролі не супадаюць.',
+created:'Акаўнт створаны. Пацвердзіце пошту або ўвайдзіце.',notsent:'Не адпраўлена: ',
+username:'імя_карыстальніка',notif:'Апавяшчэнні пра паведамленні',ntext:'Паказваць тэкст ва апавяшчэннях',newmsg:'Новае паведамленне',chats:'Чаты',contacts:'Кантакты',
+newroom:'Новая група або канал',group:'Група',channel:'Канал',rtitle:'Назва',members:'Удзельнікі (з кантактаў)',create:'Стварыць',
+rename:'Перайменаваць кантакт',addc:'Дадаць у кантакты',delc:'Выдаліць з кантактаў',addby:'Дадаць па @username',imp:'Імпарт з тэлефона',noimp:'Імпарт кантактаў падтрымлівае Chrome на Android.',
+nf:'Карыстальніка не знойдзена.',alias:'Імя кантакта (бачна толькі вам)',e_title:'Увядзіце назву.',imported:'Дададзена кантактаў: ',nocont:'Кантактаў пакуль няма.',share:'Падзяліцца спасылкай',
+reply:'Адказаць',fwdb:'Пераслаць',fwdto:'Пераслаць у…',copy:'Капіраваць',pin:'Замацаваць',unpin:'Адмацаваць',delme:'Выдаліць у мяне',delall:'Выдаліць ва ўсіх',
+readat:'Прачытана: ',notread:'Яшчэ не прачытана',role_owner:'уладальнік',role_admin:'адмін',mkadm:'Зрабіць адмінам',rmadm:'Зняць адміна',
+copied:'Спасылка скапіравана.',e_join:'Спасылка несапраўдная.',conf_t:'Пацвердзіце пошту',conf_txt:'Мы адправілі ліст на {e}. Адкрыйце яго і пацвердзіце адрас, затым націсніце «Увайсці».',conf_h:'Ліст не прыйшоў? Праверце папку «Спам».',
+e_user:'Імя карыстальніка: 3-20 сімвалаў, лацініца, лічбы і _.',e_taken:'Гэтае імя карыстальніка ўжо занята.',g_none:'Пол не ўказаны',g_m:'Мужчынскі',g_f:'Жаночы',g_o:'Іншы',
+birth:'Дата нараджэння',region:'Рэгіён пражывання',hide_seen:'Схаваць час наведвання',plink:'Спасылка на профіль',save:'Захаваць',saved:'Захавана',
+online:'у сетцы',recent:'быў(ла) нядаўна',seen:'быў(ла) ',e_big:'Файл занадта вялікі.',e_mic:'Няма доступу да мікрафона.',today:'Сёння',yday:'Учора',dbyday:'Пазаўчора',
+call:'Усе',cgroups:'Групы',cbots:'Боты',cchannels:'Каналы',pubq:'Публічны (па @username)',prot:'Абарона кантэнту',protd:'Забарона перасылкі, капіравання і захавання',rset:'Налады',
+reactions:'Дазволеныя рэакцыі',sall:'Абраць усе',snone:'Зняць усе',rusern:'назва',e_ruser:'Username: 3-30 сімвалаў, лацініца, лічбы і _.',e_rtaken:'Такі @username ужо занты.',
+rg0:'Эмоцыі і персанажы',rg1:'Жэсты',rg2:'Істоты і жывёлы',rg3:'Расліны і прырода',rg4:'Прадметы і ежа',
+edit:'Змяніць',cancel:'Адмена',ok:'ОК',s_profile:'Профіль',s_accounts:'Акаўнты',s_folders:'Папкі',s_sessions:'Сеансы',s_notif:'Апавяшчэнні і гукі',s_privacy:'Канфідэнцыяльнасць',s_loc:'Знешні выгляд і мова',s_currency:'Мая валюта',s_about:'Пра праграму',
+addacc:'Дадаць акаўнт',addfolder:'Стварыць папку',editfolder:'Папка',fname:'Назва папкі',endothers:'Завяршыць усе астатнія сеансы',thisdev:'гэта прылада',endsess:'Завяршыць',sess_end:'Гэты сеанс быў завершаны на іншай прыладзе.',
+n_dm:'Асабістыя чаты',n_gr:'Групы',n_ch:'Каналы',snd_on:'Гук уваходных паведамленняў',snd_sent:'Гук адпраўкі',vib:'Вібрацыя',snd_test:'Праверыць гук',sn_glass:'Шкло',sn_pop:'Шчоўк',sn_chime:'Перазвон',
+mycolors:'Мае колеры',savecolor:'Захаваць колер',about_ph:'Пра сябе',addmusic:'Музыка ў профілі',
+pv_email:'Пошта',pv_emailnote:'Бачна толькі вам',pv_blocked:'Заблакіраваныя',pv_none:'Пуста.',unblock:'Разблакіраваць',block:'Заблакіраваць',
+pv_pass:'Код-пароль праграмы',pass_on:'Код-пароль уключаны',pass_off:'Код-пароль выключаны',setpass:'Усталяваць код-пароль',changepass:'Змяніць код-пароль',disablepass:'Адключыць',la0:'Блакіраваць адразу',la1:'Праз 1 хвіліну',la5:'Праз 5 хвілін',la60:'Праз 1 гадзіну',
+pv_cloud:'Воблачны пароль акаўнта',cloud_on:'Запытваецца пры ўваходзе на любой прыладзе',cloud_off:'Не ўсталяваны',setcloud:'Усталяваць воблачны пароль',changecloud:'Змяніць воблачны пароль',removecloud:'Выдаліць воблачны пароль',
+pv_chatpw:'Паролі на чаты',lockchat:'Пароль на чат',unlockchat:'Зняць пароль з чата',pv_auto:'Аўтавыдаленне паведамленняў',off:'Выключана',u_day:'дн.',u_week:'тыд.',u_month:'мес.',u_year:'год',
+pv_vis:'Хто бачыць',pv_seen:'Час апошняга наведвання',pv_photo:'Фотаздымкі профілю',pv_about:'Пра сябе',pv_birthday:'Дзень нараджэння',pv_music:'Музыка ў профілі',pv_fwd:'Перасылка паведамленняў (пераход у мой профіль)',
+v_all:'Усе',v_contacts:'Кантакты',v_nobody:'Ніхто',exc_deny:'Выключэнні: хто не ўбачыць',exc_allow:'Выключэнні: хто ўбачыць заўсёды',
+pv_incoming:'Уваходныя паведамленні',in_all:'Ад усіх',in_contacts:'Толькі ад кантактаў',in_paid:'За валюту',in_price:'Кошт паведамлення',pv_invites:'Запрашэнні ў групы і каналы',inv_all:'Усе',inv_contacts:'Кантакты',inv_link:'Толькі па спасылцы або @',
+enterpass:'Увядзіце код-пароль',wrongpass:'Няправільны пароль. Паўтарыце',newpass:'Новы пароль (ад 4 сімвалаў)',repeatpass:'Паўтарыце пароль',pass_short:'Мінімум 4 сімвалы.',enterpass_cloud:'Увядзіце воблачны пароль',enterpass_chat:'Пароль на чат',
+e_blocked:'Адпраўка паведамленняў гэтаму карыстальніку недаступная.',e_contacts:'Гэты карыстальнік прымае паведамленні толькі ад кантактаў.',e_funds:'Недастаткова Ỻ для адпраўкі платнага паведамлення.',
+cur_bal:'Баланс',cur_buy:'Папаўненне',cur_code:'Код папаўнення',cur_redeem:'Актываваць код',cur_ok:'Залічана. Баланс:',e_code:'Няправільны або ўжо выкарыстаны код.',cur_note:'Аплата банкаўскай картай пакуль не падключана: валюта папаўняецца кодамі. Платныя паведамленні спісваюць Ỻ у адпраўніка і залічваюць атрымальніку.',
+ab_ver:'Версія',ab1:'XINH — мэсенджар: асабістыя чаты, групы і каналы, файлы, фота, відэа, галасавыя, рэакцыі, кантакты.',ab2:'Захоўванне: даныя і файлы ляжаць у Supabase. Файлы да 25 МБ даступныя па закрытай доўгай спасылцы.',
+ab3:'Абарона: код-пароль і паролі на чаты працуюць на гэтай прыладзе, воблачны пароль правяраецца серверам пры ўваходзе. Скразное шыфраванне не выкарыстоўваецца.',ab4:'Абмежаванні браўзера: забараніць скрыншоты і push-апавяшчэнні пры закрытай праграме вэб-версія не можа.',ab5:'Усе налады праграмы захоўваюцца на прыладзе, налады прыватнасці і профіль — у вашым акаўнце.',
+s_stickers:'Стыкеры і эмодзі',stk_packs:'Стыкерпакі',emo_packs:'Эмодзіпакі',newpack_s:'Стварыць стыкерпак',newpack_e:'Стварыць эмодзіпак',packname:'Назва набору',delpack:'Выдаліць набор цалкам?',delstk:'Выдаліць гэты стыкер?',addstk:'Дадаць відарысы',stk_hint:'Націсніце на відарыс, каб выдаліць яго з набору. Стыкеры адпраўляюцца кнопкай 🖼 над полем уводу.',official:'Афіцыйныя',
+cloud:'Воблака',cloud_sub:'Ваша асабістае сховішча: паведамленні, файлы і нататкі',tocloud:'У Воблака',verified:'Правераны акаўнт',delchat:'Выдаліць чат',delchat_me:'Выдаліць у мяне',delchat_all:'Выдаліць ва ўсіх',delchat_conf:'Выдаліць перапіску ў абодвух удзельнікаў? Гэта нельга адмяніць.',
+sec_media:'Медыя',sec_voice:'Галасавыя',sec_links:'Спасылкі',sec_common:'Агульныя групы',sec_empty:'Тут пакуль пуста.',rs_menu_ch:'Налады канала',rs_menu_gr:'Налады групы',
+rs_type:'Тып',rs_disc:'Абмеркаванне',rs_react:'Рэакцыі',rs_admins:'Адміністрацыя',rs_subs:'Падпісчыкі',rs_bans:'Чорны спіс',rs_del:'Выдаліць',rs_hist:'Гісторыя чата',rs_members:'Удзельнікі',rs_perms:'Дазволы',
+comments:'Каментарыі',cmt_ph:'Каментарый',cmt_on:'Уключыць каментарыі',cmt_off:'Выключыць каментарыі',disc_on:'Каментарыі пад паведамленнямі',disc_hint:'Калі ўключана, пад паведамленнямі з’яўляецца кнопка каментарыяў. Адключыць каментарыі пад асобным паведамленнем можна ў яго меню.',
+hist_on:'Новыя ўдзельнікі бачаць гісторыю чата',adm_add:'Дадаць адміністратара',members_add:'Дадаць удзельнікаў',ban_add:'Дадаць у чорны спіс',bans_none:'Чорны спіс пусты.',unban:'Прыбраць',kick_conf:'Выдаліць з удзельнікаў?',ban_conf:'Забараніць гэтаму карыстальніку ўваход?',
+my_tag:'Мой тэг у гэтай групе',tag_ph:'тэг (да 24 сімвалаў)',perm_send:'Удзельнікі могуць пісаць паведамленні',perm_media:'Удзельнікі могуць адпраўляць фота і відэа',perm_invite:'Удзельнікі могуць дадаваць іншых',perm_pin:'Удзельнікі могуць замацоўваць паведамленні',perm_tag:'Удзельнікі могуць змяняць свой тэг',
+perm_price:'Кошт аднаго паведамлення ад удзельніка, Ỻ (0 — бясплатна)',del_room:'Выдаліць назаўжды',del_room_conf:'Выдаліць назаўжды разам з усёй перапіскай?',added:'Дададзена: ',only_owner:'Гэтыя налады даступныя толькі ўладальніку.',e_no_media:'У гэтай групе ўдзельнікам нельга адпраўляць фота і відэа.',e_banned:'Вам забаронены ўваход.',
+e_music:'Патрэбны аўдыяфайл: MP3, WAV, OGG, M4A, AAC або FLAC. Відэа (MP4 і інш.) не падыходзіць.',uploadmusic:'Загрузіць файл',pickmusic:'Абраць з чатаў',musicpick_t:'Музыка з вашых чатаў',
+album_max:'Максімум 9 далучэнняў у адным паведамленні.',net_conn:'злучэнне…',net_upd:'абнаўленне…',
+st_new:'Новая гісторыя',st_pick:'Абраць фота або відэа',st_text:'Тэкст на гісторыі',st_cap:'Апісанне пад гісторыяй',st_music:'Музыка',st_dur:'Колькі відаць іншым',st_prof:'Паказваць у профілі (застанецца і пасля тэрміну)',st_pub:'Апублікаваць',st_my:'Мая',st_stories:'Гісторыі',st_del:'Выдаліць гісторыю?',st_h:'гадз.',st_nomedia:'Абярыце фота або відэа.',st_noaud:'Патрэбны аўдыяфайл.',st_inprof:'У профілі',st_myst:'Мае гісторыі',st_uploadmus:'Файл',st_pickmus:'З чатаў',
+sub:'Падпісацца',join:'Уступіць',mute:'Выключыць гук',unmute:'Уключыць гук',unsub:'Адпісацца',leave:'Пакінуць групу',unsub_conf:'Адпісацца ад канала?',leave_conf:'Выйсці з групы?',owner_leave:'Уладальнік не можа выйсці. Выдаліце чат у наладах.',
+ri_edit:'Змяніць назву, апісанне, фота',ri_desc:'Апісанне',ri_rmav:'Прыбраць фота',room_nf:'Не знойдзена.',
+bd_tom:'Заўтра ў «{n}» дзень нараджэння!',bd_today:'Сёння дзень нараджэння ў «{n}».',st_typing:'друкуе…',st_voice:'запісвае голас…',st_choose:'выбірае медыя…',st_upload:'адпраўляе медыя…',
+mu_t:'Музыка',mu_title:'Назва',mu_artist:'Выканаўца (неабавязкова)',mu_cover:'Вокладка',mu_rm:'Прыбраць вокладку',mu_send:'Адправіць'};
+
+/* ================= подключение ================= */
+Object.assign(I18,L);
+const LOC={ru:'ru',en:'en',xx:'en',vi:'vi',zh:'zh-CN',be:'be'};
+const sel=$('selLang');
+[['vi','Tiếng Việt'],['zh','中文'],['be','Беларуская']].forEach(([v,n])=>{if(!sel.querySelector('[value="'+v+'"]'))sel.append(H('option',{value:v,textContent:n}))});
+
+buildRegions=function(){const s=$('pRegion'),v=s.value,lg=LOC[S.lang]||'en';s.textContent='';
+ const o0=document.createElement('option');o0.value='';o0.textContent=t('region');s.append(o0);
+ try{const dn=new Intl.DisplayNames([lg],{type:'region'}),A='ABCDEFGHIJKLMNOPQRSTUVWXYZ',l=[];
+  for(const a of A)for(const b of A){const c=a+b;if(BAD.has(c))continue;const n=dn.of(c);if(n&&n!==c)l.push([c,n])}
+  l.sort((x,y)=>x[1].localeCompare(y[1],lg));
+  l.forEach(([c,n])=>{const o=document.createElement('option');o.value=c;o.textContent=n;s.append(o)})}catch(e){}
+ s.value=v};
+regName=function(c){if(!c)return '';try{return new Intl.DisplayNames([LOC[S.lang]||'en'],{type:'region'}).of(c)||c}catch(e){return c}};
+seenText=function(u){if(u.is_service)return t('svc_acc');if(u.hide_seen||!u.last_seen)return t('recent');const d=new Date(u.last_seen);
+ return Date.now()-d<150000?t('online'):t('seen')+d.toLocaleString(LOC[S.lang]||'en',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})};
+const _aa=applyAll;
+applyAll=function(){_aa();document.documentElement.lang=LOC[S.lang]||'en'};
+applyAll();
 })();
 </script>
 </body>
