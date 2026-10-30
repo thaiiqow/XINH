@@ -488,7 +488,7 @@ async function boot(u){
   if(msgs.some(x=>x.id===m.id))return;msgs.push(m);if(m.comment_of){renderComments();return}
   const other=m.room_id?'r'+m.room_id:(m.sender_id===me.id?m.recipient_id:m.sender_id);if(m.room_id&&!rooms.some(x=>x.id===other))loadRooms();
   if(m.sender_id!==me.id&&(!peer||peer.id!==other))unread.add(other);
-  if(m.sender_id!==me.id&&S[kindOf(m)]!==false){fx();if(S.notif&&(!peer||peer.id!==other||document.hidden))notify(m,other)}
+  if(m.sender_id!==me.id&&S[kindOf(m)]!==false&&!isMuted(m)){fx();if(S.notif&&(!peer||peer.id!==other||document.hidden))notify(m,other)}
   if(!m.room_id&&m.sender_id!==me.id&&peer&&peer.id===other&&!document.hidden)sb.rpc('mark_read',{pid:other}).then(()=>{});
   renderList();if(peer&&peer.id===other)renderMsgs();
   if(!m.room_id&&!users.some(x=>x.id===other))refreshUsers();
