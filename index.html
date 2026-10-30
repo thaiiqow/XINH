@@ -1886,5 +1886,98 @@ document.addEventListener('click',e=>{const v=$('stv');
  if(v&&!v.classList.contains('hide')&&!v.contains(e.target)){e.preventDefault();e.stopPropagation();const x=v.querySelector('.sth .x');if(x)x.click()}},true);
 })();
 </script>
+<style>
+#mud{position:fixed;inset:0;z-index:28;background:var(--shade);display:flex;align-items:center;justify-content:center;padding:20px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.cov.cvr button{background:rgba(0,0,0,.5);color:#fff;border-color:rgba(255,255,255,.4)}
+</style>
+<script>
+(()=>{
+const RU={mu_t:'Музыка',mu_title:'Название',mu_artist:'Исполнитель (необязательно)',mu_cover:'Обложка',mu_rm:'Убрать обложку',mu_send:'Отправить'};
+Object.assign(I18.ru,RU);Object.assign(I18.xx,RU);
+Object.assign(I18.en,{mu_t:'Music',mu_title:'Title',mu_artist:'Artist (optional)',mu_cover:'Cover',mu_rm:'Remove cover',mu_send:'Send'});
+
+const isAud=f=>AUDIO_RE.test(f.name||'')||((f.type||'').startsWith('audio/'));
+const clean=s=>(s||'').replace(/[\\\/]/g,'').trim();
+
+/* ---------- окно: название, исполнитель, обложка ---------- */
+const md=H('div',{id:'mud',className:'hide'});document.body.append(md);
+function musicDlg(f,withCover){return new Promise(res=>{
+ const nm=f.name.replace(/\.[^.]+$/,''),k=nm.indexOf(' - ');
+ const ti=H('input',{value:k>0?nm.slice(k+3):nm,maxLength:100,placeholder:t('mu_title')}),
+  ar=H('input',{value:k>0?nm.slice(0,k):'',maxLength:100,placeholder:t('mu_artist')}),
+  err=H('div',{className:'err'}),cv=H('div',{className:'av avb'}),
+  fi=H('input',{type:'file',accept:'image/*',className:'hide'}),
+  rm=H('button',{type:'button',className:'hide',textContent:t('mu_rm')}),
+  go=H('button',{type:'button',className:'solid',textContent:t(withCover?'mu_send':'save')}),
+  no=H('button',{type:'button',textContent:t('cancel')});
+ let cover=null,url=null;
+ const paint=()=>{cv.textContent='';if(url)cv.append(H('img',{src:url,alt:''}));else cv.textContent='🎵';rm.classList.toggle('hide',!url)};
+ const done=v=>{if(url)URL.revokeObjectURL(url);md.classList.add('hide');md.textContent='';res(v)};
+ cv.onclick=()=>fi.click();
+ fi.onchange=e=>{const x=e.target.files[0];e.target.value='';if(!x)return;
+  if(!(x.type||'').startsWith('image/')){return}
+  if(x.size>5242880){err.textContent=t('e_big');return}
+  err.textContent='';if(url)URL.revokeObjectURL(url);cover=x;url=URL.createObjectURL(x);paint()};
+ rm.onclick=()=>{if(url)URL.revokeObjectURL(url);url=null;cover=null;paint()};
+ go.onclick=()=>done({title:clean(ti.value)||clean(nm)||'Music',artist:clean(ar.value).replace(/\s-\s/g,'-')||'Unknown',cover});
+ no.onclick=()=>done(null);
+ md.onclick=e=>{if(e.target===md)done(null)};
+ paint();md.textContent='';
+ md.append(H('div',{className:'card'},H('h2',{textContent:t('mu_t')}),...(withCover?[cv,fi,rm]:[]),ti,ar,err,go,no));
+ md.classList.remove('hide');setTimeout(()=>ti.focus(),80)})}
+
+/* ---------- отправка музыки в чат ---------- */
+const _sf=sendFile;
+sendFile=async function(f,kind){
+ if(kind||!f||!isAud(f))return _sf(f,kind);
+ if(!peer)return;
+ if(f.size>26214400){alert(t('e_big'));return}
+ const target=peer,mt=await musicDlg(f,true);if(!mt)return;
+ try{
+  const ext=((f.name.split('.').pop()||'mp3').replace(/\W/g,'').slice(0,8))||'mp3',
+   path=me.id+'/'+Date.now()+'.'+ext;
+  const{error:e1}=await sb.storage.from('xinh').upload(path,f,{contentType:AUDIO_MIME[ext.toLowerCase()]||(f.type||'audio/mpeg').split(';')[0]});
+  if(e1)throw e1;
+  const url=sb.storage.from('xinh').getPublicUrl(path).data.publicUrl;
+  let cu=null;
+  if(mt.cover){const ce=((mt.cover.name.split('.').pop()||'jpg').replace(/\W/g,'').slice(0,5))||'jpg',cp=me.id+'/mcover_'+Date.now()+'.'+ce;
+   const{error:e2}=await sb.storage.from('xinh').upload(cp,mt.cover,{contentType:mt.cover.type||'image/jpeg'});
+   if(!e2)cu=sb.storage.from('xinh').getPublicUrl(cp).data.publicUrl}
+  const row={...tgt(target),...(reply?{reply_to:reply.id}:{}),body:'🎵 '+mt.artist+' — '+mt.title,kind:'audio',file_url:url,file_name:(mt.artist+' - '+mt.title).slice(0,120)+'.'+ext};
+  let r=await sb.from('messages').insert(cu?{...row,cover_url:cu}:row).select().single();
+  if(r.error&&cu&&/cover_url/.test(r.error.message||''))r=await sb.from('messages').insert(row).select().single();
+  if(r.error)throw r.error;
+  sent();if(!msgs.some(x=>x.id===r.data.id)){msgs.push(r.data);renderList();if(peer&&peer.id===target.id)renderMsgs()}
+ }catch(e){alert(t('notsent')+errTxt(e))}};
+
+/* ---------- музыка в профиле ---------- */
+$('pMusicFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+ const ext=(f.name.split('.').pop()||'').toLowerCase();
+ if(!AUDIO_RE.test('.'+ext)||(f.type||'').startsWith('video/')&&!/^(ogg|oga|opus)$/.test(ext)){$('pErr').textContent=t('e_music');return}
+ if(f.size>10485760){$('pErr').textContent=t('e_big');return}
+ $('pErr').textContent='';
+ const mt=await musicDlg(f,false);if(!mt)return;
+ const path=me.id+'/music_'+Date.now()+'.'+ext.replace(/\W/g,'').slice(0,5);
+ const{error}=await sb.storage.from('xinh').upload(path,f,{contentType:AUDIO_MIME[ext]||'audio/mpeg'});
+ if(error){$('pErr').textContent=error.message;return}
+ await sb.from('profiles').update({music_url:sb.storage.from('xinh').getPublicUrl(path).data.publicUrl,music_name:mt.artist+' - '+mt.title}).eq('id',me.id);
+ await loadMe()};
+
+/* ---------- плеер: обложка и Unknown ---------- */
+player=function(m){if(pc[m.id])return pc[m.id];
+ const w=H('div',{className:'mp'});pc[m.id]=w;
+ const base=(m.file_name||'').replace(/\.[^.]+$/,''),i=base.indexOf(' - '),au=i>0?base.slice(0,i):'Unknown',ti=i>0?base.slice(i+3):base;
+ const a=new Audio(m.file_url);a.preload='metadata';
+ const cv=H('div',{className:'cov'}),b=H('button',{type:'button',textContent:'▶'});b.setAttribute('aria-label','Play');
+ if(m.cover_url){cv.classList.add('cvr');cv.style.backgroundImage='url("'+String(m.cover_url).replace(/"/g,'%22')+'")';cv.style.backgroundSize='cover';cv.style.backgroundPosition='center'}
+ cv.append(b);
+ const bi=H('i'),c=H('div',{style:'min-width:0'},H('b',{textContent:ti||'—'}),H('small',{textContent:au}),H('div',{className:'bar'},bi));
+ w.append(cv,c);
+ b.onclick=()=>{if(a.paused){if(curA&&curA!==a)curA.pause();curA=a;a.play()}else a.pause()};
+ a.onplay=()=>b.textContent='❚❚';a.onpause=()=>b.textContent='▶';a.onended=()=>{b.textContent='▶';bi.style.width='0'};
+ a.ontimeupdate=()=>{bi.style.width=(a.duration?a.currentTime/a.duration*100:0)+'%'};
+ return w};
+})();
+</script>
 </body>
 </html>
