@@ -1718,5 +1718,106 @@ $('rGo').onclick=async()=>{const before=new Set(rooms.map(x=>x.rid)),d=rd.value.
  rd.value='';rfile=null;if(rurl)URL.revokeObjectURL(rurl);rurl=null;paintRav()};
 })();
 </script>
+<style>
+#bdbar{display:flex;flex-direction:column;gap:6px;padding:0 14px 10px}
+#bdbar:empty{display:none}
+#bdbar .srow{padding:9px 14px;font-size:14px;cursor:pointer}
+</style>
+<script>
+(()=>{
+const RU={bd_tom:'Завтра у «{n}» день рождения!',bd_today:'Сегодня день рождения у «{n}».',
+ st_typing:'печатает…',st_voice:'записывает голос…',st_choose:'выбирает медиа…',st_upload:'отправляет медиа…'};
+Object.assign(I18.ru,RU);Object.assign(I18.xx,RU);
+Object.assign(I18.en,{bd_tom:"Tomorrow is «{n}»'s birthday!",bd_today:"Today is «{n}»'s birthday.",
+ st_typing:'typing…',st_voice:'recording voice…',st_choose:'choosing media…',st_upload:'sending media…'});
+
+/* ================= ДНИ РОЖДЕНИЯ ================= */
+const pad=n=>String(n).padStart(2,'0');
+const mdOf=d=>pad(d.getMonth()+1)+'-'+pad(d.getDate());
+function bdMD(s,y){const p=(s||'').split('-');if(p.length<3)return null;let m=p[1],d=p[2];
+ if(m==='02'&&d==='29'&&!(y%4===0&&(y%100!==0||y%400===0)))d='28';return m+'-'+d}
+function bdList(){if(!me)return[];
+ const n=new Date(),tm=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1),a0=mdOf(n),a1=mdOf(tm),out=[];
+ users.filter(u=>(u.id in conts)&&u.birthdate).forEach(u=>{
+  if(bdMD(u.birthdate,n.getFullYear())===a0)out.push({u,k:'today'});
+  else if(bdMD(u.birthdate,tm.getFullYear())===a1)out.push({u,k:'tom'})});
+ return out.sort((x,y)=>(x.k==='today'?0:1)-(y.k==='today'?0:1))}
+const bdText=x=>t('bd_'+x.k).replace('{n}',dn(x.u));
+
+function pushBd(list){if(!S.notif||!list.length)return;
+ let st={};try{st=JSON.parse(localStorage.getItem('xinh_bdn')||'{}')}catch(e){}
+ const day=new Date().toDateString();let ch=false;
+ Object.keys(st).forEach(k=>{if(!k.endsWith('|'+day)){delete st[k];ch=true}});
+ list.forEach(x=>{const k=me.id+':'+x.u.id+':'+x.k+'|'+day;if(st[k])return;st[k]=1;ch=true;
+  const txt=bdText(x);
+  if(document.hidden&&'Notification' in window&&Notification.permission==='granted'){
+   try{const nt=new Notification('🎂 XINH',{body:txt,icon:x.u.avatar_url||undefined,tag:k});nt.onclick=()=>{window.focus();openChat(x.u);nt.close()}}catch(e){toast(x.u,txt)}}
+  else toast(x.u,txt)});
+ if(ch)try{localStorage.setItem('xinh_bdn',JSON.stringify(st))}catch(e){}}
+
+function renderBd(){if(!me)return;let b=$('bdbar');
+ if(!b){b=H('div',{id:'bdbar'});const s=$('sbar');s?s.after(b):$('list').before(b)}
+ b.textContent='';const l=bdList();
+ if(tab==='chats')l.forEach(x=>b.append(H('div',{className:'srow',onclick:()=>openChat(x.u)},H('span',{textContent:'🎂'}),H('span',{textContent:bdText(x)}))));
+ pushBd(l)}
+const _rl3=renderList;renderList=function(){_rl3();renderBd()};
+setInterval(()=>{if(me)renderBd()},600000);
+document.addEventListener('visibilitychange',()=>{if(me)renderBd()});
+
+/* ================= СТАТУСЫ: печатает, записывает... ================= */
+const LAB={typing:'st_typing',voice:'st_voice',choose:'st_choose',upload:'st_upload'};
+const chs={},stt={};
+const ckey=p=>p.room?'r'+p.rid:[me.id,p.id].sort().join('_');
+function refreshSt(k){if(peer&&me&&!peer.cloud&&!peer.preview&&ckey(peer)===k)setHead()}
+function getCh(p){if(!p||!me||p.cloud||p.preview)return null;const k=ckey(p);if(chs[k])return chs[k];
+ const c=sb.channel('ty-'+k,{config:{broadcast:{self:false}}});
+ c.on('broadcast',{event:'st'},m=>{const pl=m.payload||{};if(!pl.u||pl.u===me.id)return;
+  const o=stt[k]=stt[k]||{};
+  if(pl.s&&pl.s!=='idle')o[pl.u]={s:pl.s,exp:Date.now()+6000};else delete o[pl.u];
+  refreshSt(k);setTimeout(()=>refreshSt(k),6200)}).subscribe();
+ return chs[k]=c}
+function curSt(p){const o=stt[ckey(p)];if(!o)return'';const now=Date.now();
+ const e=Object.entries(o).find(([,v])=>v.exp>now);if(!e)return'';
+ const lab=t(LAB[e[1].s]);
+ if(p.room){const u=users.find(x=>x.id===e[0]);return (u?dn(u):'…')+' '+lab}
+ return lab}
+
+const _sh3=setHead;
+setHead=function(){_sh3();if(!peer||!me||peer.cloud||peer.preview)return;
+ const s=curSt(peer);$('hsb').style.color=s?'var(--act)':'';if(s)$('hsb').textContent=s};
+const _oc3=openChat;
+openChat=async function(u){await _oc3(u);if(peer&&peer.id===u.id){getCh(peer);setHead()}};
+
+/* что делаю я */
+let lastTyp=0,chooseUntil=0,upN=0,lastS={k:'',s:'idle'};
+function curState(){
+ if(typeof rec!=='undefined'&&rec)return'voice';
+ if(upN>0)return'upload';
+ const ab=$('abar');
+ if(Date.now()<chooseUntil||(ab&&!ab.classList.contains('hide')))return'choose';
+ if($('txt').value.trim()&&Date.now()-lastTyp<3500)return'typing';
+ return'idle'}
+function tick(){if(!me||!peer)return;const c=getCh(peer);if(!c)return;
+ const s=curState(),k=ckey(peer);
+ if(s==='idle'&&(lastS.k!==k||lastS.s==='idle'))return;
+ lastS={k,s};
+ try{const r=c.send({type:'broadcast',event:'st',payload:{u:me.id,s}});if(r&&r.catch)r.catch(()=>{})}catch(e){}}
+setInterval(tick,2500);
+$('txt').addEventListener('input',()=>{lastTyp=Date.now();tick()});
+$('attach').addEventListener('click',()=>{chooseUntil=Date.now()+20000;tick()});
+$('file').addEventListener('change',()=>{chooseUntil=Date.now()+3000;setTimeout(tick,100)});
+$('mic').addEventListener('click',()=>setTimeout(tick,500));
+$('form').addEventListener('submit',()=>{lastTyp=0;chooseUntil=0;setTimeout(tick,150)});
+$('back').addEventListener('click',()=>{lastS={k:'',s:'idle'}});
+
+/* загрузка файлов в чат = «отправляет медиа» (аватарки, музыку профиля и т.п. не считаем) */
+const _stf=sb.storage.from.bind(sb.storage);
+sb.storage.from=b=>{const o=_stf(b);if(b!=='xinh')return o;const up=o.upload.bind(o);
+ o.upload=async(p,...r)=>{const track=/^[^/]+\/\d+(_\d+)?\.[^/]*$/.test(p||'');
+  if(track){upN++;tick()}
+  try{return await up(p,...r)}finally{if(track){upN--;tick()}}};
+ return o};
+})();
+</script>
 </body>
 </html>
