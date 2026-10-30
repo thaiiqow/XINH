@@ -1406,5 +1406,174 @@ document.addEventListener('visibilitychange',()=>{
 setInterval(()=>{if(me&&!document.hidden&&navigator.onLine&&(!chan||chan.state!=='joined'))resync()},20000);
 })();
 </script>
+<!-- ===== ИСТОРИИ: вставьте этот блок в index.html прямо перед </body> ===== -->
+<style>
+.srch{display:flex;gap:8px;align-items:center;margin:0 14px 10px}
+.srch #search{flex:1;margin:0;width:auto;min-width:0}
+#bStory{flex:none;width:44px;height:44px;padding:0;border-radius:50%;font-size:19px;line-height:1;display:grid;place-items:center}
+#sbar{display:flex;gap:12px;overflow-x:auto;padding:0 14px 10px;scrollbar-width:none}
+#sbar::-webkit-scrollbar{display:none}
+.sti{flex:none;width:62px;text-align:center;cursor:pointer}
+.sti .rg{width:58px;height:58px;border-radius:50%;padding:3px;margin:0 auto 3px;display:grid;place-items:center;background:linear-gradient(135deg,var(--ac),#fff 150%);box-shadow:0 0 14px var(--tn)}
+.sti.seen .rg{background:var(--gb);box-shadow:none}
+.sti .av{width:100%;height:100%;border:2px solid var(--bg)}
+.sti small{display:block;font-size:11px;color:var(--mt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pvSt,#vSt{width:100%}
+#stNew{position:fixed;inset:0;z-index:24;background:var(--shade);display:flex;align-items:center;justify-content:center;padding:20px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.stp{position:relative;height:230px;border-radius:20px;overflow:hidden;background:#000;display:grid;place-items:center;flex-shrink:0}
+.stp img,.stp video{max-width:100%;max-height:100%;object-fit:contain}
+#stv{position:fixed;inset:0;z-index:50;background:#000;color:#fff;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.stbars{display:flex;gap:3px;padding:8px 10px 0}
+.stbars div{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.3);overflow:hidden}
+.stbars i{display:block;height:100%;width:0;background:#fff}
+.sth{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.sth .av{width:36px;height:36px}.sth .n{flex:1;min-width:0}
+.sth .lbl{font-size:12px}
+.stm{flex:1;min-height:0;position:relative;display:grid;place-items:center}
+.stm>img,.stm>video{max-width:100%;max-height:100%;object-fit:contain}
+.stz{position:absolute;top:0;bottom:0;left:0;width:35%}.stz.r{left:auto;right:0;width:65%}
+.sto{position:absolute;left:14px;right:14px;bottom:16%;text-align:center;font-size:22px;font-weight:800;line-height:1.25;color:#fff;text-shadow:0 2px 10px #000,0 0 3px #000;pointer-events:none;overflow-wrap:anywhere}
+.stp .sto{font-size:15px;bottom:10%}
+.stc{padding:8px 18px;text-align:center;max-height:22vh;overflow:auto;white-space:pre-wrap}
+.sta{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;padding:6px 12px 12px}
+.sta .em{font-size:26px;width:48px;opacity:.6}.sta .em.on{opacity:1}
+.sta .lbl{width:100%;text-align:center;color:#ccc}
+</style>
+<script>
+(()=>{
+Object.assign(I18.ru,{st_new:'Новая история',st_pick:'Выбрать фото или видео',st_text:'Текст на истории',st_cap:'Описание под историей',st_music:'Музыка',st_dur:'Сколько видна другим',st_prof:'Показывать в профиле (останется и после срока)',st_pub:'Опубликовать',st_my:'Моя',st_stories:'Истории',st_del:'Удалить историю?',st_h:'ч',st_nomedia:'Выберите фото или видео.',st_noaud:'Нужен аудиофайл.',st_inprof:'В профиле',st_myst:'Мои истории',st_uploadmus:'Файл',st_pickmus:'Из чатов'});
+Object.assign(I18.en,{st_new:'New story',st_pick:'Choose photo or video',st_text:'Text on the story',st_cap:'Caption under the story',st_music:'Music',st_dur:'Visible to others for',st_prof:'Show in profile (stays after expiry)',st_pub:'Publish',st_my:'Mine',st_stories:'Stories',st_del:'Delete this story?',st_h:'h',st_nomedia:'Choose a photo or video.',st_noaud:'An audio file is required.',st_inprof:'In profile',st_myst:'My stories',st_uploadmus:'File',st_pickmus:'From chats'});
+
+const EMS=['❤️','🔥','😂','😮','😢','👍'],DUR=[6,12,24,48],SK='xinh_stseen';
+let stories=[],srx={},seen=new Set(),ch=null,dt=null,N=null,V={list:[],i:0,tm:null,a:null};
+try{seen=new Set(JSON.parse(localStorage.getItem(SK)||'[]'))}catch(e){}
+const active=s=>new Date(s.created_at).getTime()+s.hours*36e5>Date.now();
+const mark=id=>{if(seen.has(id))return;seen.add(id);try{localStorage.setItem(SK,JSON.stringify([...seen].slice(-800)))}catch(e){}};
+const fmt=x=>new Date(x).toLocaleString(loc(),{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const meU=()=>({id:me.id,display_name:(prof&&prof.display_name)||me.email||'?',avatar_url:prof&&prof.avatar_url});
+const who=id=>id===me.id?meU():(users.find(x=>x.id===id)||{display_name:'…'});
+const byTime=(a,b)=>a.created_at<b.created_at?-1:1;
+const profStories=uid=>stories.filter(s=>s.user_id===uid&&(s.in_profile||(uid===me.id&&active(s)))).sort(byTime);
+
+/* ---------- кнопка рядом с поиском и лента ---------- */
+const bS=H('button',{type:'button',id:'bStory',className:'solid',textContent:'📷',title:'+'});
+bS.setAttribute('aria-label','Story');
+const sr=H('div',{className:'srch'});$('search').before(sr);sr.append($('search'),bS);
+bS.onclick=()=>openNew();
+
+function renderBar(){let b=$('sbar');if(!b){b=H('div',{id:'sbar'});$('list').before(b)}
+ b.textContent='';if(!me||tab!=='chats'){b.classList.add('hide');return}
+ const by={};stories.filter(active).forEach(s=>(by[s.user_id]=by[s.user_id]||[]).push(s));
+ const mine=by[me.id]?[{u:meU(),n:t('st_my'),l:by[me.id]}]:[];
+ const others=users.filter(u=>by[u.id]&&last(u.id)).map(u=>({u,n:dn(u),l:by[u.id]}));
+ [...mine,...others].forEach(x=>x.un=x.l.some(s=>!seen.has(s.id)));
+ others.sort((a,b)=>(b.un-a.un));
+ const items=[...mine,...others];b.classList.toggle('hide',!items.length);
+ items.forEach(x=>{const av=H('div',{className:'av'});setAv(av,x.u);
+  b.append(H('div',{className:'sti'+(x.un?'':' seen'),onclick:()=>{const l=x.l.slice().sort(byTime),k=l.findIndex(s=>!seen.has(s.id));openStories(l,k<0?0:k)}},H('div',{className:'rg'},av),H('small',{textContent:x.n})))})}
+const _rl=renderList;renderList=function(){_rl();if(me)renderBar()};
+
+/* ---------- загрузка и realtime ---------- */
+async function loadStories(){if(!me)return;
+ const[a,b]=await Promise.all([sb.from('stories').select('*').order('created_at').limit(500),sb.from('story_reactions').select('*').limit(5000)]);
+ if(a.error||b.error)return;stories=a.data||[];srx={};(b.data||[]).forEach(x=>(srx[x.story_id]=srx[x.story_id]||[]).push(x));
+ renderBar();if(!$('stv').classList.contains('hide'))drawAct()}
+function subSt(){if(ch){sb.removeChannel(ch);ch=null}
+ const d=()=>{clearTimeout(dt);dt=setTimeout(loadStories,500)};
+ ch=sb.channel('st-'+me.id).on('postgres_changes',{event:'*',schema:'public',table:'stories'},d).on('postgres_changes',{event:'*',schema:'public',table:'story_reactions'},d).subscribe()}
+const _b2=boot;boot=async function(u){stories=[];srx={};await _b2(u);await loadStories();subSt()};
+setInterval(()=>{if(me)renderBar()},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me)loadStories()});
+
+/* ---------- просмотр ---------- */
+document.body.append(H('div',{id:'stv',className:'hide'}));
+const stopA=()=>{if(V.a){V.a.pause();V.a=null}};
+function openStories(list,i){if(!list.length)return;V.list=list;V.i=i||0;$('stv').classList.remove('hide');show()}
+function closeV(){clearTimeout(V.tm);stopA();const v=$('stv');v.querySelectorAll('video').forEach(x=>x.pause());v.classList.add('hide');v.textContent='';renderBar()}
+const next=()=>{V.i++;V.i>=V.list.length?closeV():show()},prev=()=>{V.i=Math.max(0,V.i-1);show()};
+function show(){clearTimeout(V.tm);stopA();const s=V.list[V.i];if(!s){closeV();return}
+ mark(s.id);const v=$('stv');v.textContent='';const u=who(s.user_id);let cur;
+ const bars=H('div',{className:'stbars'});V.list.forEach((x,k)=>{const i=H('i');if(k<V.i)i.style.width='100%';if(k===V.i)cur=i;bars.append(H('div',{},i))});
+ const av=H('div',{className:'av'});setAv(av,u);
+ const head=H('div',{className:'sth'},av,H('div',{className:'n'},H('b',{textContent:dn(u)}),H('div',{className:'lbl',textContent:fmt(s.created_at)+(s.music_name?'  🎵 '+s.music_name:'')})),H('button',{type:'button',className:'x',textContent:'✕',onclick:closeV}));
+ const m=H('div',{className:'stm'});let el;
+ if(s.kind==='video'){el=H('video',{src:s.file_url,playsInline:true});el.muted=!!s.music_url;
+  el.ontimeupdate=()=>{if(el.duration)cur.style.width=el.currentTime/el.duration*100+'%'};el.onended=next;
+  el.play().catch(()=>{el.muted=true;el.play().catch(()=>{})})}
+ else{el=H('img',{src:s.file_url,alt:''});cur.style.transition='width 6s linear';requestAnimationFrame(()=>requestAnimationFrame(()=>cur.style.width='100%'));V.tm=setTimeout(next,6000)}
+ m.append(el);if(s.text_overlay)m.append(H('div',{className:'sto',textContent:s.text_overlay}));
+ m.append(H('div',{className:'stz',onclick:prev}),H('div',{className:'stz r',onclick:next}));
+ if(s.music_url){V.a=new Audio(s.music_url);V.a.loop=true;V.a.play().catch(()=>{})}
+ v.append(bars,head,m);if(s.caption)v.append(H('div',{className:'stc',textContent:s.caption}));
+ v.append(H('div',{className:'sta',id:'sta'}));drawAct()}
+function drawAct(){const s=V.list[V.i],b=$('sta');if(!s||!b)return;b.textContent='';
+ const a=srx[s.id]||[],mine=a.find(x=>x.user_id===me.id);
+ if(s.user_id===me.id){
+  if(a.length)b.append(H('div',{className:'lbl',textContent:a.map(x=>x.emoji+' '+dn(who(x.user_id))).join(', ')}));
+  b.append(H('button',{type:'button',textContent:(s.in_profile?'📌 ':'📍 ')+t('st_inprof'),onclick:async()=>{const{error}=await sb.from('stories').update({in_profile:!s.in_profile}).eq('id',s.id);if(error)return alert(error.message);s.in_profile=!s.in_profile;drawAct()}}),
+   H('button',{type:'button',textContent:'🗑',onclick:async()=>{if(!confirm(t('st_del')))return;const{error}=await sb.from('stories').delete().eq('id',s.id);if(error)return alert(error.message);
+    stories=stories.filter(x=>x.id!==s.id);V.list.splice(V.i,1);if(!V.list.length)closeV();else{V.i=Math.min(V.i,V.list.length-1);show()}}}))}
+ else EMS.forEach(e=>b.append(H('button',{type:'button',className:'em'+(mine&&mine.emoji===e?' on':''),textContent:e,onclick:()=>react(s,e)})))}
+async function react(s,e){const a=srx[s.id]||[],mine=a.find(x=>x.user_id===me.id);
+ if(mine&&mine.emoji===e){const{error}=await sb.from('story_reactions').delete().eq('story_id',s.id).eq('user_id',me.id);if(error)return alert(error.message);srx[s.id]=a.filter(x=>x.user_id!==me.id)}
+ else{const{error}=await sb.from('story_reactions').upsert({story_id:s.id,user_id:me.id,emoji:e},{onConflict:'story_id,user_id'});if(error)return alert(error.message);srx[s.id]=[...a.filter(x=>x.user_id!==me.id),{story_id:s.id,user_id:me.id,emoji:e}]}
+ drawAct()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('stv').classList.contains('hide'))closeV()});
+
+/* ---------- создание ---------- */
+document.body.append(H('div',{id:'stNew',className:'hide'}));
+async function upl(f,pre,ct){const ext=((f.name.split('.').pop()||'bin').replace(/\W/g,'').slice(0,8))||'bin',path=me.id+'/'+pre+Date.now()+'.'+ext;
+ const{error}=await sb.storage.from('xinh').upload(path,f,{contentType:ct||(f.type||'application/octet-stream').split(';')[0]});if(error)throw error;
+ return sb.storage.from('xinh').getPublicUrl(path).data.publicUrl}
+function closeNew(){if(N&&N.url)URL.revokeObjectURL(N.url);N=null;$('stNew').classList.add('hide');$('stNew').textContent=''}
+function chatMusic(){const seen2=new Set(),rows=[];
+ msgs.filter(m=>m.file_url&&!hid.has(m.id)&&((m.kind==='audio'&&!VIDEO_RE.test(m.file_name||''))||(m.kind==='file'&&AUDIO_RE.test(m.file_name||'')))).slice().reverse().forEach(m=>{if(seen2.has(m.file_url))return;seen2.add(m.file_url);const nm=(m.file_name||'').replace(/\.[^.]+$/,'');rows.push({label:nm||'—',sub:chatNameOf(m),url:m.file_url,name:nm,preview:m.file_url})});
+ return pickOne(t('musicpick_t'),rows)}
+function openNew(){if(!me)return;N={f:null,kind:'',url:'',mus:null,hours:24};const box=$('stNew'),c=H('div',{className:'card'});box.textContent='';box.append(c);
+ const fi=H('input',{type:'file',accept:'image/*,video/*',className:'hide'}),prev=H('div',{className:'stp hide'}),ov=H('div',{className:'sto'}),
+  tx=H('input',{maxLength:80,placeholder:t('st_text')}),cp=H('input',{maxLength:200,placeholder:t('st_cap')}),
+  mn=H('span',{className:'lbl',style:'flex:1;min-width:0'}),mx=H('button',{type:'button',className:'x hide',textContent:'✕'}),
+  mf=H('input',{type:'file',accept:'.mp3,.wav,.ogg,.oga,.opus,.m4a,.aac,.flac,.wma,.aif,.aiff,audio/*',className:'hide'}),
+  pr=H('input',{type:'checkbox'}),err=H('div',{className:'err'}),go=H('button',{type:'button',className:'solid',textContent:t('st_pub')});
+ fi.onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const ty=f.type||'';
+  if(!ty.startsWith('image/')&&!ty.startsWith('video/')){err.textContent=t('st_nomedia');return}
+  if(f.size>26214400){err.textContent=t('e_big');return}err.textContent='';
+  if(N.url)URL.revokeObjectURL(N.url);N.f=f;N.kind=ty.startsWith('video/')?'video':'image';N.url=URL.createObjectURL(f);
+  const el=N.kind==='video'?H('video',{src:N.url,muted:true,loop:true,autoplay:true,playsInline:true}):H('img',{src:N.url,alt:''});
+  prev.textContent='';prev.append(el,ov);prev.classList.remove('hide')};
+ tx.oninput=()=>{ov.textContent=tx.value};
+ const setM=(m,txt)=>{N.mus=m;mn.textContent=m?'🎵 '+txt:'';mx.classList.toggle('hide',!m)};
+ mx.onclick=()=>setM(null);
+ mf.onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+  if(!AUDIO_RE.test(f.name)||(f.type||'').startsWith('video/')){err.textContent=t('st_noaud');return}
+  if(f.size>10485760){err.textContent=t('e_big');return}err.textContent='';setM({f},f.name.replace(/\.[^.]+$/,''))};
+ c.append(H('h2',{textContent:t('st_new')}),
+  H('button',{type:'button',textContent:t('st_pick'),onclick:()=>fi.click()}),fi,prev,tx,cp,
+  H('div',{className:'lbl',textContent:t('st_music')}),
+  H('div',{style:'display:flex;gap:8px;flex-wrap:wrap'},H('button',{type:'button',textContent:t('st_uploadmus'),onclick:()=>mf.click()}),H('button',{type:'button',textContent:t('st_pickmus'),onclick:async()=>{const r=await chatMusic();if(r)setM({url:r.url,name:r.name},r.name)}})),mf,
+  H('div',{className:'chk'},mn,mx),
+  H('div',{className:'lbl',textContent:t('st_dur')}),SEL(DUR.map(h=>[h,h+' '+t('st_h')]),24,v=>N.hours=+v),
+  H('label',{className:'chk'},pr,H('span',{textContent:t('st_prof')})),err,go,H('button',{type:'button',textContent:t('cancel'),onclick:closeNew}));
+ go.onclick=async()=>{if(!N.f){err.textContent=t('st_nomedia');return}go.disabled=true;err.textContent='…';
+  try{const fu=await upl(N.f,'story_');let mu=null,mnm=null;
+   if(N.mus){if(N.mus.f){const ext=(N.mus.f.name.split('.').pop()||'').toLowerCase();mu=await upl(N.mus.f,'smusic_',AUDIO_MIME[ext]||'audio/mpeg');mnm=N.mus.f.name.replace(/\.[^.]+$/,'')}else{mu=N.mus.url;mnm=N.mus.name}}
+   const{data,error}=await sb.from('stories').insert({user_id:me.id,kind:N.kind,file_url:fu,caption:cp.value.trim()||null,text_overlay:tx.value.trim()||null,music_url:mu,music_name:mnm,hours:N.hours,in_profile:pr.checked}).select().single();
+   if(error)throw error;stories.push(data);closeNew();renderBar();toast(meU(),t('saved'))}
+  catch(e){err.textContent=(e&&e.message)||'error';go.disabled=false}};
+ box.classList.remove('hide')}
+$('stNew').onclick=e=>{if(e.target===$('stNew'))closeNew()};
+
+/* ---------- профиль: чужой и свой ---------- */
+const vSt=H('button',{type:'button',id:'vSt',className:'hide'});$('vSecs').before(vSt);
+const _sp2=showProfile;
+showProfile=function(){_sp2();if(!peer||peer.room||peer.cloud){vSt.classList.add('hide');return}
+ const l=profStories(peer.id);vSt.classList.toggle('hide',!l.length);vSt.textContent='📖 '+t('st_stories')+' ('+l.length+')';
+ vSt.onclick=()=>{$('pview').classList.add('hide');openStories(l,0)}};
+$('hav').onclick=$('hnm').onclick=showProfile;
+const pvSt=H('button',{type:'button',id:'pvSt',className:'hide'});$('pvMusic').after(pvSt);
+const _bp=BLD.profile;BLD.profile=()=>{_bp();const l=profStories(me.id);pvSt.classList.toggle('hide',!l.length);pvSt.textContent='📖 '+t('st_myst')+' ('+l.length+')';
+ pvSt.onclick=()=>{$('modal').classList.add('hide');openStories(l,0)}};
+})();
+</script>
 </body>
 </html>
