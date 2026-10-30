@@ -1246,9 +1246,9 @@ async function pickMusic(){const seen=new Set(),rows=[];
   rows.push({label:nm||'—',sub:chatNameOf(m),url:m.file_url+(m.cover_url?'#cover='+encodeURIComponent(m.cover_url):''),name:nm,preview:m.file_url})});
  const r=await pickOne(t('musicpick_t'),rows);if(!r)return;
  const{error}=await sb.from('profiles').update({music_url:r.url,music_name:r.name}).eq('id',me.id);if(error){$('pErr').textContent=error.message;return}await loadMe()}
+$('pMusicPick').onclick=pickMusic;
 applyAll();
 </script>
-
 <!-- ===== АЛЬБОМЫ: несколько фото/видео (до 9) в одном сообщении + подпись текстом ===== -->
 <script>
 (()=>{
