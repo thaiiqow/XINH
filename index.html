@@ -1454,6 +1454,7 @@ const meU=()=>({id:me.id,display_name:(prof&&prof.display_name)||me.email||'?',a
 const who=id=>id===me.id?meU():(users.find(x=>x.id===id)||{display_name:'…'});
 const byTime=(a,b)=>a.created_at<b.created_at?-1:1;
 const profStories=uid=>stories.filter(s=>s.user_id===uid&&(s.in_profile||(uid===me.id&&active(s)))).sort(byTime);
+window.XS={open:(l,i)=>openStories(l,i),prof:profStories};
 
 /* ---------- кнопка рядом с поиском и лента ---------- */
 const bS=H('button',{type:'button',id:'bStory',className:'solid',textContent:'📷',title:'+'});
@@ -1817,6 +1818,72 @@ sb.storage.from=b=>{const o=_stf(b);if(b!=='xinh')return o;const up=o.upload.bin
   if(track){upN++;tick()}
   try{return await up(p,...r)}finally{if(track){upN--;tick()}}};
  return o};
+})();
+</script>
+<style>
+/* окно истории: карточка с закруглёнными углами, на телефоне почти во весь экран */
+#stv{inset:auto;left:50%;top:50%;transform:translate(-50%,-50%);padding:0;overflow:hidden;border-radius:30px;background:#000;
+ width:min(420px,calc(100vw - 16px));
+ height:min(calc(100vh - 16px),780px);
+ height:min(calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)),780px);
+ box-shadow:0 0 0 100vmax rgba(0,0,0,.78),0 20px 60px rgba(0,0,0,.6)}
+@media(min-width:701px){#stv{width:min(380px,calc(100vw - 32px));height:min(86vh,680px)}}
+
+/* медиа на всю карточку, всё остальное поверх него */
+#stv .stm{position:absolute;inset:0;z-index:auto;background:#000;display:grid;place-items:center}
+#stv .stm>img,#stv .stm>video{width:100%;height:100%;max-width:none;max-height:none;object-fit:contain}
+#stv .stz{z-index:2}
+#stv .sto{z-index:5}
+#stv::before,#stv::after{content:"";position:absolute;left:0;right:0;z-index:3;pointer-events:none}
+#stv::before{top:0;height:130px;background:linear-gradient(rgba(0,0,0,.55),transparent)}
+#stv::after{bottom:0;height:230px;background:linear-gradient(transparent,rgba(0,0,0,.65))}
+#stv .stbars,#stv .sth,#stv .stc,#stv .sta{position:relative;z-index:4}
+#stv .stbars{padding:12px 14px 0}
+#stv .sth{padding:10px 14px}
+#stv .stc{margin-top:auto;padding:8px 18px 4px;max-height:28%;pointer-events:none;text-shadow:0 1px 6px #000}
+#stv .sta{margin-top:auto;padding:8px 12px 14px}
+#stv .stc~.sta{margin-top:0}
+
+/* сетка историй в профиле */
+#vSt,#pvSt{display:none!important}
+.stw{display:flex;flex-direction:column;gap:6px}
+.stg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.stt{position:relative;aspect-ratio:3/4;padding:0;overflow:hidden;border-radius:14px;
+ -webkit-backdrop-filter:none;backdrop-filter:none;background:var(--gl)}
+.stt img,.stt video{width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;display:block;pointer-events:none}
+.stt i{position:absolute;left:6px;bottom:4px;font-size:11px;font-style:normal;color:#fff;text-shadow:0 0 4px #000,0 0 8px #000}
+</style>
+<script>
+(()=>{
+const DMY=x=>{const d=new Date(x);return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')};
+function grid(l,close){const g=H('div',{className:'stg'});
+ l.map((s,i)=>[s,i]).reverse().forEach(([s,i])=>{
+  const e=s.kind==='video'?H('video',{src:s.file_url+'#t=0.1',preload:'metadata',muted:true,playsInline:true}):H('img',{src:s.file_url,alt:'',loading:'lazy'});
+  g.append(H('button',{type:'button',className:'stt',onclick:()=>{close();window.XS.open(l,i)}},e,H('i',{textContent:(s.kind==='video'?'▶ ':'')+DMY(s.created_at)})))});
+ return g}
+
+/* чужой профиль */
+const vG=H('div',{id:'vStG',className:'hide stw'});$('vSecs').before(vG);
+const _sp3=showProfile;
+showProfile=function(){_sp3();vG.textContent='';vG.classList.add('hide');
+ if(!peer||peer.room||peer.cloud||!window.XS)return;
+ const l=window.XS.prof(peer.id);if(!l.length)return;
+ vG.append(H('div',{className:'lbl',textContent:'📖 '+t('st_stories')+' ('+l.length+')'}),grid(l,()=>$('pview').classList.add('hide')));
+ vG.classList.remove('hide')};
+$('hav').onclick=$('hnm').onclick=showProfile;
+
+/* свой профиль */
+const pG=H('div',{id:'pvStG',className:'hide stw'});$('pvMusic').after(pG);
+const _bp3=BLD.profile;
+BLD.profile=()=>{_bp3();pG.textContent='';pG.classList.add('hide');
+ if(!me||!window.XS)return;
+ const l=window.XS.prof(me.id);if(!l.length)return;
+ pG.append(H('div',{className:'lbl',textContent:'📖 '+t('st_myst')+' ('+l.length+')'}),grid(l,()=>$('modal').classList.add('hide')));
+ pG.classList.remove('hide')};
+
+/* клик вне карточки закрывает историю */
+document.addEventListener('click',e=>{const v=$('stv');
+ if(v&&!v.classList.contains('hide')&&!v.contains(e.target)){e.preventDefault();e.stopPropagation();const x=v.querySelector('.sth .x');if(x)x.click()}},true);
 })();
 </script>
 </body>
