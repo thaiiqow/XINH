@@ -2311,5 +2311,92 @@ showProfile=function(){_sp7();const ok=peer&&!peer.cloud&&!peer.preview;mb.class
 $('hav').onclick=$('hnm').onclick=showProfile;
 })();
 </script>
+<style>
+#wpm{position:fixed;inset:0;z-index:70;background:var(--shade);display:flex;align-items:center;justify-content:center;padding:20px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#wpm input[type=range]{padding:0;border:0;background:none;box-shadow:none;accent-color:var(--ac)}
+#main{background-repeat:no-repeat;background-position:center;background-size:cover}
+</style>
+<script>
+(()=>{
+const R={
+ru:{wp_t:'Обои чатов',wp_set:'Выбрать обои',wp_rm:'Убрать общие обои',wp_chat:'Обои этого чата',wp_rm_chat:'Убрать обои чата (будут общие)',wp_zoom:'Масштаб',wp_dim:'Затемнение',wp_err:'Не удалось открыть картинку.',wp_title:'Кадрирование обоев',wp_hint:'Перетащите картинку, чтобы выбрать видимую область.'},
+en:{wp_t:'Chat wallpapers',wp_set:'Choose wallpaper',wp_rm:'Remove default wallpaper',wp_chat:'This chat wallpaper',wp_rm_chat:'Remove chat wallpaper (default will apply)',wp_zoom:'Zoom',wp_dim:'Dimming',wp_err:'Could not open the image.',wp_title:'Crop wallpaper',wp_hint:'Drag the image to choose the visible area.'}};
+Object.assign(I18.ru,R.ru);Object.assign(I18.en,R.en);Object.assign(I18.xx,R.ru);
+
+/* ---------- хранилище (IndexedDB) ---------- */
+const idb=new Promise(r=>{try{const q=indexedDB.open('xinh_wp',1);q.onupgradeneeded=()=>q.result.createObjectStore('w');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch(e){r(null)}});
+const wget=async k=>{const d=await idb;if(!d)return null;return new Promise(r=>{try{const q=d.transaction('w').objectStore('w').get(k);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)}catch(e){r(null)}})};
+const wset=async(k,v)=>{const d=await idb;if(!d)return;return new Promise(r=>{try{const tx=d.transaction('w','readwrite'),s=tx.objectStore('w');v?s.put(v,k):s.delete(k);tx.oncomplete=()=>r();tx.onerror=()=>r()}catch(e){r()}})};
+const key=sc=>sc==='g'?'g:'+me.id:'c:'+me.id+':'+peer.id;
+
+/* ---------- применение ---------- */
+let tok=0;
+async function applyWall(){const my=++tok,m=$('main');
+ if(!me){m.style.backgroundImage='';return}
+ let w=peer?await wget('c:'+me.id+':'+peer.id):null;
+ if(!w)w=await wget('g:'+me.id);
+ if(my!==tok)return;
+ if(!w){m.style.backgroundImage='';return}
+ const d=w.dim||0;
+ m.style.backgroundImage='linear-gradient(rgba(0,0,0,'+d+'),rgba(0,0,0,'+d+')),url("'+w.d+'")';
+ m.style.backgroundSize='cover';m.style.backgroundPosition='center';m.style.backgroundRepeat='no-repeat'}
+
+/* ---------- кадрирование ---------- */
+function cropWall(file){return new Promise(res=>{
+ const url=URL.createObjectURL(file),img=new Image();
+ img.onerror=()=>{URL.revokeObjectURL(url);alert(t('wp_err'));res(null)};
+ img.onload=()=>{
+  const ar=innerWidth/innerHeight;let ch=Math.round(Math.min(innerHeight*.5,380)),cw=Math.round(ch*ar);
+  if(cw>320){cw=320;ch=Math.round(cw/ar)}
+  const cv=H('canvas',{width:cw,height:ch}),g=cv.getContext('2d');
+  cv.style.cssText='align-self:center;border-radius:18px;touch-action:none;cursor:grab;max-width:100%;border:1px solid var(--gb)';
+  let zoom=1,dim=.25,x=0,y=0,drag=null;
+  const base=()=>Math.max(cw/img.width,ch/img.height),s=()=>base()*zoom;
+  const clamp=()=>{x=Math.min(0,Math.max(cw-img.width*s(),x));y=Math.min(0,Math.max(ch-img.height*s(),y))};
+  const draw=()=>{g.clearRect(0,0,cw,ch);g.drawImage(img,x,y,img.width*s(),img.height*s());g.fillStyle='rgba(0,0,0,'+dim+')';g.fillRect(0,0,cw,ch)};
+  x=(cw-img.width*s())/2;y=(ch-img.height*s())/2;clamp();draw();
+  cv.onpointerdown=e=>{drag={px:e.clientX,py:e.clientY,x,y};cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing'};
+  cv.onpointermove=e=>{if(!drag)return;const k=cw/cv.getBoundingClientRect().width;x=drag.x+(e.clientX-drag.px)*k;y=drag.y+(e.clientY-drag.py)*k;clamp();draw()};
+  cv.onpointerup=cv.onpointercancel=()=>{drag=null;cv.style.cursor='grab'};
+  const zr=H('input',{type:'range',min:1,max:4,step:.01,value:1}),dr=H('input',{type:'range',min:0,max:.7,step:.01,value:dim});
+  zr.oninput=()=>{const o=s(),cx=(cw/2-x)/o,cy=(ch/2-y)/o;zoom=+zr.value;x=cw/2-cx*s();y=ch/2-cy*s();clamp();draw()};
+  dr.oninput=()=>{dim=+dr.value;draw()};
+  const ov=H('div',{id:'wpm'});
+  const done=v=>{URL.revokeObjectURL(url);ov.remove();res(v)};
+  const ok=H('button',{type:'button',className:'solid',textContent:t('save'),onclick:()=>{
+   const ow=Math.min(900,Math.max(cw,Math.min(img.width,900))),k=ow/cw,oc=H('canvas',{width:ow,height:Math.round(ch*k)});
+   oc.getContext('2d').drawImage(img,x*k,y*k,img.width*s()*k,img.height*s()*k);
+   done({d:oc.toDataURL('image/jpeg',.85),dim})}});
+  ov.onclick=e=>{if(e.target===ov)done(null)};
+  ov.append(H('div',{className:'card'},H('h2',{textContent:t('wp_title')}),cv,H('div',{className:'lbl',textContent:t('wp_hint')}),
+   H('div',{className:'lbl',textContent:t('wp_zoom')}),zr,H('div',{className:'lbl',textContent:t('wp_dim')}),dr,ok,H('button',{type:'button',textContent:t('cancel'),onclick:()=>done(null)})));
+  document.body.append(ov)};
+ img.src=url})}
+
+function pickWall(sc){const inp=H('input',{type:'file',accept:'image/*'});
+ inp.onchange=async()=>{const f=inp.files[0];if(!f)return;const r=await cropWall(f);if(!r)return;
+  await wset(key(sc),r);await applyWall();toast(null,t('saved'))};inp.click()}
+
+/* ---------- Настройки → Локализация: общие обои ---------- */
+const lab=H('div',{className:'lbl sec',textContent:t('wp_t')});lab.dataset.i='wp_t';
+const b1=H('button',{type:'button',textContent:t('wp_set'),onclick:()=>pickWall('g')});b1.dataset.i='wp_set';
+const b2=H('button',{type:'button',textContent:t('wp_rm'),onclick:async()=>{await wset(key('g'),null);applyWall()}});b2.dataset.i='wp_rm';
+$('pg-loc').append(lab,b1,b2);
+
+/* ---------- профиль чата: индивидуальные обои ---------- */
+const pb=H('button',{type:'button',className:'hide'});$('vSecs').before(pb);
+const _sp8=showProfile;
+showProfile=function(){_sp8();const ok=!!peer&&!peer.preview;pb.classList.toggle('hide',!ok);
+ if(ok){pb.textContent='🖼 '+t('wp_chat');
+  pb.onclick=()=>choice(t('wp_chat'),[[t('wp_set'),()=>pickWall('c')],[t('wp_rm_chat'),async()=>{await wset(key('c'),null);applyWall()}]])}};
+$('hav').onclick=$('hnm').onclick=showProfile;
+
+/* ---------- когда применять ---------- */
+const _ocw=openChat;openChat=async function(u){await _ocw(u);applyWall()};
+$('back').addEventListener('click',applyWall);
+const _bw=boot;boot=async function(u){await _bw(u);applyWall()};
+if(me)applyWall();
+})();
+</script>
 </body>
 </html>
