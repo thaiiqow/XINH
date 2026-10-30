@@ -233,6 +233,52 @@ button.link{background:none;border:0;box-shadow:none;-webkit-backdrop-filter:non
 </style>
 </head>
 <body>
+  <style>
+#errs{position:fixed;top:calc(10px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:8px;width:calc(100% - 24px);max-width:420px;pointer-events:none}
+.errc{pointer-events:auto;border-radius:22px;padding:12px 14px;color:var(--tx,#f2f2f2);background:var(--gl,rgba(28,28,32,.92));-webkit-backdrop-filter:var(--blur,blur(20px));backdrop-filter:var(--blur,blur(20px));border:1px solid rgba(255,69,58,.8);box-shadow:var(--gs,0 10px 30px rgba(0,0,0,.5)),0 0 24px rgba(255,69,58,.35);animation:errin .3s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes errin{from{opacity:0;transform:translateY(-14px) scale(.95)}}
+.errc .eh{display:flex;gap:10px;align-items:flex-start}
+.errc .ei{font-size:20px;line-height:1.2}
+.errc .et{flex:1;min-width:0}
+.errc .et b{display:block;font-size:14px}
+.errc .et span{display:block;font-size:13px;opacity:.8;overflow-wrap:anywhere}
+.errc .ed{display:none;margin-top:8px;max-height:30vh;overflow:auto;font:11px/1.4 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;opacity:.75;overflow-wrap:anywhere}
+.errc.open .ed{display:block}
+.errc .ea{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.errc .ea button{padding:5px 12px;font-size:12px;border-radius:999px;cursor:pointer;color:inherit;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25)}
+.errc .ea .ex{margin-left:auto}
+</style>
+<script>
+(()=>{
+let lang='ru';try{lang=JSON.parse(localStorage.getItem('xinh')||'{}').lang||'ru'}catch(e){}
+const T=lang==='ru'?{t:'Ошибка в приложении',d:'Подробнее',c:'Копировать',ok:'Скопировано'}:{t:'App error',d:'Details',c:'Copy',ok:'Copied'};
+const SKIP=/ResizeObserver loop|^Script error\.?$|AbortError|NotAllowedError|play\(\) request|Failed to fetch dynamically/i;
+const seen={};
+function host(){let h=document.getElementById('errs');if(!h){h=document.createElement('div');h.id='errs';(document.body||document.documentElement).append(h)}return h}
+function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function show(msg,detail){
+ msg=String(msg||'Unknown error').slice(0,300);detail=String(detail||'').slice(0,3000);
+ if(SKIP.test(msg))return;
+ const now=Date.now();if(seen[msg]&&now-seen[msg]<5000)return;seen[msg]=now;
+ const h=host();while(h.children.length>=3)h.firstChild.remove();
+ const c=el('div','errc'),eh=el('div','eh'),et=el('div','et');
+ et.append(el('b','',T.t),el('span','',msg));
+ eh.append(el('div','ei','⚠️'),et);
+ const ed=el('div','ed',detail||msg),ea=el('div','ea');
+ let timer=setTimeout(()=>c.remove(),9000);
+ const bd=el('button','',T.d),bc=el('button','',T.c),bx=el('button','ex','✕');
+ bd.onclick=()=>{c.classList.toggle('open');clearTimeout(timer)};
+ bc.onclick=async()=>{try{await navigator.clipboard.writeText(msg+'\n'+detail);bc.textContent=T.ok}catch(e){}setTimeout(()=>bc.textContent=T.c,1500)};
+ bx.onclick=()=>{clearTimeout(timer);c.remove()};
+ ea.append(bd,bc,bx);c.append(eh,ed,ea);h.append(c)}
+window.addEventListener('error',e=>{
+ if(e.target&&e.target!==window)return;
+ show(e.message,(e.filename||'')+':'+(e.lineno||0)+':'+(e.colno||0)+'\n'+((e.error&&e.error.stack)||''))});
+window.addEventListener('unhandledrejection',e=>{
+ const r=e.reason;show((r&&r.message)||String(r),(r&&r.stack)||'')});
+window.xinhError=show; /* вручную: xinhError('текст','детали') */
+})();
+</script>
 
 <button id="gear" class="hide" aria-label="Settings">⚙</button>
 
