@@ -2239,5 +2239,77 @@ const b=document.createElement('button');b.type='button';b.textContent='🔔 Pus
 document.getElementById('pg-notif').append(b);
 })();
 </script>
+<script>
+(()=>{
+const R={
+ru:{mem:'Воспоминания',mem_chat:'Воспоминания чата',mem_msgs:'сообщений',mem_days:'дней',mem_voice:'голосовых',mem_media:'Фото и видео',mem_best:'Лучший момент',mem_day:'Самый живой день',mem_top:'Больше всего общались',mem_rx:'Любимые реакции',mem_music:'Музыка месяца',mem_empty:'В этом месяце пока нечего вспомнить.'},
+en:{mem:'Memories',mem_chat:'Chat memories',mem_msgs:'messages',mem_days:'days',mem_voice:'voice',mem_media:'Photos & videos',mem_best:'Best moment',mem_day:'Busiest day',mem_top:'Most chatted with',mem_rx:'Favorite reactions',mem_music:'Music of the month',mem_empty:'Nothing to remember this month yet.'}};
+Object.assign(I18.ru,R.ru);Object.assign(I18.en,R.en);Object.assign(I18.xx,R.ru);
+
+const prot=m=>m.room_id&&(rooms.find(r=>r.rid===m.room_id)||{}).protect;
+const alb=m=>{try{const a=JSON.parse(m.file_name);if(Array.isArray(a)&&a[0].u)return a}catch(e){}return[{u:m.file_url,k:m.kind}]};
+
+function build(y,mo,f){
+ const l=msgs.filter(x=>{const d=new Date(x.created_at);return d.getFullYear()===y&&d.getMonth()===mo&&!x.comment_of&&!hid.has(x.id)&&alive(x)&&(!f||(f.room?x.room_id===f.rid:(!x.room_id&&inDm(x,f.id))))});
+ const days={},chats={},emo={},media=[],music=[];let voice=0,best=null,bn=0;
+ l.forEach(x=>{
+  const dk=new Date(x.created_at).toDateString();days[dk]=(days[dk]||0)+1;
+  const ck=x.room_id?'r'+x.room_id:(x.sender_id===me.id?x.recipient_id:x.sender_id);chats[ck]=(chats[ck]||0)+1;
+  const p=prot(x);
+  if(!p&&(x.kind==='image'||x.kind==='video')&&x.file_url)media.push(...alb(x));
+  if(x.kind==='voice')voice++;
+  if(!p&&x.kind==='audio'&&x.file_url)music.push(x);
+  const r=rx[x.id]||[];r.forEach(y=>emo[y.emoji]=(emo[y.emoji]||0)+1);
+  if(!p&&r.length>bn){bn=r.length;best=x}});
+ return{l,days,chats,emo,media,music,voice,best}}
+
+function openMem(f){
+ const now=new Date();let y=now.getFullYear(),mo=now.getMonth();const b=$('cmBody');
+ const sec=k=>H('div',{className:'lbl sec',textContent:t(k)});
+ const stat=(n,l)=>H('div',{className:'srow',style:'flex-direction:column;align-items:center;gap:0;flex:1;padding:10px 4px'},H('b',{textContent:n,style:'font-size:22px'}),H('span',{className:'lbl',textContent:l}));
+ const draw=()=>{b.textContent='';$('cmT').textContent='✨ '+t('mem')+(f?' · '+dn(f):'');
+  const s=build(y,mo,f),lab=new Date(y,mo,1).toLocaleDateString(loc(),{month:'long',year:'numeric'});
+  b.append(H('div',{className:'srow',style:'justify-content:space-between'},
+   H('button',{type:'button',className:'x',textContent:'‹',onclick:()=>{mo--;if(mo<0){mo=11;y--}draw()}}),
+   H('b',{textContent:lab}),
+   H('button',{type:'button',className:'x',textContent:'›',onclick:()=>{mo++;if(mo>11){mo=0;y++}draw()}})));
+  if(!s.l.length){b.append(H('div',{className:'lbl',textContent:t('mem_empty')}));return}
+  b.append(H('div',{style:'display:flex;gap:8px'},stat(s.l.length,t('mem_msgs')),stat(Object.keys(s.days).length,t('mem_days')),stat(s.voice,t('mem_voice'))));
+  /* коллаж */
+  if(s.media.length){const step=Math.max(1,Math.floor(s.media.length/9)),pk=s.media.filter((_,i)=>i%step===0).slice(0,9),g=H('div',{className:'egrid mg'});
+   pk.forEach(x=>g.append(H('a',{className:'mg1',href:x.u,target:'_blank',rel:'noopener'},
+    x.k==='video'?H('video',{src:x.u+'#t=0.1',preload:'metadata',muted:true}):H('img',{src:x.u,alt:'',loading:'lazy'}))));
+   b.append(sec('mem_media'),g)}
+  /* лучший момент */
+  if(s.best){const bm=s.best,txt=(bm.kind&&bm.kind!=='text')?'📎 '+(bm.body||''):(bm.body||'').slice(0,160);
+   b.append(sec('mem_best'),H('div',{className:'srow'},H('span',{style:'flex:1;min-width:0',textContent:txt}),H('span',{textContent:(rx[bm.id]||[]).map(z=>z.emoji).join('')})))}
+  /* самый живой день */
+  const bd=Object.entries(s.days).sort((a,c)=>c[1]-a[1])[0];
+  b.append(sec('mem_day'),H('div',{className:'srow'},H('span',{textContent:'📅 '+new Date(bd[0]).toLocaleDateString(loc(),{day:'numeric',month:'long'})+' · '+bd[1]+' '+t('mem_msgs')})));
+  /* с кем больше всего */
+  if(!f){const tp=Object.entries(s.chats).sort((a,c)=>c[1]-a[1])[0],u=[CL(),...rooms,...users].find(x=>x.id===tp[0]);
+   if(u){const av=H('div',{className:'av'});setAv(av,u);b.append(sec('mem_top'),H('div',{className:'srow'},av,H('span',{textContent:dn(u)+' · '+tp[1]})))}}
+  /* реакции */
+  const em=Object.entries(s.emo).sort((a,c)=>c[1]-a[1]).slice(0,5);
+  if(em.length)b.append(sec('mem_rx'),H('div',{className:'srow'},H('span',{style:'font-size:20px',textContent:em.map(([e,n])=>e+'×'+n).join('  ')})));
+  /* музыка */
+  if(s.music.length){b.append(sec('mem_music'));s.music.slice(-5).forEach(m=>b.append(player(m)))}
+ };
+ $('cmX').onclick=()=>$('cm').classList.add('hide');
+ draw();$('cm').classList.remove('hide')}
+
+/* вход 1: настройки */
+const _h=BLD.hub;
+BLD.hub=()=>{_h();$('pg-hub').append(H('button',{type:'button',className:'srow',onclick:()=>{$('modal').classList.add('hide');openMem(null)}},
+ H('span',{textContent:'✨'}),H('span',{textContent:t('mem')}),H('span',{className:'chev',textContent:'›'})))};
+
+/* вход 2: профиль чата */
+const mb=H('button',{type:'button',className:'hide'});$('vSecs').before(mb);
+const _sp7=showProfile;
+showProfile=function(){_sp7();const ok=peer&&!peer.cloud&&!peer.preview;mb.classList.toggle('hide',!ok);
+ if(ok){mb.textContent='✨ '+t('mem_chat');mb.onclick=()=>openMem(peer)}};
+$('hav').onclick=$('hnm').onclick=showProfile;
+})();
+</script>
 </body>
 </html>
