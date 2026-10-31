@@ -3428,5 +3428,72 @@ const prev=$('attach').onclick;
 $('attach').onclick=function(e){if(peer&&(peer.bot||peer.ubot))return prev&&prev.call(this,e);open()};
 })();
 </script>
+<!-- ===== МИНИ-ПЛЕЕР ПОД ШАПКОЙ ЧАТА ===== -->
+<style>
+#mbar{position:relative;display:flex;align-items:center;gap:10px;margin:8px 12px 0;padding:8px 10px 11px 8px;border-radius:26px;overflow:hidden;
+ background:var(--gl);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--gb);box-shadow:var(--gs)}
+#mbar .mc{width:46px;height:46px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:20px;border:1px solid var(--ac);
+ background:radial-gradient(circle at 35% 30%,var(--ac),#000 78%) center/cover;box-shadow:0 0 12px var(--tn)}
+#mbar .mt{flex:1;min-width:0}
+#mbar .mt b,#mbar .mt small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mbar .mt b{font-size:15px}
+#mbar .mt small{color:var(--mt);font-size:12px}
+#mbar button{width:36px;height:36px;padding:0;border-radius:50%;flex:none;display:grid;place-items:center;font-size:18px;line-height:1}
+#mbar button.pp{width:42px;height:42px;font-size:16px}
+#mbar button:disabled{opacity:.35;pointer-events:none}
+#mbar .mp2{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--gb)}
+#mbar .mp2 i{display:block;height:100%;width:0;background:var(--ac);box-shadow:var(--glow);transition:width .25s linear}
+</style>
+<script>
+(()=>{
+/* отслеживаем все Audio, которые создаёт приложение */
+const NA=window.Audio;let act=null;const lastIdx={};
+const hook=a=>['play','pause','ended','timeupdate','loadedmetadata'].forEach(ev=>a.addEventListener(ev,()=>{
+ if(ev==='play')act=a;if(ev==='ended')setTimeout(()=>step(1),60);upd()}));
+function A(s){const a=s===undefined?new NA():new NA(s);hook(a);return a}
+A.prototype=NA.prototype;window.Audio=A;
+
+const bar=H('div',{id:'mbar',className:'hide'});
+const cov=H('div',{className:'mc'}),ti=H('b'),ar=H('small'),bi=H('i');
+const bPrev=H('button',{type:'button',textContent:'‹',onclick:()=>step(-1)}),
+ bPP=H('button',{type:'button',className:'pp solid',onclick:toggle}),
+ bNext=H('button',{type:'button',textContent:'›',onclick:()=>step(1)});
+bPrev.setAttribute('aria-label','Prev');bNext.setAttribute('aria-label','Next');
+bar.append(cov,H('div',{className:'mt'},ti,ar),bPrev,bPP,bNext,H('div',{className:'mp2'},bi));
+$('head').after(bar);
+
+const src=m=>new URL(String(m.file_url).split('#cover=')[0],location.href).href;
+function pl(){if(!me||!peer||peer.bot||peer.ubot||peer.preview)return[];
+ return msgs.filter(m=>m.kind==='audio'&&m.file_url&&!hid.has(m.id)&&alive(m)&&!VIDEO_RE.test(m.file_name||'')&&
+  (peer.room?(m.room_id===peer.rid&&!m.comment_of):(!m.room_id&&inDm(m,peer.id))))}
+function cur(l){let i=act?l.findIndex(m=>src(m)===act.src):-1;const hit=i>=0;
+ if(!hit)i=Math.min(lastIdx[peer.id]!=null?lastIdx[peer.id]:l.length-1,l.length-1);
+ lastIdx[peer.id]=i;return{i,hit}}
+function upd(){const l=pl();bar.classList.toggle('hide',!l.length);if(!l.length)return;
+ const{i,hit}=cur(l),m=l[i],base=(m.file_name||'').replace(/\.[^.]+$/,''),k=base.indexOf(' - ');
+ ti.textContent=(k>0?base.slice(k+3):base)||'—';ar.textContent=k>0?base.slice(0,k):'Unknown';
+ const p=String(m.file_url).split('#cover='),cv=m.cover_url||(p[1]?decodeURIComponent(p[1]):'');
+ cov.style.backgroundImage=cv?'url("'+cv.replace(/"/g,'%22')+'")':'';cov.textContent=cv?'':'🎵';
+ bPP.textContent=(hit&&!act.paused)?'❚❚':'▶';
+ bi.style.width=(hit&&act.duration?act.currentTime/act.duration*100:0)+'%';
+ bNext.disabled=i>=l.length-1}
+function toggle(){const l=pl();if(!l.length)return;const{i,hit}=cur(l);
+ if(hit){act.paused?act.play().catch(()=>{}):act.pause();return}
+ const b=player(l[i]).querySelector('.cov button');if(b)b.click()}
+function step(d){const l=pl();if(!l.length)return;const{i,hit}=cur(l);
+ if(!hit&&d>0&&event&&event.type==='ended')return;
+ const j=i+d;
+ if(j<0){if(hit)act.currentTime=0;return}
+ if(j>=l.length)return;
+ if(d>0&&!hit&&act===null&&false)return;
+ const b=player(l[j]).querySelector('.cov button');if(b)b.click()}
+
+/* обновляем при смене чата и новых сообщениях */
+const _rm=renderMsgs;
+renderMsgs=function(){const r=_rm.apply(this,arguments);try{upd()}catch(e){}return r};
+$('back').addEventListener('click',()=>setTimeout(upd,30));
+upd();
+})();
+</script>
 </body>
 </html>
