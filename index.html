@@ -759,7 +759,7 @@ function player(m){if(pc[m.id])return pc[m.id];
 
 /* ===== МЕНЮ СООБЩЕНИЙ, УЧАСТНИКИ ===== */
 let mem={},hid=new Set(),reply=null,lastPeer=null;
-const loc=()=>({ru:'ru',vi:'vi',zh:'zh-CN',be:'be'}[S.lang]||'en');
+const loc=()=>({ru:'ru',vi:'vi',zh:'zh-CN',be:'be', nr:'ru'}[S.lang]||'en');
 const tgt=p=>p.room?{sender_id:me.id,room_id:p.rid}:{sender_id:me.id,recipient_id:p.id};
 function showReply(){$('rbar').classList.toggle('hide',!reply);if(reply)$('rtxt').textContent='↩ '+(reply.body||'').slice(0,80)}
 function sent(){reply=null;showReply();autoSize()}
@@ -2982,7 +2982,7 @@ st_new:'Новая гісторыя',st_pick:'Абраць фота або ві�
 sub:'Падпісацца',join:'Уступіць',mute:'Выключыць гук',unmute:'Уключыць гук',unsub:'Адпісацца',leave:'Пакінуць групу',unsub_conf:'Адпісацца ад канала?',leave_conf:'Выйсці з групы?',owner_leave:'Уладальнік не можа выйсці. Выдаліце чат у наладах.',
 ri_edit:'Змяніць назву, апісанне, фота',ri_desc:'Апісанне',ri_rmav:'Прыбраць фота',room_nf:'Не знойдзена.',
 bd_tom:'Заўтра ў «{n}» дзень нараджэння!',bd_today:'Сёння дзень нараджэння ў «{n}».',st_typing:'друкуе…',st_voice:'запісвае голас…',st_choose:'выбірае медыя…',st_upload:'адпраўляе медыя…',
-mu_t:'Музыка',mu_title:'Назва',mu_artist:'Выканаўца (неабавязкова)',mu_cover:'Вокладка',mu_rm:'Прыбраць вокладку',mu_send:'Адправіць'},
+mu_t:'Музыка',mu_title:'Назва',mu_artist:'Выканаўца (неабавязкова)',mu_cover:'Вокладка',mu_rm:'Прыбраць вокладку',mu_send:'Адправіць',
  ...WD_RU
  /* пример: login_t:'...', today:'...', */
 };
