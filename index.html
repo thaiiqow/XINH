@@ -2824,6 +2824,97 @@ function botRow(){if(tab!=='chats'||!(cat==='all'||cat==='bots'))return;
 if(me){loadMeta()}else{const _b=boot;boot=async function(u){await _b(u);loadMeta()}}
 })();
 </script>
+<!-- ===== XINH Creator, ЧАСТЬ 3/3: чат с пользовательскими ботами. Вставьте прямо перед </body>, ПОСЛЕ блока XINH Creator ===== -->
+<script>
+(()=>{
+const bm={},ub={};let ch=null,tmp=0,st=null;
+const PID=id=>'bot:'+id;
+const lc=()=>['ru','be','vi','zh'].includes(S.lang)?S.lang:(S.lang==='xx'?'ru':'en');
+const UB=b=>({id:PID(b.id),ubot:true,rid:b.id,username:b.username,display_name:b.name,avatar_url:b.avatar_url,verified:!!b.verified,description:b.description,users:Number(b.users)||0});
+function usersTxt(n){const l=lc();n=n||0;
+ if(l==='ru'||l==='be'){const a=n%100,b=n%10,f=l==='ru'?['пользователь','пользователя','пользователей']:['карыстальнік','карыстальнікі','карыстальнікаў'];return n+' '+(a>10&&a<20?f[2]:b===1?f[0]:b>1&&b<5?f[1]:f[2])}
+ if(l==='vi')return n+' người dùng';if(l==='zh')return n+' 位用户';return n+(n===1?' user':' users')}
 
+/* ---------- загрузка и realtime ---------- */
+async function loadUB(){Object.keys(bm).forEach(k=>delete bm[k]);Object.keys(ub).forEach(k=>delete ub[k]);
+ const{data,error}=await sb.from('bot_messages').select('*').order('id',{ascending:false}).limit(300);if(error)return;
+ (data||[]).reverse().forEach(m=>(bm[m.bot_id]=bm[m.bot_id]||[]).push(m));
+ const ids=Object.keys(bm);
+ if(ids.length){const{data:bs}=await sb.rpc('bot_public_ids',{ids});(bs||[]).forEach(r=>{ub[r.id]=UB(r)})}
+ renderList()}
+async function loadChat(id){const{data,error}=await sb.from('bot_messages').select('*').eq('bot_id',id).order('id',{ascending:false}).limit(200);if(error)return;
+ const keep=(bm[id]||[]).filter(m=>m.tmp);bm[id]=[...data.reverse(),...keep];if(peer&&peer.rid===id)renderMsgs()}
+function subUB(){if(ch){sb.removeChannel(ch);ch=null}
+ ch=sb.channel('ub-'+me.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'bot_messages',filter:'user_id=eq.'+me.id},p=>{
+  const m=p.new,a=bm[m.bot_id]=bm[m.bot_id]||[];if(a.some(x=>x.id===m.id))return;a.push(m);
+  const id=PID(m.bot_id),here=peer&&peer.id===id;
+  if(m.from_bot&&!(here&&!document.hidden)){unread.add(id);if(S.n_dm!==false){fx();if(ub[m.bot_id])toast(ub[m.bot_id],m.body.slice(0,80))}}
+  renderList();if(here)renderMsgs()}).subscribe()}
+
+/* ---------- чат ---------- */
+const _rm=renderMsgs;
+renderMsgs=function(){if(!(peer&&peer.ubot))return _rm.apply(this,arguments);
+ const box=$('msgs'),l=bm[peer.rid]||[];box.textContent='';$('pin').classList.add('hide');
+ if(!l.length){box.append(H('div',{className:'empty',textContent:peer.description||t('nochat')}));return}
+ l.forEach(m=>{const d=H('div',{className:'m'+(m.from_bot?'':' me')});rich(d,m.body);
+  d.append(H('time',{textContent:new Date(m.created_at).toLocaleTimeString(loc(),{hour:'2-digit',minute:'2-digit'})}));box.append(d)});
+ box.scrollTop=box.scrollHeight};
+
+const _fs=$('form').onsubmit;
+$('form').onsubmit=async e=>{if(!(peer&&peer.ubot))return _fs.call($('form'),e);e.preventDefault();
+ const v=$('txt').value.trim();if(!v)return;$('txt').value='';autoSize();
+ const p=peer,a=bm[p.rid]=bm[p.rid]||[],tm={id:'t'+(++tmp),tmp:1,bot_id:p.rid,from_bot:false,body:v.slice(0,4000),created_at:new Date().toISOString()};
+ a.push(tm);ub[p.rid]=p;sent();renderList();renderMsgs();
+ const{data,error}=await sb.rpc('bot_send',{uname:p.username,txt:v});
+ if(error){const i=a.indexOf(tm);if(i>=0)a.splice(i,1);alert(t('notsent')+error.message);renderMsgs();return}
+ if(a.some(x=>x.id===data&&x!==tm)){const i=a.indexOf(tm);if(i>=0)a.splice(i,1)}else{tm.id=data;delete tm.tmp}
+ renderList();if(peer&&peer.id===p.id)renderMsgs()};
+
+const _oc=openChat;
+openChat=async function(u){const r=await _oc(u);
+ if(peer&&peer.id===u.id&&u.ubot){['attach','mic'].forEach(i=>$(i).classList.add('hide'));ub[u.rid]=u;renderMsgs();await loadChat(u.rid)}
+ return r};
+const _os=openStk;openStk=async function(){if(peer&&peer.ubot)return;return _os.apply(this,arguments)};
+
+/* ---------- шапка и профиль ---------- */
+const _sh=setHead;
+setHead=function(){_sh();if(!peer||!peer.ubot)return;
+ setAv($('hav'),peer);$('hnm').textContent=peer.display_name;if(peer.verified)$('hnm').append(vb());
+ $('hsb').style.color='';$('hsb').textContent=usersTxt(peer.users)};
+const _sp=showProfile;
+showProfile=function(){if(!peer||!peer.ubot)return _sp.apply(this,arguments);
+ const cd=$('pview').firstElementChild;
+ [...cd.children].forEach(e=>{if(e.classList.contains('prow')||e.id==='vClose')return;e.dataset.bh='1';e.style.display='none'});
+ setAv($('vAv'),peer);$('vName').textContent=peer.display_name;if(peer.verified)$('vName').append(vb());
+ $('vInfo').textContent=['@'+peer.username,usersTxt(peer.users),peer.description||''].filter(Boolean).join('\n');$('pview').classList.remove('hide')};
+$('hav').onclick=$('hnm').onclick=showProfile;
+
+/* ---------- строки в списке и поиск по @username ---------- */
+function row(u,sub){const av=H('div',{className:'av'});setAv(av,u);
+ const nm=H('div',{className:'nm',textContent:u.display_name});if(u.verified)nm.append(vb());nm.append(H('span',{className:'badge',textContent:'bot'}));
+ const d=H('div',{className:'u'+(peer&&peer.id===u.id?' on':''),onclick:()=>openChat(u)},av,H('div',{style:'min-width:0'},nm,H('div',{className:'sb',textContent:sub})));
+ if(unread.has(u.id))d.append(H('div',{className:'dot'}));return d}
+const _rl=renderList;
+renderList=function(){_rl();if(!me)return;try{rows()}catch(e){console.error(e)}};
+function rows(){if(tab!=='chats'||!(cat==='all'||cat==='bots'))return;
+ const q=$('search').value.toLowerCase().trim().replace(/^@/,''),box=$('list');
+ const l=Object.keys(bm).filter(id=>ub[id]&&bm[id].length&&(!q||(ub[id].display_name+' '+ub[id].username).toLowerCase().includes(q)))
+  .sort((a,b)=>bm[b][bm[b].length-1].created_at<bm[a][bm[a].length-1].created_at?-1:1);
+ if(!l.length)return;box.querySelectorAll('.empty').forEach(e=>e.remove());
+ const rs=l.map(id=>{const m=bm[id][bm[id].length-1];return row(ub[id],(m.from_bot?'':'→ ')+m.body.split('\n')[0])});
+ const cr=[...box.children].find(e=>e.classList.contains('u')&&/^XINH Creator/.test((e.querySelector('.nm')||{}).textContent||''));
+ cr?cr.after(...rs):box.prepend(...rs)}
+$('search').addEventListener('input',()=>{clearTimeout(st);
+ const q=$('search').value.trim().toLowerCase().replace(/^@/,'');
+ if(!/^[a-z][a-z0-9_]{2,31}$/.test(q)||!/bot$/.test(q)||q==='creator_bot')return;
+ st=setTimeout(async()=>{const{data}=await sb.rpc('bot_public',{uname:q}),r=data&&data[0];if(!r||bm[r.id])return;
+  $('list').querySelectorAll('.empty').forEach(e=>e.remove());
+  $('list').prepend(row(UB({...r,username:q}),'@'+q))},300)});
+
+/* ---------- запуск ---------- */
+async function start(){await loadUB();subUB()}
+if(me)start();else{const _b=boot;boot=async function(u){await _b(u);await start()}}
+})();
+</script>
 </body>
 </html>
