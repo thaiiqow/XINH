@@ -3018,5 +3018,140 @@ window.exportLang=dump;
 applyAll();
 })();
 </script>
+<!-- ===== РЕГИСТРАЦИЯ В НЕСКОЛЬКО ШАГОВ: вставьте в самый конец index.html, прямо перед </body> (после всех остальных блоков) ===== -->
+<style>
+#rg{z-index:15;position:fixed;inset:0}
+#rg .card{text-align:center}
+#rg .card h2{font-size:20px}
+#rg .lbl{text-align:left}
+#rg .card.rgc{align-items:center}
+.rgd{display:flex;gap:6px;justify-content:center}
+.rgd i{width:8px;height:8px;border-radius:50%;background:var(--gb)}
+.rgd i.on{background:var(--ac);box-shadow:var(--glow)}
+.rgsp{width:84px;height:84px;margin:18px auto;border-radius:50%;border:4px solid color-mix(in srgb,var(--ac) 22%,transparent);border-top-color:var(--ac);box-shadow:0 0 22px var(--tn);animation:rgspin 1s linear infinite}
+@keyframes rgspin{to{transform:rotate(360deg)}}
+.rgok{width:84px;height:84px;margin:18px auto;border-radius:50%;border:3px solid var(--ac);color:var(--act);font-size:44px;display:grid;place-items:center;box-shadow:0 0 28px var(--tn);animation:pop .5s cubic-bezier(.2,.9,.3,1.3)}
+</style>
+<script>
+(()=>{
+const RU={rg_next:'Далее',rg_back:'Назад',rg_prof_t:'Создайте профиль',rg_avatar:'Нажмите на круг, чтобы добавить фото',rg_set_t:'Настройте мессенджер под себя',
+ rg_opt:'(необязательно)',rg_gender:'Пол',rg_look:'Оформление',
+ rg_birth_d:'Мы просим указать дату рождения, чтобы Ваши контакты знали, когда вас поздравить.',
+ rg_reg_d:'Мы просим указать страну проживания, для того, чтобы знать какой контент Вам лучше предоставлять.',
+ rg_gen_d:'Мы просим указать пол для того, чтобы собеседник знал как к вам обращаться.',
+ rg_creating:'Создаем ваш профиль',rg_done:'Ваш аккаунт создан',rg_email_taken:'Эта почта уже зарегистрирована.'};
+const EN={rg_next:'Next',rg_back:'Back',rg_prof_t:'Create your profile',rg_avatar:'Tap the circle to add a photo',rg_set_t:'Set up the messenger your way',
+ rg_opt:'(optional)',rg_gender:'Gender',rg_look:'Appearance',
+ rg_birth_d:'We ask for your date of birth so your contacts know when to congratulate you.',
+ rg_reg_d:'We ask for your country of residence to know what content suits you best.',
+ rg_gen_d:'We ask for your gender so the person you chat with knows how to address you.',
+ rg_creating:'Creating your profile',rg_done:'Your account is created',rg_email_taken:'This email is already registered.'};
+Object.assign(I18.ru,RU);Object.assign(I18.en,EN);
+if(I18.xx)Object.assign(I18.xx,RU);if(I18.nr)Object.assign(I18.nr,RU);
+
+const R={step:1,email:'',pass:'',av:null,name:'',user:'',about:'',birth:'',region:'',gender:''};
+let hold=false,held=null;
+const root=H('div',{id:'rg',className:'auth hide'});document.body.append(root);
+
+/* шаг 1 — старая форма: только почта и пароли */
+['rgName'].forEach(i=>{$(i).removeAttribute('required');$(i).classList.add('hide')});
+$('rgUser').removeAttribute('required');$('rgUser').closest('.pfx').classList.add('hide');
+$('fReg').onsubmit=e=>{e.preventDefault();
+ const em=$('rgEmail').value.trim(),p=$('rgPass').value;
+ if(!em||p.length<6){$('rgErr').textContent=t('e_fill');return}
+ if(p!==$('rgPass2').value){$('rgErr').textContent=t('e_match');return}
+ $('rgErr').textContent='';R.email=em;R.pass=p;go(2)};
+
+function show(){showAuth('x');$('gear').classList.add('hide');root.classList.remove('hide')}
+function go(n){R.step=n;if(n===1){root.classList.add('hide');showAuth('reg');return}show();render()}
+
+const pData=()=>({name:R.name,user:R.user,about:R.about,birth:R.birth,region:R.region,gender:R.gender,avatar:R.av});
+function squash(f){return new Promise(res=>{const u=URL.createObjectURL(f),i=new Image();
+ i.onload=()=>{const s=Math.min(i.width,i.height),z=Math.min(400,s),c=document.createElement('canvas');c.width=c.height=z;
+  c.getContext('2d').drawImage(i,(i.width-s)/2,(i.height-s)/2,s,s,0,0,z,z);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.85))};
+ i.onerror=()=>{URL.revokeObjectURL(u);res(null)};i.src=u})}
+
+function render(){root.textContent='';
+ const c=H('div',{className:'card'},H('div',{className:'logo',textContent:'XINH'}),
+  H('div',{className:'rgd'},[2,3].map(n=>H('i',{className:n===R.step?'on':''}))));
+ c.append(...(R.step===2?step2():step3()));root.append(c)}
+
+function step2(){
+ const fi=H('input',{type:'file',accept:'image/*',className:'hide'});
+ fi.onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const d=await squash(f);if(d){R.av=d;render()}};
+ const avb=H('div',{className:'av avb',onclick:()=>fi.click()});
+ if(R.av)avb.append(H('img',{src:R.av,alt:''}));else avb.textContent='📷';
+ const nm=H('input',{value:R.name,maxLength:40,placeholder:t('name'),oninput:e=>{R.name=e.target.value}});
+ const us=H('input',{value:R.user,maxLength:20,placeholder:t('username'),autocomplete:'off',autocapitalize:'none'});
+ us.oninput=()=>{us.value=us.value.replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();R.user=us.value};
+ const ab=H('textarea',{className:'ta',rows:3,maxLength:200,placeholder:t('about_ph'),value:R.about,oninput:e=>{R.about=e.target.value}});
+ const err=H('div',{className:'err'});
+ const nx=H('button',{type:'button',className:'solid',textContent:t('rg_next')});
+ nx.onclick=async()=>{
+  if(!R.name.trim()){err.textContent=t('e_name');return}
+  if(!/^[a-z0-9_]{3,20}$/.test(R.user)){err.textContent=t('e_user');return}
+  nx.disabled=true;err.textContent='…';
+  try{const{data:free}=await sb.rpc('username_free',{u:R.user});if(free===false){err.textContent=t('e_taken');nx.disabled=false;return}}catch(e){}
+  R.name=R.name.trim();go(3)};
+ return[H('h2',{textContent:t('rg_prof_t')}),avb,fi,H('div',{className:'lbl',style:'text-align:center',textContent:t('rg_avatar')}),
+  nm,H('div',{className:'pfx'},H('span',{textContent:'@'}),us),ab,err,nx,
+  H('button',{type:'button',className:'link',textContent:t('rg_back'),onclick:()=>go(1)})]}
+
+function step3(){
+ const lb=(k,opt)=>H('div',{className:'lbl',textContent:t(k)+(opt?' '+t('rg_opt'):'')}),
+  ds=k=>H('div',{className:'lbl',style:'font-size:12px',textContent:t(k)});
+ const bd=H('input',{type:'date',value:R.birth,max:new Date().toISOString().slice(0,10),onchange:e=>{R.birth=e.target.value}});
+ const rg=H('select');[...$('pRegion').options].forEach(o=>rg.append(new Option(o.textContent,o.value)));rg.value=R.region;rg.onchange=()=>{R.region=rg.value};
+ const gd=SEL([['',t('g_none')],['m',t('g_m')],['f',t('g_f')],['o',t('g_o')]],R.gender,v=>{R.gender=v});
+ const th=H('div',{className:'seg2'},[['dark','dark'],['light','light']].map(([m,k])=>
+  H('button',{type:'button',className:m===S.mode?'on':'',style:'flex:1',textContent:t(k),onclick:()=>{S.mode=m;save();applyAll();render()}})));
+ const ac=H('div',{className:'seg',style:'justify-content:space-between;flex-wrap:nowrap'},Object.keys(ACC).map(k=>{
+  const b=H('button',{type:'button',className:'sw'+(k===S.accent?' on':''),onclick:()=>{S.accent=k;save();applyAll();render()}});
+  b.style.setProperty('--c',ACC[k]);b.setAttribute('aria-label',t(k));return b}));
+ const lg=SEL([...$('selLang').options].map(o=>[o.value,o.textContent]),S.lang,v=>{S.lang=v;save();applyAll();render()});
+ const done=H('button',{type:'button',className:'solid',textContent:t('signup'),onclick:create});
+ return[H('h2',{textContent:t('rg_set_t')}),
+  lb('birth',1),bd,ds('rg_birth_d'),
+  lb('region',1),rg,ds('rg_reg_d'),
+  lb('rg_gender',1),gd,ds('rg_gen_d'),
+  lb('rg_look'),th,ac,lb('lang'),lg,done,
+  H('button',{type:'button',className:'link',textContent:t('rg_back'),onclick:()=>go(2)})]}
+
+/* применение профиля после регистрации */
+async function applyProfile(uid,p){let av=null;
+ if(p.avatar){try{const blob=await(await fetch(p.avatar)).blob(),path=uid+'/avatar_'+Date.now()+'.jpg';
+  const{error}=await sb.storage.from('xinh').upload(path,blob,{contentType:'image/jpeg'});
+  if(!error)av=sb.storage.from('xinh').getPublicUrl(path).data.publicUrl}catch(e){}}
+ const u={display_name:p.name,username:p.user,gender:p.gender||null,birthdate:p.birth||null,region:p.region||null,about:(p.about||'').trim()||null};
+ if(av)u.avatar_url=av;await sb.from('profiles').update(u).eq('id',uid)}
+
+async function signup(){hold=true;
+ const{data,error}=await sb.auth.signUp({email:R.email,password:R.pass,options:{data:{display_name:R.name,username:R.user}}});
+ if(error){hold=false;return{err:error.message}}
+ if(data.user&&data.user.identities&&!data.user.identities.length){hold=false;return{err:t('rg_email_taken')}}
+ let s=data.session;
+ if(!s){const r=await sb.auth.signInWithPassword({email:R.email,password:R.pass});s=r.data&&r.data.session}
+ if(!s){hold=false;try{localStorage.setItem('xinh_regpend',JSON.stringify({email:R.email.toLowerCase(),p:pData()}))}catch(e){}return{confirm:true}}
+ await applyProfile(s.user.id,pData());held=s.user;return{ok:true}}
+
+async function create(){R.step=4;root.textContent='';
+ root.append(H('div',{className:'card rgc'},H('div',{className:'logo',textContent:'XINH'}),H('div',{className:'rgsp'}),H('h2',{textContent:t('rg_creating')})));
+ const wait=new Promise(r=>setTimeout(r,4000));let res;
+ try{res=await signup()}catch(e){hold=false;res={err:(e&&e.message)||'error'}}
+ await wait;
+ if(res.err){root.classList.add('hide');showAuth('reg');$('rgErr').textContent=res.err;return}
+ if(res.confirm){root.classList.add('hide');$('confTxt').textContent=t('conf_txt').replace('{e}',R.email);$('liEmail').value=R.email;showAuth('confirm');return}
+ root.textContent='';
+ root.append(H('div',{className:'card rgc'},H('div',{className:'logo',textContent:'XINH'}),H('div',{className:'rgok',textContent:'✓'}),H('h2',{textContent:t('rg_done')}),
+  H('button',{type:'button',className:'solid',textContent:t('signin'),style:'width:100%',onclick:()=>{hold=false;root.classList.add('hide');boot(held)}})))}
+
+/* пока идёт регистрация, не пускаем в приложение раньше времени */
+async function applyPending(u){let p=null;try{p=JSON.parse(localStorage.getItem('xinh_regpend')||'null')}catch(e){}
+ if(!p||!u||(u.email||'').toLowerCase()!==p.email)return;
+ try{localStorage.removeItem('xinh_regpend')}catch(e){}await applyProfile(u.id,p.p)}
+const _b=boot;
+boot=async function(u){if(hold){held=u;return}try{await applyPending(u)}catch(e){}return _b.apply(this,arguments)};
+})();
+</script>
 </body>
 </html>
