@@ -2574,5 +2574,256 @@ openChat=async function(u){const r=await _oc(u);if(me&&peer&&peer.id===u.id&&has
 renderList();
 })();
 </script>
+<!-- ===== XINH CREATOR (@creator_bot): вставьте этот блок в index.html прямо перед </body> (после блока свайпов) ===== -->
+<style>
+#botbar{display:flex;margin:8px 12px calc(10px + env(safe-area-inset-bottom))}
+#botbar button{flex:1;padding:14px;font-size:16px}
+.m.bm{max-width:min(440px,90%)}
+.bkb{display:flex;flex-direction:column;gap:6px;margin-top:8px;position:relative;z-index:1}
+.bkb .brow{display:flex;gap:6px;flex-wrap:wrap}
+.bkb .brow button{flex:1;min-width:0;padding:9px 12px;font-size:14px}
+</style>
+<script>
+(()=>{
+const BID='bot:creator_bot';
+const LN={ru:'Русский',en:'English',vi:'Tiếng Việt',zh:'中文',be:'Беларуская'};
+const LF={ru:'🇷🇺',en:'🇬🇧/🇺🇸',vi:'🇻🇳',zh:'🇨🇳',be:'🇧🇾'};
+
+/* ---------- ТЕКСТЫ БОТА (по языкам) ---------- */
+const B={
+ru:{start:'Начать',intro_h:'XINH Creator — Ваше рабочее пространство, здесь вы можете:',intro_1:'Создать своего уникального бота,',intro_2:'Настроить его как вам хочется,',intro_3:'Подать заявку на верификацию официальному пользователю.',
+ hello:'@{u}, что сегодня сотворим? ({l})',btn_new:'🤖 Новый бот',btn_edit:'✏️ Редактировать бота',btn_set:'⚙️ Настройки',btn_back:'← Назад',btn_cancel:'Отмена',btn_menu:'← В меню',set_t:'Настройки',btn_lang:'🌐 Язык',
+ new_name:'Отправьте название бота (например: Мой помощник).',new_user:'Теперь придумайте username. Он должен заканчиваться на «bot» и содержать только a–z, 0–9 и «_», например my_helper_bot.',
+ bad_user:'Неверный username. Нужно 3–32 символа: латиница, цифры, «_», начало с буквы и окончание на «bot».',taken:'Этот username уже занят. Придумайте другой.',new_lang:'На чём будем программировать бота?',
+ created:'Готово! Бот {n} (@{u}) создан. В «Редактировать бота» можно вставить свой код.',err:'Ошибка: {e}',no_bots:'У вас пока нет ботов.',pick_bot:'Выберите бота:',
+ card:'{n} (@{u})\nКод: {c}\nВерификация: {v}\n{d}',v_yes:'есть ✓',v_no:'нет',btn_name:'Название',btn_desc:'Описание',btn_ava:'Аватар',btn_code:'Вставить код',btn_show:'Показать код',btn_test:'▶️ Проверить',btn_verif:'✓ Верификация',btn_del:'🗑 Удалить',
+ ask_name:'Отправьте новое название.',ask_desc:'Отправьте описание бота.',ask_ava:'Нажмите 📎 и выберите картинку для аватара.',
+ ask_code:'Отправьте код бота одним сообщением. В JavaScript нужна функция onMessage(text, user), в Python — on_message(text, user). Она должна вернуть строку-ответ.',
+ saved:'Сохранено ✓',code_is:'Текущий код:',verif_ask:'Напишите, зачем боту нужна верификация (или отправьте «-»).',verif_ok:'Заявка отправлена ✓ Мы рассмотрим её.',verif_dup:'Заявка для этого бота уже подана.',verif_done:'Этот бот уже верифицирован ✓',
+ del_conf:'Удалить бота @{u}? Это нельзя отменить.',btn_yes:'Да, удалить',deleted:'Бот удалён.',test_on:'Режим проверки. Пишите сообщения — ответит код вашего бота.',btn_exit:'Выйти',
+ test_err:'Ошибка в коде: {e}',test_empty:'(пустой ответ)',e_file:'Сейчас файл не нужен.',e_img:'Нужна картинка.',hint:'Пользуйтесь кнопками ниже.',about_bot:'Рабочее пространство для создания и настройки ботов.'},
+en:{start:'Start',intro_h:'XINH Creator is your workspace. Here you can:',intro_1:'Create your own unique bot,',intro_2:'Customize it the way you like,',intro_3:'Apply for verification as an official user.',
+ pick_lang:'Select the language to use.',
+ hello:'@{u}, what shall we create today? ({l})',btn_new:'🤖 New bot',btn_edit:'✏️ Edit bot',btn_set:'⚙️ Settings',btn_back:'← Back',btn_cancel:'Cancel',btn_menu:'← Menu',set_t:'Settings',btn_lang:'🌐 Language',
+ new_name:'Send a name for the bot (for example: My Helper).',new_user:'Now choose a username. It must end with "bot" and contain only a-z, 0-9 and "_", for example my_helper_bot.',
+ bad_user:'Invalid username. Use 3-32 characters: Latin letters, digits, "_", starting with a letter and ending with "bot".',taken:'This username is taken. Try another one.',new_lang:'What will we program the bot in?',
+ created:'Done! Bot {n} (@{u}) is created. Use "Edit bot" to paste your code.',err:'Error: {e}',no_bots:'You have no bots yet.',pick_bot:'Choose a bot:',
+ card:'{n} (@{u})\nCode: {c}\nVerification: {v}\n{d}',v_yes:'yes ✓',v_no:'no',btn_name:'Name',btn_desc:'Description',btn_ava:'Avatar',btn_code:'Paste code',btn_show:'Show code',btn_test:'▶️ Test',btn_verif:'✓ Verification',btn_del:'🗑 Delete',
+ ask_name:'Send the new name.',ask_desc:'Send the bot description.',ask_ava:'Tap 📎 and choose a picture for the avatar.',
+ ask_code:'Send the bot code in one message. JavaScript needs a function onMessage(text, user), Python needs on_message(text, user). It must return a reply string.',
+ saved:'Saved ✓',code_is:'Current code:',verif_ask:'Tell us why the bot needs verification (or send "-").',verif_ok:'Request sent ✓ We will review it.',verif_dup:'A request for this bot was already submitted.',verif_done:'This bot is already verified ✓',
+ del_conf:'Delete bot @{u}? This cannot be undone.',btn_yes:'Yes, delete',deleted:'Bot deleted.',test_on:'Test mode. Send messages and your bot code will reply.',btn_exit:'Exit',
+ test_err:'Code error: {e}',test_empty:'(empty reply)',e_file:'No file is needed right now.',e_img:'A picture is required.',hint:'Please use the buttons below.',about_bot:'A workspace for creating and configuring bots.'},
+vi:{start:'Bắt đầu',intro_h:'XINH Creator là không gian làm việc của bạn. Tại đây bạn có thể:',intro_1:'Tạo bot độc đáo của riêng bạn,',intro_2:'Tùy chỉnh theo ý thích,',intro_3:'Gửi yêu cầu xác minh như người dùng chính thức.',
+ hello:'@{u}, hôm nay mình sẽ tạo gì nào? ({l})',btn_new:'🤖 Bot mới',btn_edit:'✏️ Sửa bot',btn_set:'⚙️ Cài đặt',btn_back:'← Quay lại',btn_cancel:'Hủy',btn_menu:'← Menu',set_t:'Cài đặt',btn_lang:'🌐 Ngôn ngữ',
+ new_name:'Gửi tên cho bot (ví dụ: Trợ lý của tôi).',new_user:'Bây giờ hãy chọn username. Phải kết thúc bằng "bot" và chỉ gồm a-z, 0-9 và "_", ví dụ my_helper_bot.',
+ bad_user:'Username không hợp lệ. Cần 3-32 ký tự: chữ Latin, số, "_", bắt đầu bằng chữ cái và kết thúc bằng "bot".',taken:'Username này đã được dùng. Hãy chọn cái khác.',new_lang:'Chúng ta sẽ lập trình bot bằng gì?',
+ created:'Xong! Bot {n} (@{u}) đã được tạo. Dùng "Sửa bot" để dán mã của bạn.',err:'Lỗi: {e}',no_bots:'Bạn chưa có bot nào.',pick_bot:'Chọn bot:',
+ card:'{n} (@{u})\nMã: {c}\nXác minh: {v}\n{d}',v_yes:'có ✓',v_no:'chưa',btn_name:'Tên',btn_desc:'Mô tả',btn_ava:'Ảnh đại diện',btn_code:'Dán mã',btn_show:'Xem mã',btn_test:'▶️ Chạy thử',btn_verif:'✓ Xác minh',btn_del:'🗑 Xóa',
+ ask_name:'Gửi tên mới.',ask_desc:'Gửi mô tả cho bot.',ask_ava:'Nhấn 📎 và chọn ảnh làm ảnh đại diện.',
+ ask_code:'Gửi mã của bot trong một tin nhắn. JavaScript cần hàm onMessage(text, user), Python cần on_message(text, user). Hàm phải trả về chuỗi trả lời.',
+ saved:'Đã lưu ✓',code_is:'Mã hiện tại:',verif_ask:'Hãy cho biết vì sao bot cần xác minh (hoặc gửi "-").',verif_ok:'Đã gửi yêu cầu ✓ Chúng tôi sẽ xem xét.',verif_dup:'Yêu cầu cho bot này đã được gửi.',verif_done:'Bot này đã được xác minh ✓',
+ del_conf:'Xóa bot @{u}? Không thể hoàn tác.',btn_yes:'Có, xóa',deleted:'Đã xóa bot.',test_on:'Chế độ thử. Hãy nhắn tin, mã bot của bạn sẽ trả lời.',btn_exit:'Thoát',
+ test_err:'Lỗi mã: {e}',test_empty:'(trả lời trống)',e_file:'Hiện chưa cần tệp.',e_img:'Cần một hình ảnh.',hint:'Hãy dùng các nút bên dưới.',about_bot:'Không gian để tạo và cấu hình bot.'},
+zh:{start:'开始',intro_h:'XINH Creator 是你的工作空间，在这里你可以：',intro_1:'创建属于你的独特机器人，',intro_2:'按你的想法进行设置，',intro_3:'申请成为官方认证用户。',
+ hello:'@{u}，今天我们创造点什么？（{l}）',btn_new:'🤖 新机器人',btn_edit:'✏️ 编辑机器人',btn_set:'⚙️ 设置',btn_back:'← 返回',btn_cancel:'取消',btn_menu:'← 菜单',set_t:'设置',btn_lang:'🌐 语言',
+ new_name:'请发送机器人的名称（例如：我的助手）。',new_user:'现在请取一个 username。必须以 “bot” 结尾，只能包含 a-z、0-9 和 “_”，例如 my_helper_bot。',
+ bad_user:'username 无效。需要 3-32 个字符：拉丁字母、数字、“_”，以字母开头并以 “bot” 结尾。',taken:'该 username 已被占用，请换一个。',new_lang:'我们用什么来编写机器人？',
+ created:'完成！机器人 {n}（@{u}）已创建。可在“编辑机器人”中粘贴你的代码。',err:'错误：{e}',no_bots:'你还没有机器人。',pick_bot:'选择机器人：',
+ card:'{n}（@{u}）\n代码：{c}\n认证：{v}\n{d}',v_yes:'已认证 ✓',v_no:'未认证',btn_name:'名称',btn_desc:'简介',btn_ava:'头像',btn_code:'粘贴代码',btn_show:'查看代码',btn_test:'▶️ 测试',btn_verif:'✓ 认证',btn_del:'🗑 删除',
+ ask_name:'请发送新名称。',ask_desc:'请发送机器人简介。',ask_ava:'点击 📎 并选择一张图片作为头像。',
+ ask_code:'请用一条消息发送机器人代码。JavaScript 需要函数 onMessage(text, user)，Python 需要 on_message(text, user)，并返回回复字符串。',
+ saved:'已保存 ✓',code_is:'当前代码：',verif_ask:'请说明机器人为什么需要认证（或发送 “-”）。',verif_ok:'申请已提交 ✓ 我们会尽快审核。',verif_dup:'该机器人已提交过申请。',verif_done:'该机器人已通过认证 ✓',
+ del_conf:'删除机器人 @{u}？此操作无法撤销。',btn_yes:'是，删除',deleted:'机器人已删除。',test_on:'测试模式。发送消息，你的机器人代码会回复。',btn_exit:'退出',
+ test_err:'代码错误：{e}',test_empty:'（空回复）',e_file:'现在不需要文件。',e_img:'需要一张图片。',hint:'请使用下方按钮。',about_bot:'用于创建和配置机器人的工作空间。'},
+be:{start:'Пачаць',intro_h:'XINH Creator — ваша працоўная прастора, тут вы можаце:',intro_1:'Стварыць свайго ўнікальнага бота,',intro_2:'Наладзіць яго так, як хочацца,',intro_3:'Падаць заяўку на верыфікацыю афіцыйнаму карыстальніку.',
+ hello:'@{u}, што сёння створым? ({l})',btn_new:'🤖 Новы бот',btn_edit:'✏️ Рэдагаваць бота',btn_set:'⚙️ Налады',btn_back:'← Назад',btn_cancel:'Адмена',btn_menu:'← У меню',set_t:'Налады',btn_lang:'🌐 Мова',
+ new_name:'Адпраўце назву бота (напрыклад: Мой памочнік).',new_user:'Цяпер прыдумайце username. Ён павінен заканчвацца на «bot» і змяшчаць толькі a–z, 0–9 і «_», напрыклад my_helper_bot.',
+ bad_user:'Няправільны username. Трэба 3–32 сімвалы: лацініца, лічбы, «_», пачатак з літары і заканчэнне на «bot».',taken:'Гэты username ужо занты. Прыдумайце іншы.',new_lang:'На чым будзем праграмаваць бота?',
+ created:'Гатова! Бот {n} (@{u}) створаны. У «Рэдагаваць бота» можна ўставіць свой код.',err:'Памылка: {e}',no_bots:'У вас пакуль няма ботаў.',pick_bot:'Абярыце бота:',
+ card:'{n} (@{u})\nКод: {c}\nВерыфікацыя: {v}\n{d}',v_yes:'ёсць ✓',v_no:'няма',btn_name:'Назва',btn_desc:'Апісанне',btn_ava:'Аватар',btn_code:'Уставіць код',btn_show:'Паказаць код',btn_test:'▶️ Праверыць',btn_verif:'✓ Верыфікацыя',btn_del:'🗑 Выдаліць',
+ ask_name:'Адпраўце новую назву.',ask_desc:'Адпраўце апісанне бота.',ask_ava:'Націсніце 📎 і абярыце відарыс для аватара.',
+ ask_code:'Адпраўце код бота адным паведамленнем. У JavaScript патрэбна функцыя onMessage(text, user), у Python — on_message(text, user). Яна павінна вярнуць радок-адказ.',
+ saved:'Захавана ✓',code_is:'Бягучы код:',verif_ask:'Напішыце, навошта боту патрэбна верыфікацыя (або адпраўце «-»).',verif_ok:'Заяўка адпраўлена ✓ Мы разгледзім яе.',verif_dup:'Заяўка для гэтага бота ўжо падана.',verif_done:'Гэты бот ужо верыфікаваны ✓',
+ del_conf:'Выдаліць бота @{u}? Гэта нельга адмяніць.',btn_yes:'Так, выдаліць',deleted:'Бот выдалены.',test_on:'Рэжым праверкі. Пішыце паведамленні — адкажа код вашага бота.',btn_exit:'Выйсці',
+ test_err:'Памылка ў кодзе: {e}',test_empty:'(пусты адказ)',e_file:'Цяпер файл не патрэбны.',e_img:'Патрэбны відарыс.',hint:'Карыстайцеся кнопкамі ніжэй.',about_bot:'Працоўная прастора для стварэння і налады ботаў.'}};
+
+const TPL={
+js:"// XINH bot (JavaScript). Runs on every message. Return a string.\nfunction onMessage(text, user) {\n  if (text === '/start') return 'Hello, ' + user + '!';\n  return 'You said: ' + text;\n}\n",
+py:"# XINH bot (Python). Runs on every message. Return a string.\ndef on_message(text, user):\n    if text == '/start':\n        return 'Hello, ' + user + '!'\n    return 'You said: ' + text\n"};
+
+/* ---------- состояние ---------- */
+let bs=null,bsFor=null,bots=[],meta={users:0,verified:true},flow=null,sid=0;
+const SKEY=()=>'xinh_cb_'+me.id;
+function ld(){if(!me)return;if(bsFor===me.id&&bs)return;bsFor=me.id;bots=[];flow=null;
+ try{bs=JSON.parse(localStorage.getItem(SKEY())||'null')}catch(e){bs=null}
+ if(!bs||!Array.isArray(bs.m)||!B[bs.lang])bs={started:false,lang:'ru',m:[]}}
+const sv=()=>{try{bs.m=bs.m.slice(-60);localStorage.setItem(SKEY(),JSON.stringify(bs))}catch(e){}};
+const lcA=()=>B[S.lang]?S.lang:(S.lang==='xx'?'ru':'en');
+const hl=()=>(bs&&bs.started)?bs.lang:lcA();
+const tr=(k,a,lg)=>{lg=lg||bs.lang;const s=(B[lg]&&B[lg][k])||B.en[k]||B.ru[k]||k;
+ a=Object.assign({u:(prof&&prof.username)||'user',l:LN[lg]},a||{});return s.replace(/\{(\w+)\}/g,(_,x)=>a[x]!=null?a[x]:'')};
+function mtext(m){if(m.text!=null)return m.text;const a=Object.assign({},m.a||{});if(a.v)a.v=tr(a.v);return tr(m.k,a)}
+function usersTxt(lg){const n=meta.users||0;
+ if(lg==='ru'||lg==='be'){const a=n%100,b=n%10,f=lg==='ru'?['пользователь','пользователя','пользователей']:['карыстальнік','карыстальнікі','карыстальнікаў'];return n+' '+(a>10&&a<20?f[2]:b===1?f[0]:b>1&&b<5?f[1]:f[2])}
+ if(lg==='vi')return n+' người dùng';if(lg==='zh')return n+' 位用户';return n+(n===1?' user':' users')}
+const logo=()=>{const c=(S.accent||'')[0]==='#'?S.accent:(ACC[S.accent]||'#ff1f3d');
+ return 'data:image/svg+xml,'+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='#050505'/><text x='50' y='71' font-size='62' text-anchor='middle' fill='"+c+"' font-family='Arial Black,Arial' font-weight='900'>X</text></svg>")};
+const BOT=()=>({id:BID,bot:true,is_bot:true,username:'creator_bot',display_name:'XINH Creator',verified:meta.verified,avatar_url:logo()});
+
+/* ---------- сообщения ---------- */
+const uid=()=>Date.now()+'_'+(sid++);
+const draw=()=>{if(peer&&peer.bot){renderMsgs();renderList()}};
+function say(k,a,kb){bs.m.push({id:uid(),k,a,kb,ts:Date.now()});sv();draw()}
+function sayT(text,kb){bs.m.push({id:uid(),text,kb,ts:Date.now()});sv();draw()}
+function mine(text){bs.m.push({id:uid(),me:1,text,ts:Date.now()});sv()}
+const KB={
+ menu:()=>[[{k:'btn_new',d:'new'}],[{k:'btn_edit',d:'edit'}],[{k:'btn_set',d:'set'}]],
+ cancel:()=>[[{k:'btn_cancel',d:'menu'}]],
+ lang:()=>[[{t:'Русский '+LF.ru,d:'lang:ru'},{t:'English '+LF.en,d:'lang:en'}],[{t:'Tiếng Việt '+LF.vi,d:'lang:vi'},{t:'中文 '+LF.zh,d:'lang:zh'}],[{t:'Беларуская '+LF.be,d:'lang:be'}]]};
+const backKb=id=>[[{k:'btn_back',d:'b:'+id}]];
+
+function renderBot(){const box=$('msgs');ld();box.textContent='';$('pin').classList.add('hide');
+ if(!bs.started){const L=lcA();
+  box.append(H('div',{className:'empty'},H('b',{textContent:tr('intro_h',null,L),style:'font-size:17px;display:block;margin-bottom:10px'}),
+   ...[1,2,3].map(i=>H('div',{textContent:'• '+tr('intro_'+i,null,L),style:'margin:4px 0'}))));return}
+ let lk=-1;bs.m.forEach((m,i)=>{if(!m.me&&m.kb)lk=i});
+ bs.m.forEach((m,i)=>{const d=H('div',{className:'m bm'+(m.me?' me':'')});rich(d,mtext(m));
+  if(i===lk){const kb=H('div',{className:'bkb'});
+   m.kb.forEach(r=>kb.append(H('div',{className:'brow'},...r.map(b=>H('button',{type:'button',textContent:b.t||tr(b.k),onclick:()=>act(b.d)})))));d.append(kb)}
+  d.append(H('time',{textContent:new Date(m.ts).toLocaleTimeString(loc(),{hour:'2-digit',minute:'2-digit'})}));box.append(d)});
+ box.scrollTop=box.scrollHeight}
+
+/* ---------- запуск кода бота (только на вашем устройстве, в изолированном Worker) ---------- */
+function runCode(lang,code,text,user){return new Promise((res,rej)=>{
+ const js="self.onmessage=async e=>{const{code,text,user}=e.data;try{const f=new Function('text','user',code+'\\n;return typeof onMessage===\"function\"?onMessage(text,user):(()=>{throw new Error(\"onMessage() not found\")})();');const r=await f(text,user);postMessage({r:r==null?'':String(r)})}catch(x){postMessage({e:String((x&&x.message)||x)})}};";
+ const py="importScripts('https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js');let py;self.onmessage=async e=>{const{code,text,user}=e.data;try{py=py||await loadPyodide();py.globals.set('_t',text);py.globals.set('_u',user);const r=await py.runPythonAsync(code+'\\nstr(on_message(_t,_u))');postMessage({r:r==null?'':String(r)})}catch(x){postMessage({e:String((x&&x.message)||x)})}};";
+ const url=URL.createObjectURL(new Blob([lang==='py'?py:js],{type:'text/javascript'})),w=new Worker(url);
+ const end=()=>{clearTimeout(tm);w.terminate();URL.revokeObjectURL(url)},tm=setTimeout(()=>{end();rej(new Error('timeout'))},lang==='py'?60000:4000);
+ w.onmessage=e=>{end();e.data.e?rej(new Error(e.data.e)):res(e.data.r)};w.onerror=e=>{end();rej(new Error(e.message||'worker error'))};
+ w.postMessage({code,text,user})})}
+
+/* ---------- логика бота ---------- */
+async function loadBots(){const{data,error}=await sb.from('bots').select('*').eq('owner',me.id).order('created_at');if(error){say('err',{e:error.message},KB.menu());return false}bots=data||[];return true}
+const gb=id=>bots.find(x=>x.id===id);
+function menu(){flow=null;say('hello',null,KB.menu())}
+function card(b){if(!b){menu();return}flow=null;
+ say('card',{n:b.name,u:b.username,c:b.lang==='py'?'Python':'JavaScript',v:b.verified?'v_yes':'v_no',d:b.description||''},
+ [[{k:'btn_name',d:'bn:'+b.id},{k:'btn_desc',d:'bd:'+b.id}],[{k:'btn_ava',d:'ba:'+b.id},{k:'btn_code',d:'bc:'+b.id}],[{k:'btn_show',d:'bs:'+b.id},{k:'btn_test',d:'bt:'+b.id}],[{k:'btn_verif',d:'bv:'+b.id}],[{k:'btn_del',d:'bx:'+b.id}],[{k:'btn_menu',d:'edit'}]])}
+async function upd(id,p){const{error}=await sb.from('bots').update(p).eq('id',id);flow=null;
+ if(error){say('err',{e:error.message},backKb(id));return}const b=gb(id);if(b)Object.assign(b,p);say('saved');card(b)}
+async function createBot(f,lang){const{data,error}=await sb.from('bots').insert({username:f.user,name:f.name,lang,code:TPL[lang]}).select().single();
+ if(error){if(error.code==='23505'){flow={s:'user',name:f.name};say('taken',null,KB.cancel())}else{flow=null;say('err',{e:error.message},KB.menu())}return}
+ flow=null;bots.push(data);say('created',{n:data.name,u:data.username},[[{k:'btn_edit',d:'b:'+data.id}],[{k:'btn_menu',d:'menu'}]])}
+
+async function act(d){ld();if(!bs.started)return;const[c,x]=d.split(':');
+ if(c==='lang'){if(!B[x])return;bs.lang=x;mine(LN[x]+' '+LF[x]);menu();setHead();return}
+ if(c==='menu'||c==='cancel'){menu();return}
+ if(c==='new'){flow={s:'name'};say('new_name',null,KB.cancel());return}
+ if(c==='nl'){if(flow&&flow.s==='nl')await createBot(flow,x);return}
+ if(c==='edit'){flow=null;if(!(await loadBots()))return;
+  if(!bots.length){say('no_bots',null,[[{k:'btn_new',d:'new'}],[{k:'btn_menu',d:'menu'}]]);return}
+  say('pick_bot',null,[...bots.map(b=>[{t:(b.verified?'✓ ':'')+b.name+' @'+b.username,d:'b:'+b.id}]),[{k:'btn_menu',d:'menu'}]]);return}
+ if(c==='set'){flow=null;say('set_t',null,[[{k:'btn_lang',d:'setlang'}],[{k:'btn_menu',d:'menu'}]]);return}
+ if(c==='setlang'){say('pick_lang',null,KB.lang());return}
+ if(c==='exit'){const f=flow;flow=null;card(f&&gb(f.id));return}
+ if(!bots.length)await loadBots();const b=gb(x);if(!b){menu();return}
+ if(c==='b'){card(b);return}
+ if(c==='bn'){flow={s:'bn',id:x};say('ask_name',null,backKb(x));return}
+ if(c==='bd'){flow={s:'bd',id:x};say('ask_desc',null,backKb(x));return}
+ if(c==='bc'){flow={s:'bc',id:x};say('ask_code',null,backKb(x));return}
+ if(c==='ba'){flow={s:'ava',id:x};say('ask_ava',null,backKb(x));return}
+ if(c==='bs'){sayT(tr('code_is')+'\n```\n'+b.code+'\n```',backKb(x));return}
+ if(c==='bt'){flow={s:'test',id:x};say('test_on',null,[[{k:'btn_exit',d:'exit'}]]);return}
+ if(c==='bv'){if(b.verified){say('verif_done',null,backKb(x));return}flow={s:'bv',id:x};say('verif_ask',null,backKb(x));return}
+ if(c==='bx'){say('del_conf',{u:b.username},[[{k:'btn_yes',d:'bxy:'+x},{k:'btn_cancel',d:'b:'+x}]]);return}
+ if(c==='bxy'){const{error}=await sb.from('bots').delete().eq('id',x);if(error){say('err',{e:error.message},backKb(x));return}bots=bots.filter(z=>z.id!==x);flow=null;say('deleted',null,[[{k:'btn_edit',d:'edit'}],[{k:'btn_menu',d:'menu'}]])}}
+
+async function onText(v){ld();mine(v);const f=flow;
+ if(!f){say('hint',null,KB.menu());return}
+ if(f.s==='name'){flow={s:'user',name:v.slice(0,40)};say('new_user',null,KB.cancel());return}
+ if(f.s==='user'){const u=v.replace(/^@/,'').toLowerCase();
+  if(!/^[a-z][a-z0-9_]{2,31}$/.test(u)||!/bot$/.test(u)){say('bad_user',null,KB.cancel());return}
+  flow={s:'nl',name:f.name,user:u};say('new_lang',null,[[{t:'JavaScript',d:'nl:js'},{t:'Python',d:'nl:py'}]]);return}
+ if(f.s==='nl'){say('new_lang',null,[[{t:'JavaScript',d:'nl:js'},{t:'Python',d:'nl:py'}]]);return}
+ if(f.s==='bn'){const n=v.slice(0,40);if(n)await upd(f.id,{name:n});return}
+ if(f.s==='bd'){await upd(f.id,{description:v.slice(0,300)});return}
+ if(f.s==='bc'){const mm=/^```[\w+-]*\n?([\s\S]*?)\n?```$/.exec(v.trim()),code=(mm?mm[1]:v).slice(0,20000);await upd(f.id,{code});return}
+ if(f.s==='bv'){const{error}=await sb.from('bot_verif_requests').insert({bot_id:f.id,owner:me.id,note:v==='-'?null:v.slice(0,500)});
+  flow=null;if(error&&error.code==='23505')say('verif_dup',null,backKb(f.id));else if(error)say('err',{e:error.message},backKb(f.id));else say('verif_ok',null,backKb(f.id));return}
+ if(f.s==='test'){const b=gb(f.id);if(!b){flow=null;menu();return}
+  try{const r=await runCode(b.lang,b.code,v,(prof&&prof.display_name)||'user');sayT('🤖 '+(r||tr('test_empty')),[[{k:'btn_exit',d:'exit'}]])}
+  catch(e){say('test_err',{e:String((e&&e.message)||e)},[[{k:'btn_exit',d:'exit'}]])}return}
+ if(f.s==='ava'){say('ask_ava',null,backKb(f.id))}}
+
+function pickAva(){const i=H('input',{type:'file',accept:'image/*'});
+ i.onchange=async()=>{const f=i.files[0];if(!f||!flow||flow.s!=='ava')return;
+  if(!(f.type||'').startsWith('image/')){say('e_img',null,backKb(flow.id));return}
+  if(f.size>5242880){sayT(t('e_big'),backKb(flow.id));return}
+  const id=flow.id,path=me.id+'/botava_'+Date.now()+'.'+((f.name.split('.').pop()||'jpg').replace(/\W/g,'').slice(0,5)||'jpg');
+  const{error}=await sb.storage.from('xinh').upload(path,f,{contentType:f.type||'image/jpeg'});
+  if(error){say('err',{e:error.message},backKb(id));return}
+  await upd(id,{avatar_url:sb.storage.from('xinh').getPublicUrl(path).data.publicUrl})};i.click()}
+
+/* ---------- встраивание в приложение ---------- */
+/* mark_read для бота не нужен */
+const _rpc=sb.rpc.bind(sb);
+sb.rpc=(n,p,...r)=>(n==='mark_read'&&p&&String(p.pid).startsWith('bot:'))?Promise.resolve({data:null,error:null}):_rpc(n,p,...r);
+
+async function loadMeta(){try{const{data,error}=await sb.rpc('bot_info',{uname:'creator_bot'}),r=data&&data[0];
+ if(!error&&r)meta={users:Number(r.users)||0,verified:!!r.verified}}catch(e){}
+ if(peer&&peer.bot){peer.verified=meta.verified;setHead()}renderList()}
+
+/* кнопка «Начать» */
+const stBtn=H('button',{type:'button',className:'solid'}),bar=H('div',{id:'botbar',className:'hide'},stBtn);$('form').after(bar);
+function ui(){const isb=!!(peer&&peer.bot);ld();bar.classList.toggle('hide',!(isb&&!bs.started));
+ if(isb){$('form').classList.toggle('hide',!bs.started);stBtn.textContent=tr('start',null,lcA())}}
+stBtn.onclick=()=>{ld();bs.started=true;bs.m=[];flow=null;sv();_rpc('bot_start',{uname:'creator_bot'}).then(loadMeta);say('pick_lang',null,KB.lang());ui();setHead();$('txt').focus()};
+$('back').addEventListener('click',()=>bar.classList.add('hide'));
+
+const _oc=openChat;
+openChat=async function(u){const r=await _oc(u);if(peer&&peer.id===u.id){ui();if(u.bot){loadMeta();renderMsgs()}}return r};
+
+const _rm=renderMsgs;
+renderMsgs=function(){if(peer&&peer.bot){try{renderBot()}catch(e){console.error(e)}return}return _rm.apply(this,arguments)};
+
+const _sh=setHead;
+setHead=function(){_sh();if(!peer||!peer.bot)return;ld();
+ setAv($('hav'),peer);$('hnm').textContent=peer.display_name;if(meta.verified)$('hnm').append(vb());
+ $('hsb').style.color='';$('hsb').textContent=usersTxt(hl())};
+
+/* отправка текста */
+const _fs=$('form').onsubmit;
+$('form').onsubmit=async e=>{if(peer&&peer.bot){e.preventDefault();const v=$('txt').value.trim();if(!v)return;$('txt').value='';autoSize();onText(v);return}return _fs.call($('form'),e)};
+
+/* скрепка, микрофон, стикеры */
+$('attach').onclick=()=>{if(peer&&peer.bot){ld();if(flow&&flow.s==='ava')pickAva();else say('e_file');return}$('file').click()};
+const _mic=$('mic').onclick;
+$('mic').onclick=function(e){if(peer&&peer.bot){say('e_file');return}return _mic.call(this,e)};
+const _os=openStk;openStk=async function(){if(peer&&peer.bot)return;return _os.apply(this,arguments)};
+
+/* профиль бота */
+const _sp=showProfile;
+showProfile=function(){const cd=$('pview').firstElementChild;
+ if(!peer||!peer.bot){cd.querySelectorAll(':scope>[data-bh]').forEach(e=>{e.style.display='';delete e.dataset.bh});return _sp.apply(this,arguments)}
+ [...cd.children].forEach(e=>{if(e.classList.contains('prow')||e.id==='vClose')return;e.dataset.bh='1';e.style.display='none'});
+ ld();setAv($('vAv'),peer);$('vName').textContent=peer.display_name;if(meta.verified)$('vName').append(vb());
+ $('vInfo').textContent=['@'+peer.username,usersTxt(hl()),tr('about_bot',null,hl())].join('\n');$('pview').classList.remove('hide')};
+$('hav').onclick=$('hnm').onclick=showProfile;
+
+/* строка бота в списке чатов */
+const _rl=renderList;
+renderList=function(){_rl();if(!me)return;try{botRow()}catch(e){console.error(e)}};
+function botRow(){if(tab!=='chats'||!(cat==='all'||cat==='bots'))return;
+ const q=$('search').value.toLowerCase().trim().replace(/^@/,'');if(q&&!'xinh creator creator_bot'.includes(q))return;
+ ld();const box=$('list');box.querySelectorAll('.empty').forEach(e=>e.remove());
+ const lm=[...bs.m].reverse().find(m=>!m.me),sub=(bs.started&&lm)?mtext(lm).split('\n')[0]:'@creator_bot',u=BOT(),av=H('div',{className:'av'});setAv(av,u);
+ const nm=H('div',{className:'nm',textContent:u.display_name});if(meta.verified)nm.append(vb());nm.append(H('span',{className:'badge',textContent:'bot'}));
+ box.prepend(H('div',{className:'u'+(peer&&peer.id===BID?' on':''),onclick:()=>openChat(BOT())},av,H('div',{style:'min-width:0'},nm,H('div',{className:'sb',textContent:sub}))))}
+
+if(me){loadMeta()}else{const _b=boot;boot=async function(u){await _b(u);loadMeta()}}
+})();
+</script>
+
 </body>
 </html>
