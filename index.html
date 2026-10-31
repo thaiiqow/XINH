@@ -759,7 +759,7 @@ function player(m){if(pc[m.id])return pc[m.id];
 
 /* ===== МЕНЮ СООБЩЕНИЙ, УЧАСТНИКИ ===== */
 let mem={},hid=new Set(),reply=null,lastPeer=null;
-const loc=()=>({ru:'ru',vi:'vi',zh:'zh-CN',be:'be', nr:'ru'}[S.lang]||'en');
+const loc=()=>({ru:'ru',vi:'vi',zh:'zh-CN',be:'be',nr:'ru',ja:'ja',de:'de',fr:'fr',bg:'bg',sr:'sr'}[S.lang]||'en');
 const tgt=p=>p.room?{sender_id:me.id,room_id:p.rid}:{sender_id:me.id,recipient_id:p.id};
 function showReply(){$('rbar').classList.toggle('hide',!reply);if(reply)$('rtxt').textContent='↩ '+(reply.body||'').slice(0,80)}
 function sent(){reply=null;showReply();autoSize()}
@@ -3493,6 +3493,402 @@ const _rm=renderMsgs;
 renderMsgs=function(){const r=_rm.apply(this,arguments);try{upd()}catch(e){}return r};
 $('back').addEventListener('click',()=>setTimeout(upd,30));
 upd();
+})();
+</script>
+<!-- ===== НОВЫЕ ЯЗЫКИ: 日本語, Deutsch, Français, Български, Српски + недостающие переводы для vi / zh / be.
+     Вставьте в самый конец index.html, прямо перед </body> (после всех остальных блоков). ===== -->
+<script>
+(()=>{
+const BASE={};
+
+/* ====================== 日本語 ====================== */
+BASE.ja={login_t:'ログイン',reg_t:'新規登録',email:'メールアドレス',pass:'パスワード(6文字以上)',pass2:'パスワード(確認)',name:'名前',
+signin:'ログイン',signup:'アカウントを作成',to_reg:'アカウントをお持ちでない方は新規登録',to_login:'アカウントをお持ちの方はログイン',out:'ログアウト',
+search:'名前またはメールで検索',msg:'メッセージ',send:'→',pick:'連絡先を選んでチャットを始めましょう。',
+nochat:'メッセージはまだありません。最初に話しかけてみましょう。',nousers:'まだ誰もいません。友だちを招待しましょう。',
+service:'サービス',svc_acc:'サービスアカウント',settings:'設定',theme:'テーマ',dark:'ダーク',light:'ライト',accent:'ネオンカラー',
+lang:'言語',close:'閉じる',red:'赤',blue:'青',green:'緑',yellow:'黄',purple:'紫',
+e_fill:'メールアドレスと6文字以上のパスワードを入力してください。',e_name:'名前を入力してください。',e_match:'パスワードが一致しません。',
+created:'アカウントを作成しました。メールを確認するか、ログインしてください。',notsent:'送信できませんでした: ',
+username:'ユーザー名',notif:'メッセージの通知',ntext:'通知に本文を表示',newmsg:'新着メッセージ',chats:'チャット',contacts:'連絡先',
+newroom:'新しいグループまたはチャンネル',group:'グループ',channel:'チャンネル',rtitle:'タイトル',members:'メンバー(連絡先から)',create:'作成',
+rename:'連絡先の名前を変更',addc:'連絡先に追加',delc:'連絡先から削除',addby:'@usernameで追加',imp:'端末から取り込む',noimp:'連絡先の取り込みはAndroidのChromeのみ対応しています。',
+nf:'ユーザーが見つかりません。',alias:'連絡先の名前(自分だけに表示)',e_title:'タイトルを入力してください。',imported:'追加した連絡先: ',nocont:'連絡先はまだありません。',share:'リンクを共有',
+reply:'返信',fwdb:'転送',fwdto:'転送先…',copy:'コピー',pin:'ピン留め',unpin:'ピン留め解除',delme:'自分のみ削除',delall:'全員から削除',
+readat:'既読: ',notread:'未読',role_owner:'オーナー',role_admin:'管理者',mkadm:'管理者にする',rmadm:'管理者を解除',
+copied:'リンクをコピーしました。',e_join:'招待リンクが無効です。',conf_t:'メールを確認',conf_txt:'{e} にメールを送信しました。メールを開いてアドレスを確認し、「ログイン」を押してください。',conf_h:'メールが届かない場合は迷惑メールフォルダをご確認ください。',
+e_user:'ユーザー名: 3〜20文字、半角英字・数字・_。',e_taken:'このユーザー名は既に使われています。',g_none:'性別未設定',g_m:'男性',g_f:'女性',g_o:'その他',
+birth:'生年月日',region:'居住地域',hide_seen:'最終ログイン時刻を隠す',plink:'プロフィールのリンク',save:'保存',saved:'保存しました',
+online:'オンライン',recent:'最近オンライン',seen:'最終ログイン ',e_big:'ファイルが大きすぎます。',e_mic:'マイクにアクセスできません。',today:'今日',yday:'昨日',dbyday:'一昨日',
+call:'すべて',cgroups:'グループ',cbots:'ボット',cchannels:'チャンネル',pubq:'公開(@usernameで検索可)',prot:'コンテンツ保護',protd:'転送・コピー・保存を禁止',rset:'設定',
+reactions:'許可するリアクション',sall:'すべて選択',snone:'すべて解除',rusern:'名前',e_ruser:'ユーザー名: 3〜30文字、半角英字・数字・_。',e_rtaken:'この@usernameは既に使われています。',
+rg0:'感情とキャラクター',rg1:'ジェスチャー',rg2:'生き物と動物',rg3:'植物と自然',rg4:'物と食べ物',
+edit:'編集',cancel:'キャンセル',ok:'OK',s_profile:'プロフィール',s_accounts:'アカウント',s_folders:'フォルダ',s_sessions:'ログイン中の端末',s_notif:'通知とサウンド',s_privacy:'プライバシー',s_loc:'外観と言語',s_currency:'マイ通貨',s_about:'このアプリについて',
+addacc:'アカウントを追加',addfolder:'フォルダを作成',editfolder:'フォルダ',fname:'フォルダ名',endothers:'他のすべてのセッションを終了',thisdev:'この端末',endsess:'終了',sess_end:'このセッションは別の端末から終了されました。',
+n_dm:'個人チャット',n_gr:'グループ',n_ch:'チャンネル',snd_on:'受信メッセージの音',snd_sent:'送信音',vib:'バイブレーション',snd_test:'音を確認',sn_glass:'グラス',sn_pop:'ポップ',sn_chime:'チャイム',
+mycolors:'マイカラー',savecolor:'色を保存',about_ph:'自己紹介',addmusic:'プロフィールの音楽',
+pv_email:'メールアドレス',pv_emailnote:'自分だけに表示されます',pv_blocked:'ブロックしたユーザー',pv_none:'なし。',unblock:'ブロック解除',block:'ブロック',
+pv_pass:'アプリのパスコード',pass_on:'パスコードはオンです',pass_off:'パスコードはオフです',setpass:'パスコードを設定',changepass:'パスコードを変更',disablepass:'オフにする',la0:'すぐにロック',la1:'1分後',la5:'5分後',la60:'1時間後',
+pv_cloud:'クラウドパスワード',cloud_on:'どの端末でもログイン時に要求されます',cloud_off:'未設定',setcloud:'クラウドパスワードを設定',changecloud:'クラウドパスワードを変更',removecloud:'クラウドパスワードを削除',
+pv_chatpw:'チャットのパスワード',lockchat:'チャットにパスワードを設定',unlockchat:'チャットのパスワードを解除',pv_auto:'メッセージの自動削除',off:'オフ',u_day:'日',u_week:'週間',u_month:'か月',u_year:'年',
+pv_vis:'公開範囲',pv_seen:'最終ログイン時刻',pv_photo:'プロフィール写真',pv_about:'自己紹介',pv_birthday:'誕生日',pv_music:'プロフィールの音楽',pv_fwd:'転送メッセージ(自分のプロフィールへのリンク)',
+v_all:'全員',v_contacts:'連絡先',v_nobody:'誰も見られない',exc_deny:'例外: 見られない人',exc_allow:'例外: 常に見られる人',
+pv_incoming:'受信メッセージ',in_all:'全員から',in_contacts:'連絡先のみ',in_paid:'有料',in_price:'メッセージの価格',pv_invites:'グループ・チャンネルへの招待',inv_all:'全員',inv_contacts:'連絡先',inv_link:'リンクまたは@のみ',
+enterpass:'パスコードを入力',wrongpass:'パスワードが違います。もう一度お試しください',newpass:'新しいパスワード(4文字以上)',repeatpass:'パスワードを再入力',pass_short:'4文字以上にしてください。',enterpass_cloud:'クラウドパスワードを入力',enterpass_chat:'チャットのパスワード',
+e_blocked:'このユーザーにはメッセージを送れません。',e_contacts:'このユーザーは連絡先からのメッセージのみ受け付けます。',e_funds:'有料メッセージを送るにはỺが足りません。',
+cur_bal:'残高',cur_buy:'チャージ',cur_code:'チャージコード',cur_redeem:'コードを使う',cur_ok:'チャージしました。残高: ',e_code:'コードが無効か、既に使用されています。',cur_note:'銀行カード決済はまだ利用できません。残高はコードでチャージします。有料メッセージは送信者のỺを差し引き、受信者に加算します。',
+ab_ver:'バージョン',ab1:'XINHはメッセンジャーです。個人チャット、グループとチャンネル、ファイル、写真、動画、ボイスメッセージ、リアクション、連絡先に対応しています。',ab2:'保存: データとファイルはSupabaseに保存されます。25MBまでのファイルは非公開の長いリンクで配信されます。',
+ab3:'保護: パスコードとチャットのパスワードはこの端末で動作し、クラウドパスワードはログイン時にサーバーが確認します。エンドツーエンド暗号化は使用していません。',ab4:'ブラウザの制限: Webアプリはスクリーンショットを禁止したり、閉じている間にプッシュ通知を受け取ったりできません。',ab5:'アプリの設定はこの端末に、プライバシー設定とプロフィールはアカウントに保存されます。',
+s_stickers:'ステッカーと絵文字',stk_packs:'ステッカーパック',emo_packs:'絵文字パック',newpack_s:'ステッカーパックを作成',newpack_e:'絵文字パックを作成',packname:'パック名',delpack:'このパックをすべて削除しますか?',delstk:'このステッカーを削除しますか?',addstk:'画像を追加',stk_hint:'画像をタップするとパックから削除されます。ステッカーは入力欄の上の🖼ボタンで送信します。',official:'公式',
+cloud:'クラウド',cloud_sub:'あなた専用のストレージ: メッセージ、ファイル、メモ',tocloud:'クラウドに保存',verified:'認証済みアカウント',delchat:'チャットを削除',delchat_me:'自分のみ削除',delchat_all:'全員から削除',delchat_conf:'両方の参加者の会話を削除しますか?元に戻せません。',
+sec_media:'メディア',sec_voice:'ボイス',sec_links:'リンク',sec_common:'共通のグループ',sec_empty:'まだ何もありません。',rs_menu_ch:'チャンネル設定',rs_menu_gr:'グループ設定',
+rs_type:'種類',rs_disc:'ディスカッション',rs_react:'リアクション',rs_admins:'管理者',rs_subs:'登録者',rs_bans:'ブロックリスト',rs_del:'削除',rs_hist:'チャット履歴',rs_members:'メンバー',rs_perms:'権限',
+comments:'コメント',cmt_ph:'コメント',cmt_on:'コメントを有効にする',cmt_off:'コメントを無効にする',disc_on:'投稿へのコメント',disc_hint:'オンにすると、投稿にコメントボタンが表示されます。個別の投稿のメニューから、その投稿のコメントをオフにできます。',
+hist_on:'新しいメンバーがチャット履歴を見られる',adm_add:'管理者を追加',members_add:'メンバーを追加',ban_add:'ブロックリストに追加',bans_none:'ブロックリストは空です。',unban:'解除',kick_conf:'メンバーから削除しますか?',ban_conf:'このユーザーの参加を禁止しますか?',
+my_tag:'このグループでの自分のタグ',tag_ph:'タグ(24文字まで)',perm_send:'メンバーがメッセージを送信できる',perm_media:'メンバーが写真・動画を送信できる',perm_invite:'メンバーが他の人を追加できる',perm_pin:'メンバーがメッセージをピン留めできる',perm_tag:'メンバーが自分のタグを変更できる',
+perm_price:'メンバーのメッセージ1通の価格、Ỻ(0で無料)',del_room:'完全に削除',del_room_conf:'すべてのメッセージごと完全に削除しますか?',added:'追加しました: ',only_owner:'この設定はオーナーのみ利用できます。',e_no_media:'このグループでは、メンバーは写真や動画を送信できません。',e_banned:'参加が禁止されています。',
+e_music:'音声ファイルが必要です(MP3、WAV、OGG、M4A、AAC、FLAC)。動画(MP4など)は使えません。',uploadmusic:'ファイルをアップロード',pickmusic:'チャットから選ぶ',musicpick_t:'チャットの音楽',
+album_max:'1通のメッセージに添付できるのは最大9点です。',net_conn:'接続中…',net_upd:'更新中…',
+st_new:'新しいストーリー',st_pick:'写真または動画を選ぶ',st_text:'ストーリー上の文字',st_cap:'ストーリーの説明',st_music:'音楽',st_dur:'他の人に表示する時間',st_prof:'プロフィールに表示(期限後も残る)',st_pub:'公開',st_my:'自分',st_stories:'ストーリー',st_del:'このストーリーを削除しますか?',st_h:'時間',st_nomedia:'写真または動画を選んでください。',st_noaud:'音声ファイルが必要です。',st_inprof:'プロフィールに表示',st_myst:'自分のストーリー',st_uploadmus:'ファイル',st_pickmus:'チャットから',
+sub:'登録',join:'参加',mute:'ミュート',unmute:'ミュート解除',unsub:'登録解除',leave:'グループを退出',unsub_conf:'このチャンネルの登録を解除しますか?',leave_conf:'このグループを退出しますか?',owner_leave:'オーナーは退出できません。設定からチャットを削除してください。',
+ri_edit:'名前・説明・写真を編集',ri_desc:'説明',ri_rmav:'写真を削除',room_nf:'見つかりません。',
+bd_tom:'明日は「{n}」さんの誕生日です!',bd_today:'今日は「{n}」さんの誕生日です。',st_typing:'入力中…',st_voice:'音声を録音中…',st_choose:'メディアを選択中…',st_upload:'メディアを送信中…',
+mu_t:'音楽',mu_title:'タイトル',mu_artist:'アーティスト(任意)',mu_cover:'カバー',mu_rm:'カバーを削除',mu_send:'送信'};
+
+/* ====================== Deutsch ====================== */
+BASE.de={login_t:'Anmelden',reg_t:'Registrieren',email:'E-Mail',pass:'Passwort (mind. 6 Zeichen)',pass2:'Passwort wiederholen',name:'Name',
+signin:'Anmelden',signup:'Konto erstellen',to_reg:'Noch kein Konto? Registrieren',to_login:'Schon ein Konto? Anmelden',out:'Abmelden',
+search:'Nach Name oder E-Mail suchen',msg:'Nachricht',send:'→',pick:'Wähle einen Kontakt, um zu chatten.',
+nochat:'Noch keine Nachrichten. Schreib zuerst.',nousers:'Noch niemand hier. Lade Freunde zur Registrierung ein.',
+service:'Dienst',svc_acc:'Dienstkonto',settings:'Einstellungen',theme:'Design',dark:'Dunkel',light:'Hell',accent:'Neonfarbe',
+lang:'Sprache',close:'Schließen',red:'Rot',blue:'Blau',green:'Grün',yellow:'Gelb',purple:'Lila',
+e_fill:'Gib E-Mail und ein Passwort mit mind. 6 Zeichen ein.',e_name:'Gib einen Namen ein.',e_match:'Die Passwörter stimmen nicht überein.',
+created:'Konto erstellt. Bestätige deine E-Mail oder melde dich an.',notsent:'Nicht gesendet: ',
+username:'benutzername',notif:'Nachrichtenbenachrichtigungen',ntext:'Text in Benachrichtigungen anzeigen',newmsg:'Neue Nachricht',chats:'Chats',contacts:'Kontakte',
+newroom:'Neue Gruppe oder neuer Kanal',group:'Gruppe',channel:'Kanal',rtitle:'Titel',members:'Mitglieder (aus Kontakten)',create:'Erstellen',
+rename:'Kontakt umbenennen',addc:'Zu Kontakten hinzufügen',delc:'Aus Kontakten entfernen',addby:'Per @username hinzufügen',imp:'Vom Telefon importieren',noimp:'Der Kontaktimport funktioniert nur in Chrome auf Android.',
+nf:'Benutzer nicht gefunden.',alias:'Kontaktname (nur für dich sichtbar)',e_title:'Gib einen Titel ein.',imported:'Kontakte hinzugefügt: ',nocont:'Noch keine Kontakte.',share:'Link teilen',
+reply:'Antworten',fwdb:'Weiterleiten',fwdto:'Weiterleiten an …',copy:'Kopieren',pin:'Anheften',unpin:'Lösen',delme:'Für mich löschen',delall:'Für alle löschen',
+readat:'Gelesen: ',notread:'Noch nicht gelesen',role_owner:'Inhaber',role_admin:'Admin',mkadm:'Zum Admin machen',rmadm:'Admin entziehen',
+copied:'Link kopiert.',e_join:'Einladungslink ungültig.',conf_t:'E-Mail bestätigen',conf_txt:'Wir haben eine E-Mail an {e} gesendet. Öffne sie, bestätige die Adresse und tippe dann auf „Anmelden“.',conf_h:'Keine E-Mail erhalten? Prüfe den Spam-Ordner.',
+e_user:'Benutzername: 3–20 Zeichen, lateinische Buchstaben, Ziffern und _.',e_taken:'Dieser Benutzername ist bereits vergeben.',g_none:'Geschlecht nicht angegeben',g_m:'Männlich',g_f:'Weiblich',g_o:'Divers',
+birth:'Geburtsdatum',region:'Wohnregion',hide_seen:'Zuletzt online ausblenden',plink:'Profillink',save:'Speichern',saved:'Gespeichert',
+online:'online',recent:'zuletzt kürzlich online',seen:'zuletzt online ',e_big:'Die Datei ist zu groß.',e_mic:'Kein Zugriff auf das Mikrofon.',today:'Heute',yday:'Gestern',dbyday:'Vorgestern',
+call:'Alle',cgroups:'Gruppen',cbots:'Bots',cchannels:'Kanäle',pubq:'Öffentlich (per @username)',prot:'Inhaltsschutz',protd:'Weiterleiten, Kopieren und Speichern verboten',rset:'Einstellungen',
+reactions:'Erlaubte Reaktionen',sall:'Alle auswählen',snone:'Alle abwählen',rusern:'name',e_ruser:'Username: 3–30 Zeichen, lateinische Buchstaben, Ziffern und _.',e_rtaken:'Dieser @username ist bereits vergeben.',
+rg0:'Emotionen und Figuren',rg1:'Gesten',rg2:'Wesen und Tiere',rg3:'Pflanzen und Natur',rg4:'Gegenstände und Essen',
+edit:'Bearbeiten',cancel:'Abbrechen',ok:'OK',s_profile:'Profil',s_accounts:'Konten',s_folders:'Ordner',s_sessions:'Sitzungen',s_notif:'Benachrichtigungen und Töne',s_privacy:'Datenschutz',s_loc:'Darstellung und Sprache',s_currency:'Meine Währung',s_about:'Über die App',
+addacc:'Konto hinzufügen',addfolder:'Ordner erstellen',editfolder:'Ordner',fname:'Ordnername',endothers:'Alle anderen Sitzungen beenden',thisdev:'dieses Gerät',endsess:'Beenden',sess_end:'Diese Sitzung wurde auf einem anderen Gerät beendet.',
+n_dm:'Private Chats',n_gr:'Gruppen',n_ch:'Kanäle',snd_on:'Ton für eingehende Nachrichten',snd_sent:'Ton beim Senden',vib:'Vibration',snd_test:'Ton testen',sn_glass:'Glas',sn_pop:'Pop',sn_chime:'Glockenspiel',
+mycolors:'Meine Farben',savecolor:'Farbe speichern',about_ph:'Über mich',addmusic:'Profilmusik',
+pv_email:'E-Mail',pv_emailnote:'Nur für dich sichtbar',pv_blocked:'Blockierte Nutzer',pv_none:'Leer.',unblock:'Entsperren',block:'Blockieren',
+pv_pass:'App-Code',pass_on:'Code ist aktiv',pass_off:'Code ist aus',setpass:'Code festlegen',changepass:'Code ändern',disablepass:'Ausschalten',la0:'Sofort sperren',la1:'Nach 1 Minute',la5:'Nach 5 Minuten',la60:'Nach 1 Stunde',
+pv_cloud:'Cloud-Passwort',cloud_on:'Wird bei der Anmeldung auf jedem Gerät abgefragt',cloud_off:'Nicht festgelegt',setcloud:'Cloud-Passwort festlegen',changecloud:'Cloud-Passwort ändern',removecloud:'Cloud-Passwort entfernen',
+pv_chatpw:'Chat-Passwörter',lockchat:'Passwort für Chat',unlockchat:'Chat-Passwort entfernen',pv_auto:'Nachrichten automatisch löschen',off:'Aus',u_day:'Tg.',u_week:'Wo.',u_month:'Mon.',u_year:'Jahr',
+pv_vis:'Wer darf sehen',pv_seen:'Zuletzt online',pv_photo:'Profilfotos',pv_about:'Über mich',pv_birthday:'Geburtstag',pv_music:'Profilmusik',pv_fwd:'Weitergeleitete Nachrichten (Link zu meinem Profil)',
+v_all:'Alle',v_contacts:'Kontakte',v_nobody:'Niemand',exc_deny:'Ausnahmen: wer es nicht sieht',exc_allow:'Ausnahmen: wer es immer sieht',
+pv_incoming:'Eingehende Nachrichten',in_all:'Von allen',in_contacts:'Nur von Kontakten',in_paid:'Gegen Währung',in_price:'Preis pro Nachricht',pv_invites:'Einladungen zu Gruppen und Kanälen',inv_all:'Alle',inv_contacts:'Kontakte',inv_link:'Nur per Link oder @',
+enterpass:'Code eingeben',wrongpass:'Falsches Passwort. Versuche es erneut',newpass:'Neues Passwort (mind. 4 Zeichen)',repeatpass:'Passwort wiederholen',pass_short:'Mindestens 4 Zeichen.',enterpass_cloud:'Cloud-Passwort eingeben',enterpass_chat:'Chat-Passwort',
+e_blocked:'An diesen Nutzer können keine Nachrichten gesendet werden.',e_contacts:'Dieser Nutzer nimmt nur Nachrichten von Kontakten an.',e_funds:'Nicht genug Ỻ für eine kostenpflichtige Nachricht.',
+cur_bal:'Guthaben',cur_buy:'Aufladen',cur_code:'Aufladecode',cur_redeem:'Code einlösen',cur_ok:'Gutgeschrieben. Guthaben:',e_code:'Ungültiger oder bereits verwendeter Code.',cur_note:'Kartenzahlung ist noch nicht angebunden: Das Guthaben wird per Code aufgeladen. Kostenpflichtige Nachrichten buchen Ỻ vom Absender ab und schreiben sie dem Empfänger gut.',
+ab_ver:'Version',ab1:'XINH ist ein Messenger: private Chats, Gruppen und Kanäle, Dateien, Fotos, Videos, Sprachnachrichten, Reaktionen, Kontakte.',ab2:'Speicherung: Daten und Dateien liegen bei Supabase. Dateien bis 25 MB werden über private lange Links ausgeliefert.',
+ab3:'Schutz: App-Code und Chat-Passwörter funktionieren auf diesem Gerät, das Cloud-Passwort wird bei der Anmeldung vom Server geprüft. Es wird keine Ende-zu-Ende-Verschlüsselung verwendet.',ab4:'Browser-Grenzen: Eine Web-App kann Screenshots nicht verhindern und bei geschlossener App keine Push-Benachrichtigungen zustellen.',ab5:'App-Einstellungen werden auf diesem Gerät gespeichert, Datenschutzeinstellungen und Profil in deinem Konto.',
+s_stickers:'Sticker und Emoji',stk_packs:'Sticker-Packs',emo_packs:'Emoji-Packs',newpack_s:'Sticker-Pack erstellen',newpack_e:'Emoji-Pack erstellen',packname:'Name des Packs',delpack:'Das ganze Pack löschen?',delstk:'Diesen Sticker löschen?',addstk:'Bilder hinzufügen',stk_hint:'Tippe auf ein Bild, um es aus dem Pack zu entfernen. Sticker sendest du mit der 🖼-Taste über dem Eingabefeld.',official:'Offiziell',
+cloud:'Cloud',cloud_sub:'Dein persönlicher Speicher: Nachrichten, Dateien und Notizen',tocloud:'In Cloud speichern',verified:'Verifiziertes Konto',delchat:'Chat löschen',delchat_me:'Für mich löschen',delchat_all:'Für alle löschen',delchat_conf:'Die Unterhaltung für beide löschen? Das lässt sich nicht rückgängig machen.',
+sec_media:'Medien',sec_voice:'Sprachnachrichten',sec_links:'Links',sec_common:'Gemeinsame Gruppen',sec_empty:'Hier ist noch nichts.',rs_menu_ch:'Kanaleinstellungen',rs_menu_gr:'Gruppeneinstellungen',
+rs_type:'Typ',rs_disc:'Diskussion',rs_react:'Reaktionen',rs_admins:'Administration',rs_subs:'Abonnenten',rs_bans:'Sperrliste',rs_del:'Löschen',rs_hist:'Chatverlauf',rs_members:'Mitglieder',rs_perms:'Berechtigungen',
+comments:'Kommentare',cmt_ph:'Kommentar',cmt_on:'Kommentare aktivieren',cmt_off:'Kommentare deaktivieren',disc_on:'Kommentare unter Beiträgen',disc_hint:'Wenn aktiviert, erhalten Beiträge eine Kommentar-Schaltfläche. Im Menü eines einzelnen Beitrags kannst du Kommentare dafür abschalten.',
+hist_on:'Neue Mitglieder sehen den Chatverlauf',adm_add:'Administrator hinzufügen',members_add:'Mitglieder hinzufügen',ban_add:'Zur Sperrliste hinzufügen',bans_none:'Die Sperrliste ist leer.',unban:'Entfernen',kick_conf:'Aus den Mitgliedern entfernen?',ban_conf:'Diesem Nutzer den Beitritt verbieten?',
+my_tag:'Mein Tag in dieser Gruppe',tag_ph:'Tag (bis 24 Zeichen)',perm_send:'Mitglieder dürfen Nachrichten senden',perm_media:'Mitglieder dürfen Fotos und Videos senden',perm_invite:'Mitglieder dürfen andere hinzufügen',perm_pin:'Mitglieder dürfen Nachrichten anheften',perm_tag:'Mitglieder dürfen ihren Tag ändern',
+perm_price:'Preis pro Mitgliedsnachricht, Ỻ (0 = kostenlos)',del_room:'Endgültig löschen',del_room_conf:'Endgültig mit allen Nachrichten löschen?',added:'Hinzugefügt: ',only_owner:'Diese Einstellungen sind nur für den Inhaber verfügbar.',e_no_media:'In dieser Gruppe dürfen Mitglieder keine Fotos und Videos senden.',e_banned:'Dir ist der Beitritt verboten.',
+e_music:'Eine Audiodatei ist erforderlich: MP3, WAV, OGG, M4A, AAC oder FLAC. Video (MP4 usw.) ist nicht erlaubt.',uploadmusic:'Datei hochladen',pickmusic:'Aus Chats wählen',musicpick_t:'Musik aus deinen Chats',
+album_max:'Maximal 9 Anhänge pro Nachricht.',net_conn:'Verbindung …',net_upd:'Aktualisierung …',
+st_new:'Neue Story',st_pick:'Foto oder Video wählen',st_text:'Text auf der Story',st_cap:'Beschreibung unter der Story',st_music:'Musik',st_dur:'Für andere sichtbar',st_prof:'Im Profil zeigen (bleibt nach Ablauf)',st_pub:'Veröffentlichen',st_my:'Meine',st_stories:'Stories',st_del:'Diese Story löschen?',st_h:'Std.',st_nomedia:'Wähle ein Foto oder Video.',st_noaud:'Eine Audiodatei ist erforderlich.',st_inprof:'Im Profil',st_myst:'Meine Stories',st_uploadmus:'Datei',st_pickmus:'Aus Chats',
+sub:'Abonnieren',join:'Beitreten',mute:'Stummschalten',unmute:'Stummschaltung aufheben',unsub:'Abbestellen',leave:'Gruppe verlassen',unsub_conf:'Diesen Kanal abbestellen?',leave_conf:'Diese Gruppe verlassen?',owner_leave:'Der Inhaber kann nicht austreten. Lösche den Chat in den Einstellungen.',
+ri_edit:'Titel, Beschreibung, Foto ändern',ri_desc:'Beschreibung',ri_rmav:'Foto entfernen',room_nf:'Nicht gefunden.',
+bd_tom:'Morgen hat „{n}“ Geburtstag!',bd_today:'Heute hat „{n}“ Geburtstag.',st_typing:'schreibt …',st_voice:'nimmt Sprachnachricht auf …',st_choose:'wählt Medien …',st_upload:'sendet Medien …',
+mu_t:'Musik',mu_title:'Titel',mu_artist:'Interpret (optional)',mu_cover:'Cover',mu_rm:'Cover entfernen',mu_send:'Senden'};
+
+/* ====================== Français ====================== */
+BASE.fr={login_t:'Connexion',reg_t:'Inscription',email:'E-mail',pass:'Mot de passe (6 caractères min.)',pass2:'Répétez le mot de passe',name:'Nom',
+signin:'Se connecter',signup:'Créer un compte',to_reg:'Pas de compte ? Inscrivez-vous',to_login:'Déjà un compte ? Connectez-vous',out:'Se déconnecter',
+search:'Rechercher par nom ou e-mail',msg:'Message',send:'→',pick:'Choisissez un contact pour commencer à discuter.',
+nochat:'Aucun message pour le moment. Écrivez le premier.',nousers:'Personne pour l’instant. Invitez vos amis à s’inscrire.',
+service:'service',svc_acc:'compte de service',settings:'Paramètres',theme:'Thème',dark:'Sombre',light:'Clair',accent:'Couleur néon',
+lang:'Langue',close:'Fermer',red:'Rouge',blue:'Bleu',green:'Vert',yellow:'Jaune',purple:'Violet',
+e_fill:'Saisissez votre e-mail et un mot de passe de 6 caractères minimum.',e_name:'Saisissez votre nom.',e_match:'Les mots de passe ne correspondent pas.',
+created:'Compte créé. Confirmez votre e-mail ou connectez-vous.',notsent:'Non envoyé : ',
+username:'nom_utilisateur',notif:'Notifications de messages',ntext:'Afficher le texte dans les notifications',newmsg:'Nouveau message',chats:'Discussions',contacts:'Contacts',
+newroom:'Nouveau groupe ou canal',group:'Groupe',channel:'Canal',rtitle:'Titre',members:'Membres (parmi les contacts)',create:'Créer',
+rename:'Renommer le contact',addc:'Ajouter aux contacts',delc:'Retirer des contacts',addby:'Ajouter par @username',imp:'Importer depuis le téléphone',noimp:'L’import des contacts fonctionne uniquement dans Chrome sur Android.',
+nf:'Utilisateur introuvable.',alias:'Nom du contact (visible par vous seul)',e_title:'Saisissez un titre.',imported:'Contacts ajoutés : ',nocont:'Aucun contact pour le moment.',share:'Partager le lien',
+reply:'Répondre',fwdb:'Transférer',fwdto:'Transférer à…',copy:'Copier',pin:'Épingler',unpin:'Désépingler',delme:'Supprimer pour moi',delall:'Supprimer pour tous',
+readat:'Lu : ',notread:'Pas encore lu',role_owner:'propriétaire',role_admin:'admin',mkadm:'Nommer admin',rmadm:'Retirer admin',
+copied:'Lien copié.',e_join:'Lien d’invitation invalide.',conf_t:'Confirmez votre e-mail',conf_txt:'Nous avons envoyé un e-mail à {e}. Ouvrez-le, confirmez l’adresse, puis appuyez sur « Se connecter ».',conf_h:'Pas d’e-mail ? Vérifiez vos courriers indésirables.',
+e_user:'Nom d’utilisateur : 3 à 20 caractères, lettres latines, chiffres et _.',e_taken:'Ce nom d’utilisateur est déjà pris.',g_none:'Genre non précisé',g_m:'Homme',g_f:'Femme',g_o:'Autre',
+birth:'Date de naissance',region:'Région de résidence',hide_seen:'Masquer la dernière connexion',plink:'Lien du profil',save:'Enregistrer',saved:'Enregistré',
+online:'en ligne',recent:'vu récemment',seen:'vu ',e_big:'Le fichier est trop volumineux.',e_mic:'Pas d’accès au micro.',today:'Aujourd’hui',yday:'Hier',dbyday:'Avant-hier',
+call:'Tout',cgroups:'Groupes',cbots:'Bots',cchannels:'Canaux',pubq:'Public (via @username)',prot:'Protection du contenu',protd:'Transfert, copie et enregistrement interdits',rset:'Paramètres',
+reactions:'Réactions autorisées',sall:'Tout sélectionner',snone:'Tout désélectionner',rusern:'nom',e_ruser:'Username : 3 à 30 caractères, lettres latines, chiffres et _.',e_rtaken:'Ce @username est déjà pris.',
+rg0:'Émotions et personnages',rg1:'Gestes',rg2:'Créatures et animaux',rg3:'Plantes et nature',rg4:'Objets et nourriture',
+edit:'Modifier',cancel:'Annuler',ok:'OK',s_profile:'Profil',s_accounts:'Comptes',s_folders:'Dossiers',s_sessions:'Sessions',s_notif:'Notifications et sons',s_privacy:'Confidentialité',s_loc:'Apparence et langue',s_currency:'Ma monnaie',s_about:'À propos',
+addacc:'Ajouter un compte',addfolder:'Créer un dossier',editfolder:'Dossier',fname:'Nom du dossier',endothers:'Terminer toutes les autres sessions',thisdev:'cet appareil',endsess:'Terminer',sess_end:'Cette session a été terminée depuis un autre appareil.',
+n_dm:'Discussions privées',n_gr:'Groupes',n_ch:'Canaux',snd_on:'Son des messages entrants',snd_sent:'Son d’envoi',vib:'Vibration',snd_test:'Tester le son',sn_glass:'Verre',sn_pop:'Pop',sn_chime:'Carillon',
+mycolors:'Mes couleurs',savecolor:'Enregistrer la couleur',about_ph:'À propos de moi',addmusic:'Musique du profil',
+pv_email:'E-mail',pv_emailnote:'Visible par vous seul',pv_blocked:'Utilisateurs bloqués',pv_none:'Vide.',unblock:'Débloquer',block:'Bloquer',
+pv_pass:'Code de l’application',pass_on:'Le code est activé',pass_off:'Le code est désactivé',setpass:'Définir un code',changepass:'Changer le code',disablepass:'Désactiver',la0:'Verrouiller immédiatement',la1:'Après 1 minute',la5:'Après 5 minutes',la60:'Après 1 heure',
+pv_cloud:'Mot de passe cloud',cloud_on:'Demandé à la connexion sur tout appareil',cloud_off:'Non défini',setcloud:'Définir un mot de passe cloud',changecloud:'Changer le mot de passe cloud',removecloud:'Supprimer le mot de passe cloud',
+pv_chatpw:'Mots de passe des discussions',lockchat:'Mot de passe de la discussion',unlockchat:'Retirer le mot de passe',pv_auto:'Suppression automatique des messages',off:'Désactivée',u_day:'j',u_week:'sem.',u_month:'mois',u_year:'an',
+pv_vis:'Qui peut voir',pv_seen:'Dernière connexion',pv_photo:'Photos du profil',pv_about:'À propos de moi',pv_birthday:'Anniversaire',pv_music:'Musique du profil',pv_fwd:'Messages transférés (lien vers mon profil)',
+v_all:'Tout le monde',v_contacts:'Contacts',v_nobody:'Personne',exc_deny:'Exceptions : qui ne verra pas',exc_allow:'Exceptions : qui verra toujours',
+pv_incoming:'Messages entrants',in_all:'De tout le monde',in_contacts:'Contacts uniquement',in_paid:'Contre monnaie',in_price:'Prix du message',pv_invites:'Invitations aux groupes et canaux',inv_all:'Tout le monde',inv_contacts:'Contacts',inv_link:'Par lien ou @ uniquement',
+enterpass:'Saisissez le code',wrongpass:'Mot de passe incorrect. Réessayez',newpass:'Nouveau mot de passe (4 caractères min.)',repeatpass:'Répétez le mot de passe',pass_short:'4 caractères minimum.',enterpass_cloud:'Saisissez le mot de passe cloud',enterpass_chat:'Mot de passe de la discussion',
+e_blocked:'L’envoi de messages à cet utilisateur n’est pas disponible.',e_contacts:'Cet utilisateur n’accepte que les messages de ses contacts.',e_funds:'Pas assez de Ỻ pour envoyer un message payant.',
+cur_bal:'Solde',cur_buy:'Recharge',cur_code:'Code de recharge',cur_redeem:'Activer le code',cur_ok:'Crédité. Solde :',e_code:'Code invalide ou déjà utilisé.',cur_note:'Le paiement par carte n’est pas encore disponible : le solde se recharge par codes. Les messages payants débitent l’expéditeur et créditent le destinataire en Ỻ.',
+ab_ver:'Version',ab1:'XINH est une messagerie : discussions privées, groupes et canaux, fichiers, photos, vidéos, messages vocaux, réactions, contacts.',ab2:'Stockage : les données et fichiers sont hébergés sur Supabase. Les fichiers jusqu’à 25 Mo sont servis via des liens longs privés.',
+ab3:'Protection : le code et les mots de passe de discussion fonctionnent sur cet appareil, le mot de passe cloud est vérifié par le serveur à la connexion. Le chiffrement de bout en bout n’est pas utilisé.',ab4:'Limites du navigateur : une application web ne peut pas bloquer les captures d’écran ni recevoir de notifications push lorsqu’elle est fermée.',ab5:'Les réglages de l’application sont stockés sur cet appareil ; la confidentialité et le profil sont stockés dans votre compte.',
+s_stickers:'Stickers et emojis',stk_packs:'Packs de stickers',emo_packs:'Packs d’emojis',newpack_s:'Créer un pack de stickers',newpack_e:'Créer un pack d’emojis',packname:'Nom du pack',delpack:'Supprimer tout le pack ?',delstk:'Supprimer ce sticker ?',addstk:'Ajouter des images',stk_hint:'Touchez une image pour la retirer du pack. Les stickers s’envoient avec le bouton 🖼 au-dessus du champ de saisie.',official:'Officiels',
+cloud:'Cloud',cloud_sub:'Votre stockage personnel : messages, fichiers et notes',tocloud:'Enregistrer dans le Cloud',verified:'Compte vérifié',delchat:'Supprimer la discussion',delchat_me:'Supprimer pour moi',delchat_all:'Supprimer pour tous',delchat_conf:'Supprimer la conversation pour les deux personnes ? Action irréversible.',
+sec_media:'Médias',sec_voice:'Vocaux',sec_links:'Liens',sec_common:'Groupes en commun',sec_empty:'Rien ici pour le moment.',rs_menu_ch:'Paramètres du canal',rs_menu_gr:'Paramètres du groupe',
+rs_type:'Type',rs_disc:'Discussion',rs_react:'Réactions',rs_admins:'Administration',rs_subs:'Abonnés',rs_bans:'Liste noire',rs_del:'Supprimer',rs_hist:'Historique',rs_members:'Membres',rs_perms:'Autorisations',
+comments:'Commentaires',cmt_ph:'Commentaire',cmt_on:'Activer les commentaires',cmt_off:'Désactiver les commentaires',disc_on:'Commentaires sous les publications',disc_hint:'Lorsque cette option est activée, les publications affichent un bouton de commentaires. Vous pouvez désactiver les commentaires d’une publication depuis son menu.',
+hist_on:'Les nouveaux membres voient l’historique',adm_add:'Ajouter un administrateur',members_add:'Ajouter des membres',ban_add:'Ajouter à la liste noire',bans_none:'La liste noire est vide.',unban:'Retirer',kick_conf:'Retirer des membres ?',ban_conf:'Interdire à cet utilisateur de rejoindre ?',
+my_tag:'Mon tag dans ce groupe',tag_ph:'tag (24 caractères max.)',perm_send:'Les membres peuvent écrire des messages',perm_media:'Les membres peuvent envoyer photos et vidéos',perm_invite:'Les membres peuvent ajouter d’autres personnes',perm_pin:'Les membres peuvent épingler des messages',perm_tag:'Les membres peuvent changer leur tag',
+perm_price:'Prix d’un message de membre, Ỻ (0 = gratuit)',del_room:'Supprimer définitivement',del_room_conf:'Supprimer définitivement avec tous les messages ?',added:'Ajoutés : ',only_owner:'Ces réglages sont réservés au propriétaire.',e_no_media:'Dans ce groupe, les membres ne peuvent pas envoyer de photos ni de vidéos.',e_banned:'Il vous est interdit de rejoindre.',
+e_music:'Un fichier audio est requis : MP3, WAV, OGG, M4A, AAC ou FLAC. Les vidéos (MP4, etc.) ne sont pas acceptées.',uploadmusic:'Importer un fichier',pickmusic:'Choisir parmi les discussions',musicpick_t:'Musique de vos discussions',
+album_max:'9 pièces jointes maximum par message.',net_conn:'connexion…',net_upd:'mise à jour…',
+st_new:'Nouvelle story',st_pick:'Choisir une photo ou une vidéo',st_text:'Texte sur la story',st_cap:'Légende sous la story',st_music:'Musique',st_dur:'Visible par les autres pendant',st_prof:'Afficher dans le profil (reste après expiration)',st_pub:'Publier',st_my:'Ma story',st_stories:'Stories',st_del:'Supprimer cette story ?',st_h:'h',st_nomedia:'Choisissez une photo ou une vidéo.',st_noaud:'Un fichier audio est requis.',st_inprof:'Dans le profil',st_myst:'Mes stories',st_uploadmus:'Fichier',st_pickmus:'Depuis les discussions',
+sub:'S’abonner',join:'Rejoindre',mute:'Mettre en sourdine',unmute:'Réactiver le son',unsub:'Se désabonner',leave:'Quitter le groupe',unsub_conf:'Se désabonner de ce canal ?',leave_conf:'Quitter ce groupe ?',owner_leave:'Le propriétaire ne peut pas partir. Supprimez la discussion dans les paramètres.',
+ri_edit:'Modifier le titre, la description, la photo',ri_desc:'Description',ri_rmav:'Retirer la photo',room_nf:'Introuvable.',
+bd_tom:'Demain, c’est l’anniversaire de « {n} » !',bd_today:'Aujourd’hui, c’est l’anniversaire de « {n} ».',st_typing:'écrit…',st_voice:'enregistre un vocal…',st_choose:'choisit des médias…',st_upload:'envoie des médias…',
+mu_t:'Musique',mu_title:'Titre',mu_artist:'Artiste (facultatif)',mu_cover:'Pochette',mu_rm:'Retirer la pochette',mu_send:'Envoyer'};
+
+/* ====================== Български ====================== */
+BASE.bg={login_t:'Вход',reg_t:'Регистрация',email:'Имейл',pass:'Парола (поне 6 знака)',pass2:'Повторете паролата',name:'Име',
+signin:'Вход',signup:'Създаване на профил',to_reg:'Нямате профил? Регистрация',to_login:'Вече имате профил? Вход',out:'Изход',
+search:'Търсене по име или имейл',msg:'Съобщение',send:'→',pick:'Изберете контакт, за да започнете разговор.',
+nochat:'Все още няма съобщения. Пишете първи.',nousers:'Още няма никого. Поканете приятели да се регистрират.',
+service:'услуга',svc_acc:'служебен профил',settings:'Настройки',theme:'Тема',dark:'Тъмна',light:'Светла',accent:'Неонов цвят',
+lang:'Език',close:'Затвори',red:'Червен',blue:'Син',green:'Зелен',yellow:'Жълт',purple:'Лилав',
+e_fill:'Въведете имейл и парола от поне 6 знака.',e_name:'Въведете име.',e_match:'Паролите не съвпадат.',
+created:'Профилът е създаден. Потвърдете имейла си или влезте.',notsent:'Не е изпратено: ',
+username:'потребителско_име',notif:'Известия за съобщения',ntext:'Показване на текста в известията',newmsg:'Ново съобщение',chats:'Чатове',contacts:'Контакти',
+newroom:'Нова група или канал',group:'Група',channel:'Канал',rtitle:'Заглавие',members:'Участници (от контактите)',create:'Създай',
+rename:'Преименуване на контакт',addc:'Добавяне към контактите',delc:'Премахване от контактите',addby:'Добавяне по @username',imp:'Импортиране от телефона',noimp:'Импортирането на контакти работи само в Chrome на Android.',
+nf:'Потребителят не е намерен.',alias:'Име на контакта (виждате го само вие)',e_title:'Въведете заглавие.',imported:'Добавени контакти: ',nocont:'Все още няма контакти.',share:'Споделяне на връзка',
+reply:'Отговор',fwdb:'Препрати',fwdto:'Препрати до…',copy:'Копирай',pin:'Закачи',unpin:'Откачи',delme:'Изтрий за мен',delall:'Изтрий за всички',
+readat:'Прочетено: ',notread:'Още не е прочетено',role_owner:'собственик',role_admin:'админ',mkadm:'Направи админ',rmadm:'Премахни админ',
+copied:'Връзката е копирана.',e_join:'Невалидна връзка за покана.',conf_t:'Потвърдете имейла си',conf_txt:'Изпратихме писмо на {e}. Отворете го, потвърдете адреса и натиснете „Вход“.',conf_h:'Няма писмо? Проверете папката „Спам“.',
+e_user:'Потребителско име: 3–20 знака, латиница, цифри и _.',e_taken:'Това потребителско име е заето.',g_none:'Пол не е посочен',g_m:'Мъж',g_f:'Жена',g_o:'Друг',
+birth:'Дата на раждане',region:'Регион на пребиваване',hide_seen:'Скрий последно посещение',plink:'Връзка към профила',save:'Запази',saved:'Запазено',
+online:'на линия',recent:'активен наскоро',seen:'активен ',e_big:'Файлът е твърде голям.',e_mic:'Няма достъп до микрофона.',today:'Днес',yday:'Вчера',dbyday:'Завчера',
+call:'Всички',cgroups:'Групи',cbots:'Ботове',cchannels:'Канали',pubq:'Публичен (по @username)',prot:'Защита на съдържанието',protd:'Забрана за препращане, копиране и запазване',rset:'Настройки',
+reactions:'Разрешени реакции',sall:'Избери всички',snone:'Премахни всички',rusern:'име',e_ruser:'Username: 3–30 знака, латиница, цифри и _.',e_rtaken:'Този @username е зает.',
+rg0:'Емоции и герои',rg1:'Жестове',rg2:'Същества и животни',rg3:'Растения и природа',rg4:'Предмети и храна',
+edit:'Редактирай',cancel:'Отказ',ok:'ОК',s_profile:'Профил',s_accounts:'Профили',s_folders:'Папки',s_sessions:'Сесии',s_notif:'Известия и звуци',s_privacy:'Поверителност',s_loc:'Външен вид и език',s_currency:'Моята валута',s_about:'За приложението',
+addacc:'Добавяне на профил',addfolder:'Създаване на папка',editfolder:'Папка',fname:'Име на папката',endothers:'Прекрати всички други сесии',thisdev:'това устройство',endsess:'Прекрати',sess_end:'Тази сесия беше прекратена от друго устройство.',
+n_dm:'Лични чатове',n_gr:'Групи',n_ch:'Канали',snd_on:'Звук за входящи съобщения',snd_sent:'Звук при изпращане',vib:'Вибрация',snd_test:'Пробен звук',sn_glass:'Стъкло',sn_pop:'Пукване',sn_chime:'Звънче',
+mycolors:'Моите цветове',savecolor:'Запази цвета',about_ph:'За мен',addmusic:'Музика в профила',
+pv_email:'Имейл',pv_emailnote:'Вижда се само от вас',pv_blocked:'Блокирани потребители',pv_none:'Празно.',unblock:'Отблокирай',block:'Блокирай',
+pv_pass:'Код за приложението',pass_on:'Кодът е включен',pass_off:'Кодът е изключен',setpass:'Задай код',changepass:'Промени кода',disablepass:'Изключи',la0:'Заключвай веднага',la1:'След 1 минута',la5:'След 5 минути',la60:'След 1 час',
+pv_cloud:'Облачна парола',cloud_on:'Изисква се при вход на всяко устройство',cloud_off:'Не е зададена',setcloud:'Задай облачна парола',changecloud:'Промени облачната парола',removecloud:'Премахни облачната парола',
+pv_chatpw:'Пароли за чатове',lockchat:'Парола за чата',unlockchat:'Премахни паролата на чата',pv_auto:'Автоматично изтриване на съобщения',off:'Изключено',u_day:'дн.',u_week:'сед.',u_month:'мес.',u_year:'год.',
+pv_vis:'Кой вижда',pv_seen:'Последно посещение',pv_photo:'Снимки на профила',pv_about:'За мен',pv_birthday:'Рожден ден',pv_music:'Музика в профила',pv_fwd:'Препратени съобщения (връзка към моя профил)',
+v_all:'Всички',v_contacts:'Контакти',v_nobody:'Никой',exc_deny:'Изключения: кой няма да вижда',exc_allow:'Изключения: кой винаги вижда',
+pv_incoming:'Входящи съобщения',in_all:'От всички',in_contacts:'Само от контакти',in_paid:'Срещу валута',in_price:'Цена на съобщение',pv_invites:'Покани за групи и канали',inv_all:'Всички',inv_contacts:'Контакти',inv_link:'Само по връзка или @',
+enterpass:'Въведете кода',wrongpass:'Грешна парола. Опитайте отново',newpass:'Нова парола (поне 4 знака)',repeatpass:'Повторете паролата',pass_short:'Поне 4 знака.',enterpass_cloud:'Въведете облачната парола',enterpass_chat:'Парола за чата',
+e_blocked:'Изпращането на съобщения до този потребител не е възможно.',e_contacts:'Този потребител приема съобщения само от контакти.',e_funds:'Недостатъчно Ỻ за платено съобщение.',
+cur_bal:'Баланс',cur_buy:'Зареждане',cur_code:'Код за зареждане',cur_redeem:'Активирай кода',cur_ok:'Заредено. Баланс:',e_code:'Невалиден или вече използван код.',cur_note:'Плащането с банкова карта още не е свързано: балансът се зарежда с кодове. Платените съобщения удържат Ỻ от изпращача и ги добавят на получателя.',
+ab_ver:'Версия',ab1:'XINH е месинджър: лични чатове, групи и канали, файлове, снимки, видео, гласови съобщения, реакции, контакти.',ab2:'Съхранение: данните и файловете се пазят в Supabase. Файлове до 25 МБ се предоставят чрез частни дълги връзки.',
+ab3:'Защита: кодът и паролите за чатове работят на това устройство, а облачната парола се проверява от сървъра при вход. Не се използва шифроване от край до край.',ab4:'Ограничения на браузъра: уеб приложението не може да забрани екранни снимки и да получава push известия, когато е затворено.',ab5:'Настройките на приложението се пазят на това устройство, а настройките за поверителност и профилът — във вашия профил.',
+s_stickers:'Стикери и емоджита',stk_packs:'Пакети със стикери',emo_packs:'Пакети с емоджита',newpack_s:'Създай пакет със стикери',newpack_e:'Създай пакет с емоджита',packname:'Име на пакета',delpack:'Да се изтрие ли целият пакет?',delstk:'Да се изтрие ли този стикер?',addstk:'Добави картинки',stk_hint:'Докоснете картинка, за да я премахнете от пакета. Стикерите се изпращат с бутона 🖼 над полето за писане.',official:'Официални',
+cloud:'Облак',cloud_sub:'Вашето лично хранилище: съобщения, файлове и бележки',tocloud:'Запази в Облака',verified:'Потвърден профил',delchat:'Изтрий чата',delchat_me:'Изтрий за мен',delchat_all:'Изтрий за всички',delchat_conf:'Да се изтрие ли разговорът и при двамата? Това не може да се отмени.',
+sec_media:'Медия',sec_voice:'Гласови',sec_links:'Връзки',sec_common:'Общи групи',sec_empty:'Тук все още е празно.',rs_menu_ch:'Настройки на канала',rs_menu_gr:'Настройки на групата',
+rs_type:'Тип',rs_disc:'Обсъждане',rs_react:'Реакции',rs_admins:'Администрация',rs_subs:'Абонати',rs_bans:'Черен списък',rs_del:'Изтрий',rs_hist:'История на чата',rs_members:'Участници',rs_perms:'Разрешения',
+comments:'Коментари',cmt_ph:'Коментар',cmt_on:'Включи коментарите',cmt_off:'Изключи коментарите',disc_on:'Коментари под публикациите',disc_hint:'Когато е включено, под публикациите се появява бутон за коментари. Можете да изключите коментарите за отделна публикация от нейното меню.',
+hist_on:'Новите участници виждат историята на чата',adm_add:'Добави администратор',members_add:'Добави участници',ban_add:'Добави в черния списък',bans_none:'Черният списък е празен.',unban:'Премахни',kick_conf:'Да се премахне ли от участниците?',ban_conf:'Да се забрани ли на този потребител да влиза?',
+my_tag:'Моят таг в тази група',tag_ph:'таг (до 24 знака)',perm_send:'Участниците могат да пишат съобщения',perm_media:'Участниците могат да изпращат снимки и видео',perm_invite:'Участниците могат да добавят други',perm_pin:'Участниците могат да закачат съобщения',perm_tag:'Участниците могат да сменят своя таг',
+perm_price:'Цена на едно съобщение от участник, Ỻ (0 — безплатно)',del_room:'Изтрий завинаги',del_room_conf:'Да се изтрие ли завинаги заедно с всички съобщения?',added:'Добавени: ',only_owner:'Тези настройки са достъпни само за собственика.',e_no_media:'В тази група участниците не могат да изпращат снимки и видео.',e_banned:'Входът ви е забранен.',
+e_music:'Необходим е аудиофайл: MP3, WAV, OGG, M4A, AAC или FLAC. Видео (MP4 и др.) не е позволено.',uploadmusic:'Качи файл',pickmusic:'Избери от чатовете',musicpick_t:'Музика от вашите чатове',
+album_max:'Най-много 9 прикачени файла в едно съобщение.',net_conn:'свързване…',net_upd:'обновяване…',
+st_new:'Нова история',st_pick:'Избери снимка или видео',st_text:'Текст върху историята',st_cap:'Описание под историята',st_music:'Музика',st_dur:'Видима за другите',st_prof:'Показвай в профила (остава и след изтичане)',st_pub:'Публикувай',st_my:'Моята',st_stories:'Истории',st_del:'Да се изтрие ли тази история?',st_h:'ч.',st_nomedia:'Изберете снимка или видео.',st_noaud:'Необходим е аудиофайл.',st_inprof:'В профила',st_myst:'Моите истории',st_uploadmus:'Файл',st_pickmus:'От чатовете',
+sub:'Абонирай се',join:'Присъедини се',mute:'Заглуши',unmute:'Включи звука',unsub:'Отпиши се',leave:'Напусни групата',unsub_conf:'Да се отпишете ли от канала?',leave_conf:'Да напуснете ли групата?',owner_leave:'Собственикът не може да напусне. Изтрийте чата от настройките.',
+ri_edit:'Промяна на име, описание, снимка',ri_desc:'Описание',ri_rmav:'Премахни снимката',room_nf:'Не е намерено.',
+bd_tom:'Утре е рожденият ден на „{n}“!',bd_today:'Днес е рожденият ден на „{n}“.',st_typing:'пише…',st_voice:'записва глас…',st_choose:'избира медия…',st_upload:'изпраща медия…',
+mu_t:'Музика',mu_title:'Заглавие',mu_artist:'Изпълнител (по избор)',mu_cover:'Обложка',mu_rm:'Премахни обложката',mu_send:'Изпрати'};
+
+/* ====================== Српски (ћирилица) ====================== */
+BASE.sr={login_t:'Пријава',reg_t:'Регистрација',email:'Имејл',pass:'Лозинка (најмање 6 знакова)',pass2:'Поновите лозинку',name:'Име',
+signin:'Пријави се',signup:'Направи налог',to_reg:'Немате налог? Региструјте се',to_login:'Већ имате налог? Пријавите се',out:'Одјави се',
+search:'Претрага по имену или имејлу',msg:'Порука',send:'→',pick:'Изаберите контакт да бисте почели разговор.',
+nochat:'Још нема порука. Пишите први.',nousers:'Још нема никога. Позовите пријатеље да се региструју.',
+service:'сервис',svc_acc:'службени налог',settings:'Подешавања',theme:'Тема',dark:'Тамна',light:'Светла',accent:'Неонска боја',
+lang:'Језик',close:'Затвори',red:'Црвена',blue:'Плава',green:'Зелена',yellow:'Жута',purple:'Љубичаста',
+e_fill:'Унесите имејл и лозинку од најмање 6 знакова.',e_name:'Унесите име.',e_match:'Лозинке се не поклапају.',
+created:'Налог је направљен. Потврдите имејл или се пријавите.',notsent:'Није послато: ',
+username:'корисничко_име',notif:'Обавештења о порукама',ntext:'Прикажи текст у обавештењима',newmsg:'Нова порука',chats:'Четови',contacts:'Контакти',
+newroom:'Нова група или канал',group:'Група',channel:'Канал',rtitle:'Наслов',members:'Чланови (из контаката)',create:'Направи',
+rename:'Преименуј контакт',addc:'Додај у контакте',delc:'Уклони из контаката',addby:'Додај преко @username',imp:'Увоз са телефона',noimp:'Увоз контаката ради само у Chrome-у на Android-у.',
+nf:'Корисник није пронађен.',alias:'Име контакта (видите га само ви)',e_title:'Унесите наслов.',imported:'Додато контаката: ',nocont:'Још нема контаката.',share:'Подели везу',
+reply:'Одговори',fwdb:'Проследи',fwdto:'Проследи у…',copy:'Копирај',pin:'Закачи',unpin:'Откачи',delme:'Обриши за мене',delall:'Обриши за све',
+readat:'Прочитано: ',notread:'Још није прочитано',role_owner:'власник',role_admin:'админ',mkadm:'Постави за админа',rmadm:'Уклони админа',
+copied:'Веза је копирана.',e_join:'Веза за позивницу није важећа.',conf_t:'Потврдите имејл',conf_txt:'Послали смо поруку на {e}. Отворите је, потврдите адресу и притисните „Пријави се“.',conf_h:'Није стигла порука? Проверите фасциклу за нежељену пошту.',
+e_user:'Корисничко име: 3–20 знакова, латиница, цифре и _.',e_taken:'Ово корисничко име је заузето.',g_none:'Пол није наведен',g_m:'Мушки',g_f:'Женски',g_o:'Други',
+birth:'Датум рођења',region:'Регион боравка',hide_seen:'Сакриј време последње посете',plink:'Веза до профила',save:'Сачувај',saved:'Сачувано',
+online:'на мрежи',recent:'био/ла недавно',seen:'био/ла ',e_big:'Датотека је превелика.',e_mic:'Нема приступа микрофону.',today:'Данас',yday:'Јуче',dbyday:'Прекјуче',
+call:'Све',cgroups:'Групе',cbots:'Ботови',cchannels:'Канали',pubq:'Јавно (преко @username)',prot:'Заштита садржаја',protd:'Забрањено прослеђивање, копирање и чување',rset:'Подешавања',
+reactions:'Дозвољене реакције',sall:'Изабери све',snone:'Уклони све',rusern:'назив',e_ruser:'Username: 3–30 знакова, латиница, цифре и _.',e_rtaken:'Овај @username је заузет.',
+rg0:'Емоције и ликови',rg1:'Гестови',rg2:'Бића и животиње',rg3:'Биљке и природа',rg4:'Предмети и храна',
+edit:'Измени',cancel:'Откажи',ok:'У реду',s_profile:'Профил',s_accounts:'Налози',s_folders:'Фасцикле',s_sessions:'Сесије',s_notif:'Обавештења и звукови',s_privacy:'Приватност',s_loc:'Изглед и језик',s_currency:'Моја валута',s_about:'О апликацији',
+addacc:'Додај налог',addfolder:'Направи фасциклу',editfolder:'Фасцикла',fname:'Назив фасцикле',endothers:'Заврши све остале сесије',thisdev:'овај уређај',endsess:'Заврши',sess_end:'Ова сесија је завршена са другог уређаја.',
+n_dm:'Лични четови',n_gr:'Групе',n_ch:'Канали',snd_on:'Звук долазних порука',snd_sent:'Звук слања',vib:'Вибрација',snd_test:'Провери звук',sn_glass:'Стакло',sn_pop:'Пуцањ',sn_chime:'Звонце',
+mycolors:'Моје боје',savecolor:'Сачувај боју',about_ph:'О мени',addmusic:'Музика у профилу',
+pv_email:'Имејл',pv_emailnote:'Видљиво само вама',pv_blocked:'Блокирани корисници',pv_none:'Празно.',unblock:'Деблокирај',block:'Блокирај',
+pv_pass:'Шифра апликације',pass_on:'Шифра је укључена',pass_off:'Шифра је искључена',setpass:'Постави шифру',changepass:'Промени шифру',disablepass:'Искључи',la0:'Закључај одмах',la1:'После 1 минута',la5:'После 5 минута',la60:'После 1 сата',
+pv_cloud:'Облак лозинка',cloud_on:'Тражи се при пријави на сваком уређају',cloud_off:'Није постављена',setcloud:'Постави облак лозинку',changecloud:'Промени облак лозинку',removecloud:'Уклони облак лозинку',
+pv_chatpw:'Лозинке за четове',lockchat:'Лозинка за чет',unlockchat:'Уклони лозинку са чета',pv_auto:'Аутоматско брисање порука',off:'Искључено',u_day:'дан.',u_week:'нед.',u_month:'мес.',u_year:'год.',
+pv_vis:'Ко може да види',pv_seen:'Време последње посете',pv_photo:'Фотографије профила',pv_about:'О мени',pv_birthday:'Рођендан',pv_music:'Музика у профилу',pv_fwd:'Прослеђене поруке (веза до мог профила)',
+v_all:'Сви',v_contacts:'Контакти',v_nobody:'Нико',exc_deny:'Изузеци: ко неће видети',exc_allow:'Изузеци: ко ће увек видети',
+pv_incoming:'Долазне поруке',in_all:'Од свих',in_contacts:'Само од контаката',in_paid:'За валуту',in_price:'Цена поруке',pv_invites:'Позивнице у групе и канале',inv_all:'Сви',inv_contacts:'Контакти',inv_link:'Само преко везе или @',
+enterpass:'Унесите шифру',wrongpass:'Погрешна лозинка. Покушајте поново',newpass:'Нова лозинка (најмање 4 знака)',repeatpass:'Поновите лозинку',pass_short:'Најмање 4 знака.',enterpass_cloud:'Унесите облак лозинку',enterpass_chat:'Лозинка за чет',
+e_blocked:'Слање порука овом кориснику није доступно.',e_contacts:'Овај корисник прима поруке само од контаката.',e_funds:'Нема довољно Ỻ за плаћену поруку.',
+cur_bal:'Стање',cur_buy:'Допуна',cur_code:'Код за допуну',cur_redeem:'Активирај код',cur_ok:'Уплаћено. Стање:',e_code:'Неисправан или већ искоришћен код.',cur_note:'Плаћање картицом још није повезано: стање се допуњује кодовима. Плаћене поруке скидају Ỻ пошиљаоцу и додају их примаоцу.',
+ab_ver:'Верзија',ab1:'XINH је месинџер: лични четови, групе и канали, датотеке, фотографије, видео, гласовне поруке, реакције, контакти.',ab2:'Чување: подаци и датотеке се налазе на Supabase-у. Датотеке до 25 МБ испоручују се преко приватних дугих веза.',
+ab3:'Заштита: шифра и лозинке за четове раде на овом уређају, а облак лозинку при пријави проверава сервер. Не користи се шифровање од краја до краја.',ab4:'Ограничења прегледача: веб апликација не може да забрани снимке екрана нити да прима push обавештења док је затворена.',ab5:'Подешавања апликације чувају се на овом уређају, а подешавања приватности и профил у вашем налогу.',
+s_stickers:'Стикери и емоџији',stk_packs:'Паковања стикера',emo_packs:'Паковања емоџија',newpack_s:'Направи паковање стикера',newpack_e:'Направи паковање емоџија',packname:'Назив паковања',delpack:'Обрисати цело паковање?',delstk:'Обрисати овај стикер?',addstk:'Додај слике',stk_hint:'Додирните слику да бисте је уклонили из паковања. Стикери се шаљу дугметом 🖼 изнад поља за унос.',official:'Званични',
+cloud:'Облак',cloud_sub:'Ваш лични простор: поруке, датотеке и белешке',tocloud:'Сачувај у Облак',verified:'Верификован налог',delchat:'Обриши чет',delchat_me:'Обриши за мене',delchat_all:'Обриши за све',delchat_conf:'Обрисати преписку код обоје? Ово се не може опозвати.',
+sec_media:'Медији',sec_voice:'Гласовне',sec_links:'Везе',sec_common:'Заједничке групе',sec_empty:'Овде још нема ничега.',rs_menu_ch:'Подешавања канала',rs_menu_gr:'Подешавања групе',
+rs_type:'Врста',rs_disc:'Дискусија',rs_react:'Реакције',rs_admins:'Администрација',rs_subs:'Претплатници',rs_bans:'Црна листа',rs_del:'Обриши',rs_hist:'Историја чета',rs_members:'Чланови',rs_perms:'Дозволе',
+comments:'Коментари',cmt_ph:'Коментар',cmt_on:'Укључи коментаре',cmt_off:'Искључи коментаре',disc_on:'Коментари испод објава',disc_hint:'Када је укључено, испод објава се појављује дугме за коментаре. Коментаре за појединачну објаву можете искључити у њеном менију.',
+hist_on:'Нови чланови виде историју чета',adm_add:'Додај администратора',members_add:'Додај чланове',ban_add:'Додај на црну листу',bans_none:'Црна листа је празна.',unban:'Уклони',kick_conf:'Уклонити из чланова?',ban_conf:'Забранити овом кориснику улазак?',
+my_tag:'Мој таг у овој групи',tag_ph:'таг (до 24 знака)',perm_send:'Чланови могу да пишу поруке',perm_media:'Чланови могу да шаљу фотографије и видео',perm_invite:'Чланови могу да додају друге',perm_pin:'Чланови могу да закачињу поруке',perm_tag:'Чланови могу да мењају свој таг',
+perm_price:'Цена једне поруке члана, Ỻ (0 — бесплатно)',del_room:'Заувек обриши',del_room_conf:'Заувек обрисати заједно са свим порукама?',added:'Додато: ',only_owner:'Ова подешавања су доступна само власнику.',e_no_media:'У овој групи чланови не могу да шаљу фотографије и видео.',e_banned:'Забрањен вам је улазак.',
+e_music:'Потребна је аудио датотека: MP3, WAV, OGG, M4A, AAC или FLAC. Видео (MP4 и сл.) није дозвољен.',uploadmusic:'Отпреми датотеку',pickmusic:'Изабери из четова',musicpick_t:'Музика из ваших четова',
+album_max:'Највише 9 прилога у једној поруци.',net_conn:'повезивање…',net_upd:'ажурирање…',
+st_new:'Нова прича',st_pick:'Изабери фотографију или видео',st_text:'Текст на причи',st_cap:'Опис испод приче',st_music:'Музика',st_dur:'Видљива другима',st_prof:'Прикажи у профилу (остаје и после истека)',st_pub:'Објави',st_my:'Моја',st_stories:'Приче',st_del:'Обрисати ову причу?',st_h:'ч.',st_nomedia:'Изаберите фотографију или видео.',st_noaud:'Потребна је аудио датотека.',st_inprof:'У профилу',st_myst:'Моје приче',st_uploadmus:'Датотека',st_pickmus:'Из четова',
+sub:'Претплати се',join:'Придружи се',mute:'Искључи звук',unmute:'Укључи звук',unsub:'Откажи претплату',leave:'Напусти групу',unsub_conf:'Отказати претплату на канал?',leave_conf:'Напустити групу?',owner_leave:'Власник не може да изађе. Обришите чет у подешавањима.',
+ri_edit:'Измени назив, опис, фотографију',ri_desc:'Опис',ri_rmav:'Уклони фотографију',room_nf:'Није пронађено.',
+bd_tom:'Сутра је рођендан „{n}“!',bd_today:'Данас је рођендан „{n}“.',st_typing:'куца…',st_voice:'снима глас…',st_choose:'бира медије…',st_upload:'шаље медије…',
+mu_t:'Музика',mu_title:'Наслов',mu_artist:'Извођач (необавезно)',mu_cover:'Омот',mu_rm:'Уклони омот',mu_send:'Пошаљи'};
+
+/* ============ Недостающие ключи (регистрация, запись, медиа-окно, воспоминания, обои, свайпы) ============ */
+const M={};
+M.ja={rg_next:'次へ',rg_back:'戻る',rg_prof_t:'プロフィールを作成',rg_avatar:'円をタップして写真を追加',rg_set_t:'メッセンジャーを自分好みに設定',rg_opt:'(任意)',rg_gender:'性別',rg_look:'外観',
+rg_birth_d:'連絡先の人があなたをお祝いできるよう、生年月日の入力をお願いしています。',rg_reg_d:'あなたに合ったコンテンツを提供するため、居住国の入力をお願いしています。',rg_gen_d:'会話相手があなたへの呼びかけ方を分かるよう、性別の入力をお願いしています。',
+rg_creating:'プロフィールを作成中',rg_done:'アカウントを作成しました',rg_email_taken:'このメールアドレスは既に登録されています。',
+vr_voice:'ボイスメッセージ',vr_video:'ビデオメッセージ',vr_hint:'離して送信 · 左にスライドでキャンセル',vr_cancel:'離すとキャンセル',e_cam:'カメラにアクセスできません。',vn_lbl:'ビデオメッセージ',
+pk_recent:'最近',pk_file:'ファイル',pk_sound:'音声',pk_cont:'連絡先',pk_gal:'ギャラリー',pk_add:'追加',pk_send:'送信',pk_more:'ギャラリーから選ぶ',pk_pickf:'ファイルを選ぶ',pk_pickA:'音声をアップロード',pk_chats:'チャットの音楽',pk_nocont:'連絡先はまだありません。「連絡先」で追加してください。',pk_max:'選択できるのは9件までです。',pk_prof:'プロフィール',
+mem:'思い出',mem_chat:'チャットの思い出',mem_msgs:'メッセージ',mem_days:'日',mem_voice:'ボイス',mem_media:'写真と動画',mem_best:'ベストモーメント',mem_day:'一番にぎやかだった日',mem_top:'一番やり取りした相手',mem_rx:'よく使ったリアクション',mem_music:'今月の音楽',mem_empty:'今月はまだ思い出がありません。',
+wp_t:'チャットの壁紙',wp_set:'壁紙を選ぶ',wp_rm:'共通の壁紙を削除',wp_chat:'このチャットの壁紙',wp_rm_chat:'チャットの壁紙を削除(共通の壁紙になります)',wp_zoom:'拡大',wp_dim:'暗さ',wp_err:'画像を開けませんでした。',wp_title:'壁紙をトリミング',wp_hint:'画像をドラッグして表示範囲を選んでください。',
+sw_arch:'アーカイブ',sw_unarch:'アーカイブ解除',sw_unread:'未読にする',sw_read:'既読にする',sw_pin:'ピン留め',sw_unpin:'ピン解除',sw_mute:'ミュート',sw_unmute:'ミュート解除',sw_clear:'履歴を消去',sw_del:'削除',sw_arch_t:'アーカイブ',sw_back:'チャットに戻る',sw_clr_conf:'あなたの履歴を消去しますか?他のメンバーのメッセージは残ります。',
+wd0:'日曜日',wd1:'月曜日',wd2:'火曜日',wd3:'水曜日',wd4:'木曜日',wd5:'金曜日',wd6:'土曜日'};
+
+M.de={rg_next:'Weiter',rg_back:'Zurück',rg_prof_t:'Profil erstellen',rg_avatar:'Tippe auf den Kreis, um ein Foto hinzuzufügen',rg_set_t:'Richte den Messenger nach deinen Wünschen ein',rg_opt:'(optional)',rg_gender:'Geschlecht',rg_look:'Darstellung',
+rg_birth_d:'Wir fragen nach deinem Geburtsdatum, damit deine Kontakte wissen, wann sie dir gratulieren können.',rg_reg_d:'Wir fragen nach deinem Wohnland, um zu wissen, welche Inhalte am besten zu dir passen.',rg_gen_d:'Wir fragen nach deinem Geschlecht, damit dein Gegenüber weiß, wie er oder sie dich ansprechen kann.',
+rg_creating:'Dein Profil wird erstellt',rg_done:'Dein Konto wurde erstellt',rg_email_taken:'Diese E-Mail-Adresse ist bereits registriert.',
+vr_voice:'Sprachnachricht',vr_video:'Videonachricht',vr_hint:'Loslassen zum Senden · nach links wischen zum Abbrechen',vr_cancel:'Loslassen zum Abbrechen',e_cam:'Kein Zugriff auf die Kamera.',vn_lbl:'Videonachricht',
+pk_recent:'Zuletzt',pk_file:'Datei',pk_sound:'Audio',pk_cont:'Kontakt',pk_gal:'Galerie',pk_add:'Hinzufügen',pk_send:'Senden',pk_more:'Aus Galerie wählen',pk_pickf:'Dateien wählen',pk_pickA:'Audio hochladen',pk_chats:'Musik aus deinen Chats',pk_nocont:'Noch keine Kontakte. Füge Personen unter „Kontakte“ hinzu.',pk_max:'Du kannst höchstens 9 auswählen.',pk_prof:'Profil',
+mem:'Erinnerungen',mem_chat:'Chat-Erinnerungen',mem_msgs:'Nachrichten',mem_days:'Tage',mem_voice:'Sprachnachr.',mem_media:'Fotos und Videos',mem_best:'Bester Moment',mem_day:'Aktivster Tag',mem_top:'Am meisten geschrieben mit',mem_rx:'Beliebteste Reaktionen',mem_music:'Musik des Monats',mem_empty:'In diesem Monat gibt es noch nichts zu erinnern.',
+wp_t:'Chat-Hintergründe',wp_set:'Hintergrund wählen',wp_rm:'Allgemeinen Hintergrund entfernen',wp_chat:'Hintergrund dieses Chats',wp_rm_chat:'Chat-Hintergrund entfernen (der allgemeine gilt dann)',wp_zoom:'Zoom',wp_dim:'Abdunkelung',wp_err:'Das Bild konnte nicht geöffnet werden.',wp_title:'Hintergrund zuschneiden',wp_hint:'Ziehe das Bild, um den sichtbaren Bereich zu wählen.',
+sw_arch:'Archivieren',sw_unarch:'Aus Archiv',sw_unread:'Ungelesen',sw_read:'Gelesen',sw_pin:'Anheften',sw_unpin:'Lösen',sw_mute:'Stumm',sw_unmute:'Ton an',sw_clear:'Leeren',sw_del:'Löschen',sw_arch_t:'Archiv',sw_back:'Zurück zu den Chats',sw_clr_conf:'Den Verlauf bei dir leeren? Andere Mitglieder behalten ihre Nachrichten.',
+wd0:'Sonntag',wd1:'Montag',wd2:'Dienstag',wd3:'Mittwoch',wd4:'Donnerstag',wd5:'Freitag',wd6:'Samstag'};
+
+M.fr={rg_next:'Suivant',rg_back:'Retour',rg_prof_t:'Créez votre profil',rg_avatar:'Touchez le cercle pour ajouter une photo',rg_set_t:'Configurez la messagerie à votre façon',rg_opt:'(facultatif)',rg_gender:'Genre',rg_look:'Apparence',
+rg_birth_d:'Nous demandons votre date de naissance pour que vos contacts sachent quand vous souhaiter un bon anniversaire.',rg_reg_d:'Nous demandons votre pays de résidence pour savoir quel contenu vous convient le mieux.',rg_gen_d:'Nous demandons votre genre pour que votre interlocuteur sache comment s’adresser à vous.',
+rg_creating:'Création de votre profil',rg_done:'Votre compte est créé',rg_email_taken:'Cet e-mail est déjà enregistré.',
+vr_voice:'Message vocal',vr_video:'Message vidéo',vr_hint:'Relâchez pour envoyer · glissez à gauche pour annuler',vr_cancel:'Relâchez pour annuler',e_cam:'Pas d’accès à la caméra.',vn_lbl:'Message vidéo',
+pk_recent:'Récents',pk_file:'Fichier',pk_sound:'Audio',pk_cont:'Contact',pk_gal:'Galerie',pk_add:'Ajouter',pk_send:'Envoyer',pk_more:'Choisir dans la galerie',pk_pickf:'Choisir des fichiers',pk_pickA:'Importer de l’audio',pk_chats:'Musique de vos discussions',pk_nocont:'Aucun contact pour le moment. Ajoutez des personnes dans « Contacts ».',pk_max:'Vous pouvez en sélectionner 9 au maximum.',pk_prof:'Profil',
+mem:'Souvenirs',mem_chat:'Souvenirs de la discussion',mem_msgs:'messages',mem_days:'jours',mem_voice:'vocaux',mem_media:'Photos et vidéos',mem_best:'Meilleur moment',mem_day:'Jour le plus animé',mem_top:'Plus grande conversation avec',mem_rx:'Réactions préférées',mem_music:'Musique du mois',mem_empty:'Rien à se rappeler ce mois-ci pour l’instant.',
+wp_t:'Fonds d’écran des discussions',wp_set:'Choisir un fond d’écran',wp_rm:'Retirer le fond d’écran général',wp_chat:'Fond d’écran de cette discussion',wp_rm_chat:'Retirer le fond de la discussion (le général s’appliquera)',wp_zoom:'Zoom',wp_dim:'Assombrissement',wp_err:'Impossible d’ouvrir l’image.',wp_title:'Recadrer le fond d’écran',wp_hint:'Faites glisser l’image pour choisir la zone visible.',
+sw_arch:'Archiver',sw_unarch:'Désarchiver',sw_unread:'Non lu',sw_read:'Lu',sw_pin:'Épingler',sw_unpin:'Désépingler',sw_mute:'Sourdine',sw_unmute:'Son activé',sw_clear:'Effacer',sw_del:'Supprimer',sw_arch_t:'Archives',sw_back:'Retour aux discussions',sw_clr_conf:'Effacer l’historique pour vous ? Les autres membres conservent leurs messages.',
+wd0:'Dimanche',wd1:'Lundi',wd2:'Mardi',wd3:'Mercredi',wd4:'Jeudi',wd5:'Vendredi',wd6:'Samedi'};
+
+M.bg={rg_next:'Напред',rg_back:'Назад',rg_prof_t:'Създайте профил',rg_avatar:'Докоснете кръга, за да добавите снимка',rg_set_t:'Настройте месинджъра по ваш вкус',rg_opt:'(по избор)',rg_gender:'Пол',rg_look:'Външен вид',
+rg_birth_d:'Молим ви да посочите дата на раждане, за да знаят контактите ви кога да ви поздравят.',rg_reg_d:'Молим ви да посочите страната си на пребиваване, за да знаем какво съдържание да ви предлагаме.',rg_gen_d:'Молим ви да посочите пол, за да знае събеседникът ви как да се обръща към вас.',
+rg_creating:'Създаваме вашия профил',rg_done:'Профилът ви е създаден',rg_email_taken:'Този имейл вече е регистриран.',
+vr_voice:'Гласово съобщение',vr_video:'Видеосъобщение',vr_hint:'Пуснете за изпращане · плъзнете наляво за отказ',vr_cancel:'Пуснете, за да откажете',e_cam:'Няма достъп до камерата.',vn_lbl:'Видеосъобщение',
+pk_recent:'Скорошни',pk_file:'Файл',pk_sound:'Звук',pk_cont:'Контакт',pk_gal:'Галерия',pk_add:'Добави',pk_send:'Изпрати',pk_more:'Избери от галерията',pk_pickf:'Избери файлове',pk_pickA:'Качи аудио',pk_chats:'Музика от вашите чатове',pk_nocont:'Още няма контакти. Добавете хора в „Контакти“.',pk_max:'Можете да изберете най-много 9.',pk_prof:'Профил',
+mem:'Спомени',mem_chat:'Спомени от чата',mem_msgs:'съобщения',mem_days:'дни',mem_voice:'гласови',mem_media:'Снимки и видео',mem_best:'Най-добър момент',mem_day:'Най-оживеният ден',mem_top:'Най-много сте си писали с',mem_rx:'Любими реакции',mem_music:'Музика на месеца',mem_empty:'Този месец още няма какво да си спомним.',
+wp_t:'Тапети за чатове',wp_set:'Избери тапет',wp_rm:'Премахни общия тапет',wp_chat:'Тапет на този чат',wp_rm_chat:'Премахни тапета на чата (ще важи общият)',wp_zoom:'Мащаб',wp_dim:'Затъмняване',wp_err:'Изображението не можа да се отвори.',wp_title:'Изрязване на тапета',wp_hint:'Плъзнете изображението, за да изберете видимата област.',
+sw_arch:'В архив',sw_unarch:'От архива',sw_unread:'Непрочетено',sw_read:'Прочетено',sw_pin:'Закачи',sw_unpin:'Откачи',sw_mute:'Без звук',sw_unmute:'Със звук',sw_clear:'Изчисти',sw_del:'Изтрий',sw_arch_t:'Архив',sw_back:'Назад към чатовете',sw_clr_conf:'Да се изчисти ли историята при вас? При другите участници съобщенията остават.',
+wd0:'Неделя',wd1:'Понеделник',wd2:'Вторник',wd3:'Сряда',wd4:'Четвъртък',wd5:'Петък',wd6:'Събота'};
+
+M.sr={rg_next:'Даље',rg_back:'Назад',rg_prof_t:'Направите профил',rg_avatar:'Додирните круг да додате фотографију',rg_set_t:'Подесите месинџер по свом укусу',rg_opt:'(необавезно)',rg_gender:'Пол',rg_look:'Изглед',
+rg_birth_d:'Тражимо датум рођења да би ваши контакти знали када да вам честитају.',rg_reg_d:'Тражимо земљу боравка да бисмо знали који садржај вам највише одговара.',rg_gen_d:'Тражимо пол да би саговорник знао како да вам се обраћа.',
+rg_creating:'Правимо ваш профил',rg_done:'Ваш налог је направљен',rg_email_taken:'Овај имејл је већ регистрован.',
+vr_voice:'Гласовна порука',vr_video:'Видео порука',vr_hint:'Пустите за слање · превуците улево за отказивање',vr_cancel:'Пустите да откажете',e_cam:'Нема приступа камери.',vn_lbl:'Видео порука',
+pk_recent:'Недавно',pk_file:'Датотека',pk_sound:'Звук',pk_cont:'Контакт',pk_gal:'Галерија',pk_add:'Додај',pk_send:'Пошаљи',pk_more:'Изабери из галерије',pk_pickf:'Изабери датотеке',pk_pickA:'Отпреми аудио',pk_chats:'Музика из ваших четова',pk_nocont:'Још нема контаката. Додајте људе у „Контакти“.',pk_max:'Можете изабрати највише 9.',pk_prof:'Профил',
+mem:'Сећања',mem_chat:'Сећања из чета',mem_msgs:'порука',mem_days:'дана',mem_voice:'гласовних',mem_media:'Фотографије и видео',mem_best:'Најбољи тренутак',mem_day:'Најживљи дан',mem_top:'Највише сте дописивали са',mem_rx:'Омиљене реакције',mem_music:'Музика месеца',mem_empty:'Овог месеца још нема чега да се сетимо.',
+wp_t:'Позадине четова',wp_set:'Изабери позадину',wp_rm:'Уклони општу позадину',wp_chat:'Позадина овог чета',wp_rm_chat:'Уклони позадину чета (важиће општа)',wp_zoom:'Увећање',wp_dim:'Затамњење',wp_err:'Слика није могла да се отвори.',wp_title:'Опсецање позадине',wp_hint:'Превуците слику да изаберете видљиви део.',
+sw_arch:'У архиву',sw_unarch:'Из архиве',sw_unread:'Непрочитано',sw_read:'Прочитано',sw_pin:'Закачи',sw_unpin:'Откачи',sw_mute:'Без звука',sw_unmute:'Са звуком',sw_clear:'Очисти',sw_del:'Обриши',sw_arch_t:'Архива',sw_back:'Назад на четове',sw_clr_conf:'Очистити историју код вас? Остали чланови задржавају поруке.',
+wd0:'Недеља',wd1:'Понедељак',wd2:'Уторак',wd3:'Среда',wd4:'Четвртак',wd5:'Петак',wd6:'Субота'};
+
+/* vi / zh / be: только то, чего не хватало */
+M.vi={rg_next:'Tiếp',rg_back:'Quay lại',rg_prof_t:'Tạo hồ sơ của bạn',rg_avatar:'Chạm vào vòng tròn để thêm ảnh',rg_set_t:'Thiết lập ứng dụng theo ý bạn',rg_opt:'(không bắt buộc)',rg_gender:'Giới tính',rg_look:'Giao diện',
+rg_birth_d:'Chúng tôi hỏi ngày sinh để các liên hệ biết khi nào nên chúc mừng bạn.',rg_reg_d:'Chúng tôi hỏi quốc gia nơi bạn sống để biết nội dung nào phù hợp với bạn nhất.',rg_gen_d:'Chúng tôi hỏi giới tính để người trò chuyện biết cách xưng hô với bạn.',
+rg_creating:'Đang tạo hồ sơ của bạn',rg_done:'Tài khoản của bạn đã được tạo',rg_email_taken:'Email này đã được đăng ký.',
+vr_voice:'Tin nhắn thoại',vr_video:'Tin nhắn video',vr_hint:'Thả để gửi · vuốt sang trái để hủy',vr_cancel:'Thả để hủy',e_cam:'Không có quyền dùng camera.',vn_lbl:'Tin nhắn video',
+pk_recent:'Gần đây',pk_file:'Tệp',pk_sound:'Âm thanh',pk_cont:'Liên hệ',pk_gal:'Thư viện',pk_add:'Thêm',pk_send:'Gửi',pk_more:'Chọn từ thư viện',pk_pickf:'Chọn tệp',pk_pickA:'Tải âm thanh lên',pk_chats:'Nhạc từ các cuộc trò chuyện của bạn',pk_nocont:'Chưa có liên hệ. Hãy thêm người trong «Liên hệ».',pk_max:'Bạn chỉ có thể chọn tối đa 9.',pk_prof:'Hồ sơ',
+mem:'Kỷ niệm',mem_chat:'Kỷ niệm cuộc trò chuyện',mem_msgs:'tin nhắn',mem_days:'ngày',mem_voice:'tin thoại',mem_media:'Ảnh và video',mem_best:'Khoảnh khắc đẹp nhất',mem_day:'Ngày sôi nổi nhất',mem_top:'Trò chuyện nhiều nhất với',mem_rx:'Biểu cảm yêu thích',mem_music:'Nhạc của tháng',mem_empty:'Tháng này chưa có gì để nhớ.',
+wp_t:'Hình nền trò chuyện',wp_set:'Chọn hình nền',wp_rm:'Xóa hình nền chung',wp_chat:'Hình nền cuộc trò chuyện này',wp_rm_chat:'Xóa hình nền cuộc trò chuyện (sẽ dùng hình nền chung)',wp_zoom:'Thu phóng',wp_dim:'Độ tối',wp_err:'Không mở được ảnh.',wp_title:'Cắt hình nền',wp_hint:'Kéo ảnh để chọn vùng hiển thị.',
+sw_arch:'Lưu trữ',sw_unarch:'Bỏ lưu trữ',sw_unread:'Chưa đọc',sw_read:'Đã đọc',sw_pin:'Ghim',sw_unpin:'Bỏ ghim',sw_mute:'Tắt tiếng',sw_unmute:'Bật tiếng',sw_clear:'Xóa lịch sử',sw_del:'Xóa',sw_arch_t:'Lưu trữ',sw_back:'Quay lại trò chuyện',sw_clr_conf:'Xóa lịch sử ở phía bạn? Các thành viên khác vẫn giữ tin nhắn.',
+wd0:'Chủ nhật',wd1:'Thứ hai',wd2:'Thứ ba',wd3:'Thứ tư',wd4:'Thứ năm',wd5:'Thứ sáu',wd6:'Thứ bảy'};
+
+M.zh={rg_next:'下一步',rg_back:'返回',rg_prof_t:'创建你的个人资料',rg_avatar:'点击圆圈添加照片',rg_set_t:'按你的喜好设置应用',rg_opt:'（可选）',rg_gender:'性别',rg_look:'外观',
+rg_birth_d:'我们请你填写出生日期，以便联系人知道何时向你送上祝福。',rg_reg_d:'我们请你填写居住国家，以便了解哪些内容更适合你。',rg_gen_d:'我们请你填写性别，以便聊天对象知道如何称呼你。',
+rg_creating:'正在创建你的个人资料',rg_done:'你的账号已创建',rg_email_taken:'该邮箱已被注册。',
+vr_voice:'语音消息',vr_video:'视频消息',vr_hint:'松开发送 · 向左滑动取消',vr_cancel:'松开即可取消',e_cam:'无法使用摄像头。',vn_lbl:'视频消息',
+pk_recent:'最近',pk_file:'文件',pk_sound:'音频',pk_cont:'联系人',pk_gal:'相册',pk_add:'添加',pk_send:'发送',pk_more:'从相册选择',pk_pickf:'选择文件',pk_pickA:'上传音频',pk_chats:'来自你聊天的音乐',pk_nocont:'暂无联系人。请在“联系人”中添加。',pk_max:'最多可选择 9 个。',pk_prof:'个人资料',
+mem:'回忆',mem_chat:'聊天回忆',mem_msgs:'条消息',mem_days:'天',mem_voice:'条语音',mem_media:'照片和视频',mem_best:'最佳瞬间',mem_day:'最活跃的一天',mem_top:'聊得最多的人',mem_rx:'最爱的表情回应',mem_music:'本月音乐',mem_empty:'这个月还没有值得回忆的内容。',
+wp_t:'聊天壁纸',wp_set:'选择壁纸',wp_rm:'移除通用壁纸',wp_chat:'此聊天的壁纸',wp_rm_chat:'移除此聊天壁纸（将使用通用壁纸）',wp_zoom:'缩放',wp_dim:'变暗',wp_err:'无法打开图片。',wp_title:'裁剪壁纸',wp_hint:'拖动图片以选择可见区域。',
+sw_arch:'归档',sw_unarch:'取消归档',sw_unread:'标为未读',sw_read:'标为已读',sw_pin:'置顶',sw_unpin:'取消置顶',sw_mute:'静音',sw_unmute:'取消静音',sw_clear:'清空',sw_del:'删除',sw_arch_t:'归档',sw_back:'返回聊天',sw_clr_conf:'清空你这边的记录？其他成员的消息会保留。',
+wd0:'星期日',wd1:'星期一',wd2:'星期二',wd3:'星期三',wd4:'星期四',wd5:'星期五',wd6:'星期六'};
+
+M.be={rg_next:'Далей',rg_back:'Назад',rg_prof_t:'Стварыце профіль',rg_avatar:'Націсніце на круг, каб дадаць фота',rg_set_t:'Наладзьце мэсенджар пад сябе',rg_opt:'(неабавязкова)',rg_gender:'Пол',rg_look:'Афармленне',
+rg_birth_d:'Просім указаць дату нараджэння, каб вашы кантакты ведалі, калі павіншаваць вас.',rg_reg_d:'Просім указаць краіну пражывання, каб ведаць, які кантэнт вам лепш прапаноўваць.',rg_gen_d:'Просім указаць пол, каб суразмоўца ведаў, як да вас звяртацца.',
+rg_creating:'Ствараем ваш профіль',rg_done:'Ваш акаўнт створаны',rg_email_taken:'Гэтая пошта ўжо зарэгістравана.',
+vr_voice:'Галасавое паведамленне',vr_video:'Відэапаведамленне',vr_hint:'Адпусціце — адправіць · улева — адмена',vr_cancel:'Адпусціце, каб адмяніць',e_cam:'Няма доступу да камеры.',vn_lbl:'Відэапаведамленне',
+pk_recent:'Нядаўнія',pk_file:'Файл',pk_sound:'Гук',pk_cont:'Кантакт',pk_gal:'Галерэя',pk_add:'Дадаць',pk_send:'Адправіць',pk_more:'Абраць з галерэі',pk_pickf:'Абраць файлы',pk_pickA:'Загрузіць аўдыё',pk_chats:'Музыка з вашых чатаў',pk_nocont:'Кантактаў пакуль няма. Дадайце людзей у «Кантакты».',pk_max:'Можна абраць не больш за 9.',pk_prof:'Профіль',
+mem:'Ўспаміны',mem_chat:'Успаміны чата',mem_msgs:'паведамленняў',mem_days:'дзён',mem_voice:'галасавых',mem_media:'Фота і відэа',mem_best:'Лепшы момант',mem_day:'Самы жывы дзень',mem_top:'Больш за ўсё размаўлялі',mem_rx:'Любімыя рэакцыі',mem_music:'Музыка месяца',mem_empty:'У гэтым месяцы пакуль няма чаго ўспомніць.',
+wp_t:'Шпалеры чатаў',wp_set:'Абраць шпалеры',wp_rm:'Прыбраць агульныя шпалеры',wp_chat:'Шпалеры гэтага чата',wp_rm_chat:'Прыбраць шпалеры чата (будуць агульныя)',wp_zoom:'Маштаб',wp_dim:'Зацямненне',wp_err:'Не атрымалася адкрыць відарыс.',wp_title:'Кадраванне шпалер',wp_hint:'Перацягніце відарыс, каб абраць бачную вобласць.',
+sw_arch:'У архіў',sw_unarch:'З архіва',sw_unread:'Не прачытана',sw_read:'Прачытана',sw_pin:'Замацаваць',sw_unpin:'Адмацаваць',sw_mute:'Без гуку',sw_unmute:'Са гукам',sw_clear:'Ачысціць',sw_del:'Выдаліць',sw_arch_t:'Архіў',sw_back:'Назад да чатаў',sw_clr_conf:'Ачысціць гісторыю ў вас? У іншых удзельнікаў паведамленні застануцца.',
+wd0:'Нядзеля',wd1:'Панядзелак',wd2:'Аўторак',wd3:'Серада',wd4:'Чацвер',wd5:'Пятніца',wd6:'Субота'};
+M.be.mem='Успаміны';
+
+/* ---------- подключение ---------- */
+['ja','de','fr','bg','sr'].forEach(l=>{I18[l]=Object.assign({},BASE[l],M[l])});
+['vi','zh','be'].forEach(l=>{I18[l]=Object.assign({},I18[l]||{},M[l])});
+
+const NEW={ja:'ja',de:'de',fr:'fr',bg:'bg',sr:'sr'};
+const LOC2={ru:'ru',en:'en',xx:'en',nr:'ru',vi:'vi',zh:'zh-CN',be:'be',ja:'ja',de:'de',fr:'fr',bg:'bg',sr:'sr'};
+
+const sel=$('selLang');
+[['ja','日本語'],['de','Deutsch'],['fr','Français'],['bg','Български'],['sr','Српски']].forEach(([v,n])=>{
+ if(!sel.querySelector('[value="'+v+'"]'))sel.append(H('option',{value:v,textContent:n}))});
+
+buildRegions=function(){const s=$('pRegion'),v=s.value,lg=LOC2[S.lang]||'en';s.textContent='';
+ const o0=document.createElement('option');o0.value='';o0.textContent=t('region');s.append(o0);
+ try{const dn2=new Intl.DisplayNames([lg],{type:'region'}),A='ABCDEFGHIJKLMNOPQRSTUVWXYZ',l=[];
+  for(const a of A)for(const b of A){const c=a+b;if(BAD.has(c))continue;const n=dn2.of(c);if(n&&n!==c)l.push([c,n])}
+  l.sort((x,y)=>x[1].localeCompare(y[1],lg));
+  l.forEach(([c,n])=>{const o=document.createElement('option');o.value=c;o.textContent=n;s.append(o)})}catch(e){}
+ s.value=v};
+regName=function(c){if(!c)return '';try{return new Intl.DisplayNames([LOC2[S.lang]||'en'],{type:'region'}).of(c)||c}catch(e){return c}};
+seenText=function(u){if(u.is_service)return t('svc_acc');if(u.hide_seen||!u.last_seen)return t('recent');const d=new Date(u.last_seen);
+ return Date.now()-d<150000?t('online'):t('seen')+d.toLocaleString(LOC2[S.lang]||'en',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})};
+
+/* разделители дат: день недели на новом языке */
+const _dl2=dayLabel;
+dayLabel=function(ts){
+ if(!NEW[S.lang])return _dl2(ts);
+ const d=new Date(ts),n=new Date(),a=new Date(d.getFullYear(),d.getMonth(),d.getDate()),b=new Date(n.getFullYear(),n.getMonth(),n.getDate()),k=Math.round((b-a)/864e5);
+ if(k<=0)return t('today');if(k===1)return t('yday');if(k===2)return t('dbyday');
+ if(k<7)return t('wd'+d.getDay());
+ const dd=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0');return d.getFullYear()===n.getFullYear()?dd:dd+'.'+d.getFullYear()};
+
+const _aa2=applyAll;
+applyAll=function(){_aa2();document.documentElement.lang=LOC2[S.lang]||'en'};
+applyAll();
 })();
 </script>
 </body>
