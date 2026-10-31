@@ -3006,15 +3006,6 @@ dayLabel=function(ts){
 const sel=$('selLang');
 if(!sel.querySelector('[value="nr"]'))sel.append(H('option',{value:'nr',textContent:'Нуринaмскии̉'}));
 
-/* ---------- кнопки: скопировать полную таблицу для редактирования ---------- */
-const dump=l=>'I18.'+l+'={\n'+Object.keys(I18[l]).map(k=>' '+k+':'+JSON.stringify(I18[l][k])).join(',\n')+'\n};';
-const pg=$('pg-loc');
-[['nr','📋 Нуринамский: скопировать таблицу'],['xx','📋 Lanđȃ: скопировать таблицу']].forEach(([l,txt])=>
- pg.append(H('button',{type:'button',textContent:txt,onclick:async e=>{
-  try{await navigator.clipboard.writeText(dump(l));e.target.textContent='✓ Скопировано'}catch(_){e.target.textContent='✕'}
-  setTimeout(()=>e.target.textContent=txt,1600)}})));
-window.exportLang=dump;
-
 applyAll();
 })();
 </script>
