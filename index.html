@@ -3306,5 +3306,127 @@ openChat=async function(u){const r=await _oc(u);sync();return r};
 sync();
 })();
 </script>
+<!-- ===== НОВОЕ ОКНО ВЫБОРА МЕДИА (Галерея · Файл · Звук · Контакт): вставьте в самый конец index.html, прямо перед </body> (после блока видеосообщений) ===== -->
+<style>
+#pks{position:fixed;inset:0;z-index:40;background:var(--shade);display:flex;align-items:flex-end;justify-content:center;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#pks .sh{position:relative;width:100%;max-width:520px;height:86vh;height:86dvh;display:flex;flex-direction:column;overflow:hidden;border-radius:34px 34px 0 0;background:var(--p);border:1px solid var(--gb);box-shadow:var(--gs)}
+#pks .gr{width:44px;height:5px;border-radius:3px;background:var(--mt);opacity:.6;margin:8px auto 0;flex:none}
+#pks .hd{display:flex;align-items:center;gap:10px;padding:10px 14px;flex:none}
+#pks .hd .cl{width:42px;height:42px;padding:0;font-size:18px;flex:none;border-radius:50%}
+#pks .hd h3{flex:1;text-align:center;font-size:19px;font-weight:800}
+#pks .hd .go{flex:none;min-width:42px;padding:9px 14px}
+#pks .hd .go.off{visibility:hidden}
+#pks .bd{flex:1;overflow:auto;padding:0 0 120px}
+#pks .gg{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+#pks .tl{position:relative;aspect-ratio:1;overflow:hidden;cursor:pointer;background:var(--gl);padding:0;border:0;border-radius:0;display:block;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+#pks .tl img,#pks .tl video{width:100%;height:100%;object-fit:cover;display:block;max-width:none;max-height:none;border-radius:0;pointer-events:none}
+#pks .tl.add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--act);font-size:14px}
+#pks .tl.add b{font-size:38px;line-height:1}
+#pks .ck{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.18);color:#000;font-size:14px;font-weight:800;display:grid;place-items:center}
+#pks .tl.on .ck{background:var(--ac);border-color:var(--ac)}
+#pks .tl.on::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.25);pointer-events:none}
+#pks .vi{position:absolute;left:6px;bottom:4px;color:#fff;font-size:12px;text-shadow:0 0 4px #000}
+#pks .pn{padding:8px 14px;display:flex;flex-direction:column;gap:8px}
+#pks .ro{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:18px;background:var(--gl);border:1px solid var(--gb);cursor:pointer}
+#pks .ro .ck{position:static;margin-left:auto;flex:none;border-color:var(--gb)}
+#pks .ro.on .ck{background:var(--ac);border-color:var(--ac)}
+#pks .ro span.t{flex:1;min-width:0;white-space:pre-line;overflow-wrap:anywhere}
+#pks .tb{position:absolute;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));display:flex;gap:4px;padding:6px;border-radius:999px;background:var(--gl);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--gb);box-shadow:var(--gs)}
+#pks .tb button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;border:0;box-shadow:none;background:transparent;color:var(--mt);font-size:12px;-webkit-backdrop-filter:none;backdrop-filter:none}
+#pks .tb button span{font-size:22px;line-height:1}
+#pks .tb button.on{background:var(--tn);color:var(--act);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+@media(prefers-reduced-motion:no-preference){#pks .sh{animation:pksup .32s cubic-bezier(.2,.9,.3,1.05)}@keyframes pksup{from{transform:translateY(100%)}}}
+</style>
+<script>
+(()=>{
+const RU={pk_recent:'Недавние',pk_file:'Файл',pk_sound:'Звук',pk_cont:'Контакт',pk_gal:'Галерея',pk_add:'Добавить',pk_send:'Отправить',pk_more:'Выбрать из галереи',pk_pickf:'Выбрать файлы',pk_pickA:'Загрузить аудио',pk_chats:'Музыка из ваших чатов',pk_nocont:'Контактов пока нет. Добавьте людей в «Контакты».',pk_max:'Можно выбрать не больше 9.',pk_prof:'Профиль'};
+const EN={pk_recent:'Recent',pk_file:'File',pk_sound:'Audio',pk_cont:'Contact',pk_gal:'Gallery',pk_add:'Add',pk_send:'Send',pk_more:'Choose from gallery',pk_pickf:'Choose files',pk_pickA:'Upload audio',pk_chats:'Music from your chats',pk_nocont:'No contacts yet. Add people in Contacts.',pk_max:'You can select up to 9.',pk_prof:'Profile'};
+Object.assign(I18.ru,RU);Object.assign(I18.en,EN);
+['xx','nr','vi','zh','be'].forEach(l=>{if(I18[l])Object.assign(I18[l],l==='vi'||l==='zh'?EN:RU)});
+
+const MAX=9;let tab='gal',gal=[],cs=new Set(),busy=false;
+const sh=H('div',{id:'pks',className:'hide'});document.body.append(sh);
+const TABS=[['gal','🖼','pk_gal'],['file','📄','pk_file'],['snd','🎵','pk_sound'],['con','👤','pk_cont']];
+
+function open(){if(!peer||peer.preview||peer.cloud&&false)return;tab='gal';cs=new Set();draw();sh.classList.remove('hide')}
+function close(){gal.forEach(x=>URL.revokeObjectURL(x.url));gal=[];cs=new Set();sh.classList.add('hide');sh.textContent=''}
+sh.onclick=e=>{if(e.target===sh)close()};
+
+const nSel=()=>gal.filter(x=>x.on).length;
+const picker=(accept,multi,fn)=>{const i=H('input',{type:'file',accept,multiple:!!multi});i.onchange=()=>{const f=[...i.files];if(f.length)fn(f)};i.click()};
+
+async function post(row){const{data,error}=await sb.from('messages').insert({...tgt(peer),...row}).select().single();
+ if(error){alert(t('notsent')+errTxt(error));return false}
+ if(!msgs.some(x=>x.id===data.id))msgs.push(data);return true}
+const refresh=()=>{renderList();renderMsgs()};
+
+/* ---------- Галерея ---------- */
+function addFiles(fs){let over=false;
+ fs.forEach(f=>{const ty=f.type||'';if(!ty.startsWith('image/')&&!ty.startsWith('video/'))return;
+  if(f.size>26214400){alert(t('e_big'));return}
+  const on=nSel()<MAX;if(!on)over=true;
+  gal.push({f,kind:ty.startsWith('video/')?'video':'image',url:URL.createObjectURL(f),on})});
+ if(over)alert(t('pk_max'));draw()}
+function attachGal(){const l=gal.filter(x=>x.on).map(x=>x.f);if(!l.length)return;
+ const dt=new DataTransfer();l.forEach(f=>dt.items.add(f));
+ const fi=$('file');fi.files=dt.files;fi.dispatchEvent(new Event('change'));close()}
+
+/* ---------- Звук из чатов ---------- */
+function chatAudio(){const seen=new Set(),rows=[];
+ msgs.filter(m=>m.file_url&&!hid.has(m.id)&&((m.kind==='audio'&&!VIDEO_RE.test(m.file_name||''))||(m.kind==='file'&&AUDIO_RE.test(m.file_name||'')))).slice().reverse().forEach(m=>{
+  if(seen.has(m.file_url))return;seen.add(m.file_url);rows.push(m)});return rows.slice(0,40)}
+
+/* ---------- Контакты ---------- */
+function conList(){let l=users.filter(u=>u.id in conts);if(!l.length)l=users.filter(u=>last(u.id));return l}
+async function sendContacts(){if(busy)return;busy=true;
+ try{for(const u of conList().filter(x=>cs.has(x.id))){
+   const nm=dn(u).replace(/[\[\]()]/g,''),link=u.username?location.origin+location.pathname+'?u='+u.username:'';
+   const body='👤 '+(link?'['+nm+']('+link+')':nm)+(u.username?'\n@'+u.username:'');
+   await post({body,kind:'text'})}
+  refresh();close()}finally{busy=false}}
+
+/* ---------- отрисовка ---------- */
+function draw(){sh.textContent='';
+ const titles={gal:'pk_recent',file:'pk_file',snd:'pk_sound',con:'pk_cont'};
+ const n=tab==='gal'?nSel():tab==='con'?cs.size:0;
+ const go=H('button',{type:'button',className:'solid go'+(n?'':' off'),textContent:(tab==='gal'?t('pk_add'):t('pk_send'))+' ('+n+')',onclick:tab==='gal'?attachGal:sendContacts});
+ const hd=H('div',{className:'hd'},H('button',{type:'button',className:'cl',textContent:'✕',onclick:close}),H('h3',{textContent:t(titles[tab])+(tab==='gal'?' ⌄':'')}),go);
+ const bd=H('div',{className:'bd'});
+
+ if(tab==='gal'){const g=H('div',{className:'gg'});
+  g.append(H('button',{type:'button',className:'tl add',onclick:()=>picker('image/*,video/*',true,addFiles)},H('b',{textContent:'＋'}),H('span',{textContent:t('pk_more')})));
+  gal.forEach(x=>{const e=x.kind==='video'?H('video',{src:x.url+'#t=0.1',muted:true,preload:'metadata',playsInline:true}):H('img',{src:x.url,alt:''});
+   const tl=H('button',{type:'button',className:'tl'+(x.on?' on':''),onclick:()=>{if(!x.on&&nSel()>=MAX){alert(t('pk_max'));return}x.on=!x.on;draw()}},e,
+    H('span',{className:'ck',textContent:x.on?String(gal.filter(y=>y.on).indexOf(x)+1):''}));
+   if(x.kind==='video')tl.append(H('span',{className:'vi',textContent:'▶'}));g.append(tl)});
+  bd.append(g)}
+
+ else if(tab==='file'){bd.append(H('div',{className:'pn'},
+  H('button',{type:'button',className:'solid',textContent:'📄 '+t('pk_pickf'),onclick:()=>picker('',true,async fs=>{close();for(const f of fs)await sendFile(f,'file')})})))}
+
+ else if(tab==='snd'){const p=H('div',{className:'pn'});
+  p.append(H('button',{type:'button',className:'solid',textContent:'🎵 '+t('pk_pickA'),onclick:()=>picker('.mp3,.wav,.ogg,.oga,.opus,.m4a,.aac,.flac,.wma,.aif,.aiff,audio/*',true,async fs=>{close();for(const f of fs)await sendFile(f)})}));
+  const l=chatAudio();if(l.length)p.append(H('div',{className:'lbl sec',textContent:t('pk_chats')}));
+  l.forEach(m=>{const nm=(m.file_name||'').replace(/\.[^.]+$/,'');
+   p.append(H('div',{className:'ro',onclick:async()=>{if(busy)return;busy=true;
+     try{if(await post({body:m.body,kind:m.kind,file_url:m.file_url,file_name:m.file_name})){refresh();close()}}finally{busy=false}}},
+    H('span',{textContent:'🎵'}),H('span',{className:'t',textContent:(nm||'—')+'\n'+chatNameOf(m)})))});
+  bd.append(p)}
+
+ else{const p=H('div',{className:'pn'}),l=conList();
+  if(!l.length)p.append(H('div',{className:'lbl',textContent:t('pk_nocont')}));
+  l.forEach(u=>{const av=H('div',{className:'av'});setAv(av,u);const on=cs.has(u.id);
+   p.append(H('div',{className:'ro'+(on?' on':''),onclick:()=>{on?cs.delete(u.id):cs.add(u.id);draw()}},av,
+    H('span',{className:'t',textContent:dn(u)+(u.username?'\n@'+u.username:'')}),H('span',{className:'ck',textContent:on?'✓':''})))});
+  bd.append(p)}
+
+ const tb=H('div',{className:'tb'},TABS.map(([k,i,l])=>H('button',{type:'button',className:k===tab?'on':'',onclick:()=>{tab=k;draw()}},H('span',{textContent:i}),H('small',{textContent:t(l)}))));
+ sh.append(H('div',{className:'sh'},H('div',{className:'gr'}),hd,bd,tb))}
+
+/* ---------- скрепка открывает новое окно (боты — как раньше) ---------- */
+const prev=$('attach').onclick;
+$('attach').onclick=function(e){if(peer&&(peer.bot||peer.ubot))return prev&&prev.call(this,e);open()};
+})();
+</script>
 </body>
 </html>
