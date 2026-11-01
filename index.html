@@ -4088,5 +4088,300 @@ document.addEventListener('pointerdown',e=>{
  el.append(s);setTimeout(()=>s.remove(),650)},{passive:true});
 })();
 </script>
+<!-- ===== ИСЧЕЗАЮЩИЕ + МЕДИА ЗА ВАЛЮТУ + NSFW: вставьте в САМЫЙ КОНЕЦ index.html, прямо перед </body> (после блока анимаций). Сначала выполните xinh_once_paid_nsfw.sql ===== -->
+<style>
+#fmt button.on,.pkopt button.on{background:var(--tn);border-color:var(--ac);color:var(--act)}
+.pkopt{display:flex;gap:8px;padding:0 14px 8px;overflow-x:auto;flex:none;scrollbar-width:none}
+.pkopt button{padding:6px 14px;font-size:13px;flex:none}
+.onc{display:flex;align-items:center;gap:12px;min-width:210px;cursor:pointer;position:relative;z-index:1}
+.onc .oi{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:22px;border:1px dashed var(--ac);flex:none;box-shadow:0 0 12px var(--tn)}
+.onc small{display:block;color:var(--mt)}
+.onc.dn{cursor:default;opacity:.65}.onc.dn .oi{border-style:solid}
+.nsfw{position:relative;overflow:hidden;border-radius:14px}
+.nsfw>*:not(.nsov){filter:blur(22px);transition:filter .3s}
+.nsfw.rv>*:not(.nsov){filter:none}
+.nsov{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:8px;font-weight:800;font-size:13px;color:#fff;text-shadow:0 1px 6px #000;background:rgba(0,0,0,.28);cursor:pointer;z-index:2}
+.nsfw.rv .nsov{display:none}
+.nsb{display:inline-block;font-size:11px;font-weight:800;border:1px solid #ff453a;color:#ff453a;border-radius:6px;padding:0 6px;margin:0 6px 4px 0;position:relative;z-index:1}
+.prb{font-size:12px;color:var(--act);margin-bottom:4px;position:relative;z-index:1}
+.pwall{position:relative;width:min(240px,62vw);aspect-ratio:4/3;border-radius:16px;overflow:hidden;background:var(--gl);border:1px solid var(--gb)}
+.pwall img{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;filter:blur(14px);transform:scale(1.2);border-radius:0}
+.pwo{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(0,0,0,.35);color:#fff;z-index:1}
+.pwo .pl{font-size:30px}.pwo button{padding:8px 16px;font-size:14px}
+#onceV{position:fixed;inset:0;z-index:56;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;background:rgba(0,0,0,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff}
+#onceV.hide{display:none}
+#onceV .obox{max-width:100%;max-height:72vh;overflow:auto}
+#onceV .obox img,#onceV .obox video{max-width:100%;max-height:70vh;border-radius:16px}
+#onceV .ot{font-size:22px;line-height:1.35;white-space:pre-wrap;text-align:center;overflow-wrap:anywhere;max-width:min(520px,92vw)}
+#onceV .ohd{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center}
+</style>
+<script>
+(()=>{
+const RU={o_once:'🔥 Исчезающее',o_nsfw:'🔞 18+',o_price:'💰 Цена',o_price_n:'💰 {p} Ỻ',o_ask:'Цена за открытие медиа, Ỻ',o_bad:'Введите число от 1 до 100000.',
+ on_text:'Исчезающее сообщение',on_photo:'Исчезающее фото',on_video:'Исчезающее видео',on_voice:'Исчезающее голосовое',on_circle:'Исчезающий кружок',on_file:'Исчезающий файл',
+ on_open:'Нажмите, чтобы открыть (1 раз)',on_viewed:'Просмотрено',on_unopened:'Не открыто',on_gone:'Это сообщение уже просмотрено.',on_close:'Закрыть навсегда',on_hint:'Исчезнет после закрытия',
+ nsfw_tap:'нажмите, чтобы показать',pw_lock:'Платное медиа',pw_buy:'Открыть за {p} Ỻ',pw_conf:'Купить за {p} Ỻ? Деньги пойдут в казну канала.',pw_bought:'Куплено',pw_price:'Цена: {p} Ỻ',
+ rs_treasury:'Казна',tr_bal:'Казна канала',tr_pay:'Выплатить',tr_amt:'Сумма, Ỻ',tr_none:'Операций пока нет.',tr_owner:'Казну распределяет только владелец.',tr_log:'История',e_fwd:'Это нельзя переслать или сохранить.'};
+const EN={o_once:'🔥 Disappearing',o_nsfw:'🔞 18+',o_price:'💰 Price',o_price_n:'💰 {p} Ỻ',o_ask:'Price to open the media, Ỻ',o_bad:'Enter a number from 1 to 100000.',
+ on_text:'Disappearing message',on_photo:'Disappearing photo',on_video:'Disappearing video',on_voice:'Disappearing voice',on_circle:'Disappearing circle',on_file:'Disappearing file',
+ on_open:'Tap to open (once)',on_viewed:'Viewed',on_unopened:'Not opened',on_gone:'This message was already viewed.',on_close:'Close for good',on_hint:'Disappears when closed',
+ nsfw_tap:'tap to show',pw_lock:'Paid media',pw_buy:'Open for {p} Ỻ',pw_conf:'Buy for {p} Ỻ? The money goes to the channel treasury.',pw_bought:'Purchased',pw_price:'Price: {p} Ỻ',
+ rs_treasury:'Treasury',tr_bal:'Channel treasury',tr_pay:'Pay out',tr_amt:'Amount, Ỻ',tr_none:'No operations yet.',tr_owner:'Only the owner distributes the treasury.',tr_log:'History',e_fwd:'This cannot be forwarded or saved.'};
+Object.assign(I18.ru,RU);Object.assign(I18.en,EN);
+['xx','nr','be','bg','sr'].forEach(l=>{if(I18[l])Object.assign(I18[l],RU)});
+['vi','zh','ja','de','fr'].forEach(l=>{if(I18[l])Object.assign(I18[l],EN)});
+
+/* ---------- состояние ---------- */
+const OPT={once:false,nsfw:false,price:0};
+const viewed=new Set(),purchased=new Set(),revealed=new Set(),privPaths=new Map(),thumbs=new Map(),sCache=new Map();
+const MSGPATH=/^[^/]+\/\d+(_\d+)?\.[^/]*$/,MEDIA=['image','video','audio','voice','file'],CIRC=/^circle_\d+s_/;
+const AUTO=/^(📎 |🎵|🖼|🎤|🎥|💰|🔥)/;
+const isDM=()=>!!peer&&!peer.room&&!peer.cloud&&!peer.bot&&!peer.ubot&&!peer.preview;
+const isStaffCh=()=>!!peer&&peer.room&&peer.kind==='channel'&&!peer.preview&&(peer.role==='owner'||peer.role==='admin');
+const canMark=()=>!!peer&&!peer.bot&&!peer.ubot&&!peer.preview&&!peer.cloud;
+const needPriv=()=>(OPT.once&&isDM())||(OPT.price>0&&isStaffCh());
+const hasPriv=m=>/priv:/.test((m.file_url||'')+(m.file_name||''));
+const pendActive=()=>{const a=$('abar');return !!a&&!a.classList.contains('hide')};
+
+/* ---------- кнопки в панели форматирования ---------- */
+const bO=H('button',{type:'button'}),bN=H('button',{type:'button'}),bP=H('button',{type:'button'});
+$('fmt').append(bO,bN,bP);
+const setT=(b,x)=>{if(b.textContent!==x)b.textContent=x};
+const priceLbl=()=>OPT.price>0?t('o_price_n').replace('{p}',OPT.price):t('o_price');
+function upd(){
+ bO.classList.toggle('hide',!isDM());bN.classList.toggle('hide',!canMark());bP.classList.toggle('hide',!isStaffCh());
+ bO.classList.toggle('on',OPT.once);bN.classList.toggle('on',OPT.nsfw);bP.classList.toggle('on',OPT.price>0);
+ setT(bO,t('o_once'));setT(bN,t('o_nsfw'));setT(bP,priceLbl());
+ document.querySelectorAll('.pkopt button').forEach(b=>{const k=b.dataset.k;
+  b.classList.toggle('on',k==='o'?OPT.once:k==='n'?OPT.nsfw:OPT.price>0);
+  setT(b,k==='o'?t('o_once'):k==='n'?t('o_nsfw'):priceLbl())})}
+function resetOpt(){OPT.once=false;OPT.nsfw=false;OPT.price=0;upd()}
+function tOnce(){OPT.once=!OPT.once;upd()}
+function tNsfw(){OPT.nsfw=!OPT.nsfw;upd()}
+function tPrice(){if(OPT.price>0){OPT.price=0;upd();return}
+ const v=prompt(t('o_ask'),'10');if(v===null)return;const n=Math.floor(+v);
+ if(!(n>=1&&n<=100000)){alert(t('o_bad'));return}OPT.price=n;upd()}
+bO.onclick=tOnce;bN.onclick=tNsfw;bP.onclick=tPrice;
+setInterval(upd,700);
+
+/* те же кнопки в окне выбора медиа */
+const pks=$('pks');
+if(pks)new MutationObserver(()=>{const sh=pks.querySelector('.sh');if(!sh||sh.querySelector('.pkopt'))return;
+ const hd=sh.querySelector('.hd');if(!hd)return;const row=H('div',{className:'pkopt'});
+ [['o',tOnce,isDM],['n',tNsfw,canMark],['p',tPrice,isStaffCh]].forEach(([k,f,ok])=>{if(ok()){const b=H('button',{type:'button',onclick:f});b.dataset.k=k;row.append(b)}});
+ if(row.children.length){hd.after(row);upd()}}).observe(pks,{childList:true,subtree:true});
+
+const _oc=openChat;
+openChat=async function(u){if(!peer||peer.id!==u.id)resetOpt();const r=await _oc.apply(this,arguments);upd();return r};
+
+/* ---------- миниатюра-превью для платных фото ---------- */
+function thumb(f){return new Promise(res=>{const u=URL.createObjectURL(f),i=new Image();
+ i.onload=()=>{const s=Math.min(1,28/Math.max(i.width,i.height)),c=document.createElement('canvas');
+  c.width=Math.max(2,Math.round(i.width*s));c.height=Math.max(2,Math.round(i.height*s));
+  c.getContext('2d').drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>res(b),'image/jpeg',.6)};
+ i.onerror=()=>{URL.revokeObjectURL(u);res(null)};i.src=u})}
+
+/* ---------- загрузка: исчезающее и платное уходит в ПРИВАТНЫЙ бакет ---------- */
+const _sf=sb.storage.from;
+sb.storage.from=function(b){const o=_sf.call(this,b);if(b!=='xinh')return o;
+ const up=o.upload.bind(o);
+ o.upload=async function(p,f,opts){
+  if(f&&MSGPATH.test(p||'')&&needPriv()){
+   const info={once:OPT.once&&isDM(),price:(OPT.price>0&&isStaffCh())?OPT.price:0};
+   const r=await _sf.call(sb.storage,'xinh_priv').upload(p,f,opts);
+   if(!r.error){privPaths.set(p,info);
+    if(info.price>0&&(f.type||'').startsWith('image/')){try{const tb=await thumb(f);
+     if(tb){const tp=p.split('/')[0]+'/pv_'+Date.now()+'.jpg',r2=await up(tp,tb,{contentType:'image/jpeg'});
+      if(!r2.error)thumbs.set(p,sb.storage.from('xinh').getPublicUrl(tp).data.publicUrl)}}catch(e){}}}
+   return r}
+  return up(p,f,opts)};
+ return o};
+
+/* ---------- вставка сообщений: добавляем флаги ---------- */
+const PRIV_RE=/https?:\/\/[^"\s]+?\/object\/public\/xinh\/([^"\s]+)/g;
+function decorate(row){
+ if(!row||Array.isArray(row)||typeof row!=='object')return row;
+ const o={...row};let used=false,info=null;
+ const fix=s=>s.replace(PRIV_RE,(a,p)=>{let d=p;try{d=decodeURIComponent(p)}catch(e){}const i=privPaths.get(d);if(!i)return a;info=info||{...i,p:d};return 'priv:'+d});
+ if(typeof o.file_url==='string')o.file_url=fix(o.file_url);
+ if(typeof o.file_name==='string')o.file_name=fix(o.file_name);
+ const skip=o.fwd||o.comment_of||o.kind==='sticker'||o.kind==='emoji';
+ if(!skip&&peer&&(o.room_id?(peer.room&&o.room_id===peer.rid):(o.recipient_id===peer.id))){
+  const media=MEDIA.includes(o.kind);
+  if(info){
+   if(info.once){o.once=true;used=true}
+   if(info.price>0){o.price=info.price;used=true;const th=thumbs.get(info.p);if(th)o.cover_url=th}
+   if(o.kind==='audio')o.kind='file';
+   if(typeof o.body==='string'&&/^(📎 |🎵 )/.test(o.body))o.body=o.once?'🔥':'💰';
+  }else{
+   if(OPT.once&&isDM()&&media){o.once=true;used=true}
+   if(OPT.price>0&&isStaffCh()&&media){o.price=OPT.price;used=true}
+  }
+  if(OPT.nsfw){o.nsfw=true;used=true}
+  if(used)resetOpt();
+ }
+ return o}
+const _from=sb.from.bind(sb);
+sb.from=function(tbl){const b=_from(tbl);if(tbl!=='messages')return b;
+ const ins=b.insert.bind(b);
+ b.insert=function(row,...r){try{row=decorate(row)}catch(e){console.error(e)}return ins(row,...r)};
+ return b};
+
+/* исчезающий ТЕКСТ уходит через RPC: настоящий текст хранится отдельно и отдаётся один раз */
+const _fs=$('form').onsubmit;
+$('form').onsubmit=async e=>{
+ if(OPT.once&&isDM()&&!pendActive()){
+  e.preventDefault();const v=$('txt').value.trim();if(!v)return;$('txt').value='';autoSize();
+  const{data,error}=await sb.rpc('send_once_text',{p_to:peer.id,p_txt:v,p_nsfw:OPT.nsfw,p_reply:reply?reply.id:null});
+  if(error){alert(t('notsent')+errTxt(error));$('txt').value=v;return}
+  resetOpt();sent();if(data&&!msgs.some(x=>x.id===data.id)){msgs.push(data);renderList();renderMsgs()}
+  return}
+ return _fs.call($('form'),e)};
+
+/* ---------- подписанные ссылки на приватные файлы ---------- */
+async function signed(p,ttl){const c=sCache.get(p);if(c&&c.exp>Date.now()&&ttl>=600)return c.url;
+ const{data,error}=await sb.storage.from('xinh_priv').createSignedUrl(p,ttl);if(error||!data)return '';
+ if(ttl>=600)sCache.set(p,{url:data.signedUrl,exp:Date.now()+(ttl-120)*1000});return data.signedUrl}
+const realKind=m=>(m.kind==='file'&&AUDIO_RE.test(m.file_name||''))?'audio':m.kind;
+async function resolveMsg(m,ttl){const paths=new Set(),scan=s=>String(s||'').replace(/priv:([^"\s]+)/g,(_,p)=>{paths.add(p);return _}),map={};
+ scan(m.file_url);scan(m.file_name);
+ await Promise.all([...paths].map(async p=>{map[p]=await signed(p,ttl)}));
+ const rep=s=>s&&String(s).replace(/priv:([^"\s]+)/g,(_,p)=>map[p]||'');
+ return{...m,kind:realKind(m),body:/^(💰|🔥)$/.test(m.body||'')?'🖼':m.body,file_url:rep(m.file_url),file_name:rep(m.file_name)}}
+
+/* ---------- показ сообщений ---------- */
+const _f=fill;
+function inner(m,d){const tmp=H('div');_f(tmp,m);if(d&&tmp.classList.contains('vn'))d.classList.add('vn');return[...tmp.childNodes]}
+function keepBottom(){const b=$('msgs');if(b.scrollHeight-b.scrollTop-b.clientHeight<500)b.scrollTop=b.scrollHeight}
+function nsfwBox(parent,m,nodes){
+ parent.append(H('span',{className:'nsb',textContent:'🔞 18+'}));
+ const box=H('div',{className:'nsfw'+(revealed.has(m.id)?' rv':'')});nodes.forEach(n=>box.append(n));
+ box.append(H('div',{className:'nsov',textContent:'18+ · '+t('nsfw_tap')}));
+ box.addEventListener('click',e=>{if(!box.classList.contains('rv')){e.stopPropagation();e.preventDefault();box.classList.add('rv');revealed.add(m.id)}},true);
+ parent.append(box)}
+function onceInfo(m){const k=m.kind||'text',n=m.file_name||'';
+ if(k==='text')return['💬','on_text'];if(k==='image')return['📷','on_photo'];
+ if(k==='video')return CIRC.test(n)?['⭕','on_circle']:['🎥','on_video'];
+ if(k==='voice')return['🎤','on_voice'];return['📎','on_file']}
+function fillOnce(d,m){
+ const own=m.sender_id===me.id,v=viewed.has(m.id),[ic,k]=onceInfo(m);
+ const c=H('div',{className:'onc'+(v?' dn':'')},H('span',{className:'oi',textContent:v?'✓':ic}),
+  H('div',{style:'min-width:0'},H('b',{textContent:t(k)}),H('small',{textContent:v?t('on_viewed'):(own?t('on_unopened'):t('on_open'))})));
+ if(m.nsfw)c.append(H('span',{className:'nsb',textContent:'🔞 18+'}));
+ if(!own&&!v)c.onclick=e=>{e.stopPropagation();openOnce(m)};
+ d.append(c)}
+
+/* окно «посмотреть один раз» */
+const ov=H('div',{id:'onceV',className:'hide'});document.body.append(ov);
+function closeOnce(){ov.querySelectorAll('video,audio').forEach(v=>{try{v.pause()}catch(e){}});try{if(curA)curA.pause()}catch(e){}ov.classList.add('hide');ov.textContent=''}
+function showOnce(nodes){ov.textContent='';const c=H('div',{className:'obox'});nodes.forEach(n=>c.append(n));
+ c.querySelectorAll('video,img').forEach(e=>{e.oncontextmenu=x=>x.preventDefault();e.draggable=false});
+ c.querySelectorAll('video').forEach(v=>{v.controlsList='nodownload';v.playsInline=true});
+ ov.append(H('div',{className:'ohd'},H('span',{textContent:'🔥 '+t('on_hint')}),H('button',{type:'button',className:'solid',textContent:t('on_close'),onclick:closeOnce})),c);
+ ov.classList.remove('hide')}
+let onceBusy=false;
+async function openOnce(m){if(onceBusy)return;onceBusy=true;
+ try{const{data,error}=await sb.rpc('open_once',{mid:m.id});
+  if(error||!data||!data.ok){viewed.add(m.id);renderMsgs();alert(t('on_gone'));return}
+  viewed.add(m.id);let nodes;
+  if((m.kind||'text')==='text'){const w=H('div',{className:'ot'});rich(w,data.text||'');nodes=[w]}
+  else{const m2=await resolveMsg(m,120);if(!/^https?:/.test(m2.file_url||'')){renderMsgs();alert(t('on_gone'));return}nodes=inner(m2)}
+  showOnce(nodes);renderMsgs()
+ }finally{onceBusy=false}}
+
+/* платное медиа */
+const staffOf=()=>!!(peer&&peer.room&&(peer.role==='owner'||peer.role==='admin'));
+async function buy(m){if(!confirm(t('pw_conf').replace('{p}',m.price)))return;
+ const{error}=await sb.rpc('buy_media',{mid:m.id});if(error){alert(errTxt(error));return}
+ purchased.add(m.id);renderMsgs();toast(null,t('pw_bought'))}
+function lockedCard(m){const w=H('div',{className:'pwall'});
+ if(m.cover_url)w.append(H('img',{src:m.cover_url,alt:''}));
+ w.append(H('div',{className:'pwo'},H('span',{className:'pl',textContent:'🔒'}),H('b',{textContent:t('pw_lock')}),
+  H('button',{type:'button',className:'solid',textContent:t('pw_buy').replace('{p}',m.price),onclick:e=>{e.stopPropagation();buy(m)}})));
+ const wrap=H('div');if(m.nsfw)wrap.append(H('span',{className:'nsb',textContent:'🔞 18+'}));wrap.append(w);
+ if(m.body&&!AUTO.test(m.body)){const cap=H('div',{className:'cap'});rich(cap,m.body);wrap.append(cap)}
+ return wrap}
+function fillPaid(d,m){
+ const mineOrStaff=m.sender_id===me.id||staffOf();
+ if(mineOrStaff||purchased.has(m.id)){
+  d.append(H('div',{className:'prb',textContent:mineOrStaff?'💰 '+t('pw_price').replace('{p}',m.price):'✓ '+t('pw_bought')}));
+  const slot=H('div');d.append(slot);
+  resolveMsg(m,3600).then(m2=>{const nodes=inner(m2,d);if(m.nsfw)nsfwBox(slot,m,nodes);else nodes.forEach(n=>slot.append(n));keepBottom()});
+  return}
+ d.append(lockedCard(m))}
+
+fill=function(d,m){
+ try{
+  if(m.once){fillOnce(d,m);return}
+  if(m.price>0){fillPaid(d,m);return}
+  if(m.nsfw){nsfwBox(d,m,inner(m,d));return}
+  if(hasPriv(m)){const slot=H('div');d.append(slot);resolveMsg(m,3600).then(m2=>{inner(m2,d).forEach(n=>slot.append(n));keepBottom()});return}
+ }catch(e){console.error(e)}
+ return _f.apply(this,arguments)};
+
+/* превью в списке чатов и уведомления не раскрывают содержимое */
+const _last=last;
+last=function(id){const m=_last(id);if(!m)return m;
+ if(m.once)return{...m,body:'🔥 '+t(onceInfo(m)[1])};
+ if(m.price>0)return{...m,body:'💰 '+t('pw_lock')};
+ if(m.nsfw)return{...m,body:'🔞 18+'};
+ return m};
+const _nt=notify;
+notify=function(m,o){if(m&&(m.once||m.nsfw||m.price>0))m={...m,body:m.once?'🔥':m.price>0?'💰':'🔞 18+'};return _nt.call(this,m,o)};
+
+/* нельзя пересылать / сохранять защищённое */
+const blocked=m=>m&&(m.once||m.price>0||hasPriv(m));
+const _fw=fwdPick;fwdPick=function(m){if(blocked(m)){alert(t('e_fwd'));return}return _fw.apply(this,arguments)};
+const _tc=toCloud;toCloud=async function(m){if(blocked(m)){alert(t('e_fwd'));return}return _tc.apply(this,arguments)};
+const _sv=saveFile;
+saveFile=async function(m){if(m.once)return;if(hasPriv(m)){m=await resolveMsg(m,120)}return _sv.call(this,m)};
+
+/* ---------- «просмотрено» и покупки: загрузка и realtime ---------- */
+async function loadFlags(){if(!me)return;
+ const[a,b]=await Promise.all([sb.from('message_views').select('message_id').limit(5000),sb.from('media_purchases').select('message_id').limit(5000)]);
+ if(!a.error)(a.data||[]).forEach(x=>viewed.add(x.message_id));
+ if(!b.error)(b.data||[]).forEach(x=>purchased.add(x.message_id));
+ if(peer)renderMsgs()}
+let fch=null;
+function subFlags(){if(!me)return;if(fch){sb.removeChannel(fch);fch=null}
+ fch=sb.channel('fl-'+me.id)
+  .on('postgres_changes',{event:'INSERT',schema:'public',table:'message_views'},p=>{viewed.add(p.new.message_id);if(peer)renderMsgs()})
+  .on('postgres_changes',{event:'INSERT',schema:'public',table:'media_purchases'},p=>{if(p.new.user_id===me.id){purchased.add(p.new.message_id);if(peer)renderMsgs()}})
+  .subscribe()}
+const _bt=boot;
+boot=async function(u){viewed.clear();purchased.clear();revealed.clear();resetOpt();const r=await _bt.apply(this,arguments);await loadFlags();subFlags();return r};
+if(me){loadFlags();subFlags()}
+
+/* ---------- казна канала ---------- */
+RSP.treasury=async(b,r)=>{
+ const{data,error}=await sb.rpc('treasury_info',{rid:r.rid});
+ if(error){b.append(H('div',{className:'err',textContent:error.message}));return}
+ b.append(H('div',{className:'prow'},H('div',{className:'av avb',textContent:'Ỻ',style:'cursor:default'}),
+  H('div',{className:'ptxt'},H('h2',{textContent:(data.balance||0)+' Ỻ'}),H('div',{className:'lbl',textContent:t('tr_bal')}))));
+ if(r.role==='owner'){
+  const rows=(await memRows(r)).filter(o=>o.x.role!=='member'),
+   to=SEL(rows.map(o=>[o.u.id,dn(o.u)]),me.id,()=>{}),am=H('input',{type:'number',min:1,placeholder:t('tr_amt')}),err=H('div',{className:'err'});
+  b.append(H('div',{className:'lbl sec',textContent:t('tr_pay')}),to,am,err,
+   H('button',{type:'button',className:'solid',textContent:t('tr_pay'),onclick:async()=>{
+    const n=Math.floor(+am.value);if(!(n>0)){err.textContent=t('o_bad');return}
+    const{error:e2}=await sb.rpc('treasury_pay',{rid:r.rid,uid:to.value,amt:n});
+    if(e2){err.textContent=e2.message==='insufficient'?t('e_funds'):e2.message;return}
+    rsGo('treasury')}}))
+ }else b.append(H('div',{className:'lbl',textContent:t('tr_owner')}));
+ b.append(H('div',{className:'lbl sec',textContent:t('tr_log')}));
+ const log=data.log||[];if(!log.length)b.append(H('div',{className:'lbl',textContent:t('tr_none')}));
+ log.forEach(l=>{const u=l.user_id===me.id?{display_name:(prof&&prof.display_name)||'…'}:(users.find(x=>x.id===l.user_id)||{display_name:'…'});
+  b.append(H('div',{className:'srow'},H('span',{style:'flex:1;min-width:0',textContent:(l.kind==='buy'?'＋ ':'− ')+l.amount+' Ỻ · '+dn(u)+'\n'+
+   new Date(l.created_at).toLocaleString(loc(),{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})})))})};
+const _rg=rsGo;
+rsGo=async function(k){const r=await _rg.apply(this,arguments);
+ if(k==='menu'&&peer&&peer.room&&peer.kind==='channel'&&isStaff(peer))
+  $('rsBody').append(H('button',{type:'button',className:'srow',onclick:()=>rsGo('treasury')},
+   H('span',{textContent:'💰'}),H('span',{textContent:t('rs_treasury')}),H('span',{className:'chev',textContent:'›'})));
+ return r};
+
+upd();
+})();
+</script>
 </body>
 </html>
