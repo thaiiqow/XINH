@@ -3882,5 +3882,211 @@ applyAll=function(){_aa2();document.documentElement.lang=LOC2[S.lang]||'en'};
 applyAll();
 })();
 </script>
+<!-- ===== ПЛАВНЫЕ АНИМАЦИИ: вставьте в самый конец index.html, прямо перед </body> (после всех остальных блоков) ===== -->
+<style id="ax-css">
+@media(prefers-reduced-motion:no-preference){
+:root{--ax-ease:cubic-bezier(.22,.9,.3,1);--ax-spring:cubic-bezier(.34,1.56,.64,1)}
+
+/* ---------- кадры ---------- */
+@keyframes ax-fade{from{opacity:0}}
+@keyframes ax-rise{from{opacity:0;transform:translateY(14px)}}
+@keyframes ax-pop{0%{opacity:0;transform:translateY(24px) scale(.92)}60%{opacity:1;transform:translateY(-3px) scale(1.012)}100%{opacity:1;transform:none}}
+@keyframes ax-zoom{from{opacity:0;transform:scale(.88)}}
+@keyframes ax-bub-l{from{opacity:0;transform:translate(-14px,14px) scale(.88)}}
+@keyframes ax-bub-r{from{opacity:0;transform:translate(14px,14px) scale(.88)}}
+@keyframes ax-main{from{opacity:.4;transform:translateX(42%)}}
+@keyframes ax-side{from{opacity:.4;transform:translateX(-22%)}}
+@keyframes ax-chat{from{opacity:0;transform:translateY(14px)}}
+@keyframes ax-head{from{opacity:0;transform:translateY(-10px)}}
+@keyframes ax-pgf{from{opacity:0;transform:translateX(32px)}}
+@keyframes ax-pgb{from{opacity:0;transform:translateX(-32px)}}
+@keyframes ax-title{from{opacity:0;transform:translateY(6px)}}
+@keyframes ax-toast{from{opacity:0;transform:translateY(-34px) scale(.9)}}
+@keyframes ax-toast-out{to{opacity:0;transform:translateY(-24px) scale(.94)}}
+@keyframes ax-stv{from{opacity:0;transform:translate(-50%,-46%) scale(.9)}}
+@keyframes ax-rp{to{transform:scale(1);opacity:0}}
+@keyframes ax-fly{40%{transform:scale(.82) translateX(7px)}100%{transform:none}}
+@keyframes ax-glow{50%{text-shadow:0 0 14px color-mix(in srgb,var(--ac) 80%,transparent),0 0 46px color-mix(in srgb,var(--ac) 55%,transparent)}}
+@keyframes ax-ring{50%{box-shadow:0 0 22px var(--tn),0 0 0 3px color-mix(in srgb,var(--ac) 18%,transparent)}}
+@keyframes ax-dot{50%{transform:scale(1.35);opacity:.75}}
+@keyframes ax-drift1{50%{transform:translate(18vw,12vh) scale(1.15)}}
+@keyframes ax-drift2{50%{transform:translate(-16vw,-14vh) scale(1.2)}}
+
+/* ---------- вход в приложение и экраны авторизации ---------- */
+#app:not(.hide){animation:ax-fade .55s ease}
+.auth:not(.hide){animation:ax-fade .45s ease}
+.card{animation:ax-pop .55s var(--ax-spring)}
+.auth .card>*{animation:ax-rise .5s var(--ax-ease) backwards;animation-delay:calc(var(--ax-i,0)*45ms)}
+.auth .card>:nth-child(2){--ax-i:1}.auth .card>:nth-child(3){--ax-i:2}.auth .card>:nth-child(4){--ax-i:3}
+.auth .card>:nth-child(5){--ax-i:4}.auth .card>:nth-child(6){--ax-i:5}.auth .card>:nth-child(7){--ax-i:6}
+.auth .card>:nth-child(8){--ax-i:7}.auth .card>:nth-child(9){--ax-i:8}.auth .card>:nth-child(10){--ax-i:9}
+.auth .card>:nth-child(11){--ax-i:10}.auth .card>:nth-child(12){--ax-i:11}
+.auth .card>.logo{animation:ax-rise .5s var(--ax-ease) backwards,ax-glow 3.2s ease-in-out .5s infinite}
+
+/* ---------- модальные окна: плавно и при открытии, и при закрытии ---------- */
+:is(#modal,#pview,#rmodal,#fmodal,#mm,#rset,#rpick,#pw,#pk,#stk,#cm,#rs,#cmt){animation:none;opacity:1;transition:opacity .3s ease,visibility 0s}
+:is(#modal,#pview,#rmodal,#fmodal,#mm,#rset,#rpick,#pw,#pk,#stk,#cm,#rs,#cmt).hide{display:flex!important;visibility:hidden;opacity:0;pointer-events:none;transition:opacity .24s ease,visibility 0s linear .24s}
+:is(#modal,#pview,#rmodal,#fmodal,#mm,#rset,#rpick,#pw,#pk,#stk,#cm,#rs,#cmt) .card{animation:none;transition:transform .45s var(--ax-spring),opacity .3s ease}
+:is(#modal,#pview,#rmodal,#fmodal,#mm,#rset,#rpick,#pw,#pk,#stk,#cm,#rs,#cmt).hide .card{transform:translateY(28px) scale(.93);opacity:0}
+#mm.hide .card{transform:translateY(80px) scale(.98)}
+
+/* ---------- страницы настроек ---------- */
+.pg:not(.hide)[data-dir=fwd]{animation:ax-pgf .4s var(--ax-ease)}
+.pg:not(.hide)[data-dir=back]{animation:ax-pgb .4s var(--ax-ease)}
+#sTitle.ax-ti{animation:ax-title .35s var(--ax-ease)}
+#sBack:not(.hide){animation:ax-zoom .3s var(--ax-spring)}
+#pg-hub>.srow{animation:ax-rise .45s var(--ax-ease) backwards;animation-delay:calc(var(--ax-i,0)*35ms)}
+#pg-hub>:nth-child(2){--ax-i:1}#pg-hub>:nth-child(3){--ax-i:2}#pg-hub>:nth-child(4){--ax-i:3}#pg-hub>:nth-child(5){--ax-i:4}
+#pg-hub>:nth-child(6){--ax-i:5}#pg-hub>:nth-child(7){--ax-i:6}#pg-hub>:nth-child(8){--ax-i:7}#pg-hub>:nth-child(9){--ax-i:8}
+#pg-hub>:nth-child(10){--ax-i:9}#pg-hub>:nth-child(11){--ax-i:10}#pg-hub>:nth-child(12){--ax-i:11}
+#mmc>*{animation:ax-rise .35s var(--ax-ease) backwards;animation-delay:calc(var(--ax-i,0)*30ms)}
+#mmc>:nth-child(2){--ax-i:1}#mmc>:nth-child(3){--ax-i:2}#mmc>:nth-child(4){--ax-i:3}#mmc>:nth-child(5){--ax-i:4}
+#mmc>:nth-child(6){--ax-i:5}#mmc>:nth-child(7){--ax-i:6}#mmc>:nth-child(8){--ax-i:7}#mmc>:nth-child(9){--ax-i:8}
+.qr button{animation:ax-zoom .4s var(--ax-spring) backwards}
+.qr button:nth-child(2){animation-delay:.04s}.qr button:nth-child(3){animation-delay:.08s}
+.qr button:nth-child(4){animation-delay:.12s}.qr button:nth-child(5){animation-delay:.16s}.qr button:nth-child(6){animation-delay:.2s}.qr button:nth-child(7){animation-delay:.24s}
+
+/* ---------- переходы между списком и чатом ---------- */
+#msgs.ax-ch{animation:ax-chat .4s var(--ax-ease)}
+#head.ax-hd{animation:ax-head .4s var(--ax-ease)}
+@media(max-width:700px){
+ #main{animation:ax-main .44s var(--ax-ease)}
+ #app:not(.chat) #side{animation:ax-side .42s var(--ax-ease)}
+}
+.ax-enter{animation:ax-rise .45s var(--ax-ease) backwards}
+
+/* ---------- сообщения ---------- */
+.m.pop{animation:ax-bub-l .5s var(--ax-spring);transform-origin:0 100%}
+.m.me.pop{animation:ax-bub-r .5s var(--ax-spring);transform-origin:100% 100%}
+.vnote{transition:transform .3s var(--ax-spring)}
+.vnote:active{transform:scale(.96)}
+.vnote.pl{transform:scale(1.04)}
+.alb .ac img,.alb .ac video{transition:transform .5s var(--ax-ease)}
+.alb .ac:hover img,.alb .ac:hover video{transform:scale(1.07)}
+.mp .bar i{transition:width .3s linear}
+.rx{transition:transform .25s var(--ax-spring),background .2s,border-color .2s}
+.rx:hover{transform:scale(1.12)}
+
+/* ---------- панели, которые появляются над полем ввода ---------- */
+:is(#rbar,#mbar,#chbar,#botbar,#abar,#pin,#bdbar):not(.hide){animation:ax-rise .35s var(--ax-ease)}
+#form{transition:box-shadow .35s ease,border-color .3s ease}
+#form:focus-within{border-color:var(--ac);box-shadow:var(--gs),0 0 0 3px var(--tn)}
+#sendBtn.ax-fly,#vrec.ax-fly{animation:ax-fly .4s var(--ax-ease)}
+#vro:not(.hide){animation:ax-fade .25s ease}
+#vro .vrc{animation:ax-zoom .4s var(--ax-spring)}
+#vro .vrp{animation:ax-rise .4s var(--ax-ease)}
+
+/* ---------- уведомления ---------- */
+.toast{animation:ax-toast .5s var(--ax-spring)}
+.toast.ax-out{animation:ax-toast-out .4s ease forwards}
+
+/* ---------- истории, просмотр фото ---------- */
+#stv:not(.hide){animation:ax-stv .4s var(--ax-spring)}
+#stv .stm>img,#stv .stm>video{animation:ax-fade .4s ease}
+#stv .sto{animation:ax-rise .5s var(--ax-ease) .1s backwards}
+#stNew:not(.hide),#rinf:not(.hide),#mud:not(.hide),#wpm{animation:ax-fade .3s ease}
+:is(#stNew,#rinf,#mud,#wpm) .card{animation:ax-pop .5s var(--ax-spring)}
+#pks:not(.hide){animation:ax-fade .3s ease}
+#lb:not(.hide){animation:ax-fade .28s ease}
+#lb>img,#lb>video{animation:ax-zoom .4s var(--ax-spring)}
+.sti:not(.seen) .rg{animation:ax-ring 2.6s ease-in-out infinite}
+.sti{transition:transform .3s var(--ax-spring)}
+.sti:hover{transform:translateY(-2px) scale(1.06)}
+.sti:active{transform:scale(.94)}
+.dot{animation:ax-dot 2s ease-in-out infinite}
+.stt{transition:transform .35s var(--ax-spring)}
+.stt:hover{transform:scale(1.04)}
+
+/* ---------- нажатия и наведение ---------- */
+button{transition:transform .3s var(--ax-spring),background .25s ease,box-shadow .3s ease,color .2s ease,border-color .25s ease,opacity .25s ease}
+input,select,textarea{transition:border-color .25s ease,box-shadow .3s ease,background .25s ease}
+.u,.srow,.ro{transition:background .25s ease,box-shadow .3s ease,transform .3s var(--ax-spring)}
+.u:active:not([style*="translateX"]),.srow:active,.ro:active{transform:scale(.985)}
+.u .av{transition:transform .35s var(--ax-spring),box-shadow .3s ease}
+.u:hover .av{transform:scale(1.08)}
+.sw{transition:transform .3s var(--ax-spring),box-shadow .3s ease,border-color .25s ease}
+.sw:hover{transform:scale(1.14)}
+.sw:active{transform:scale(.88)}
+.egrid .em:hover{transform:scale(1.2)}
+.egrid .em:active,.em:active{transform:scale(.88)}
+.em{transition:transform .25s var(--ax-spring),opacity .2s ease,background .2s ease}
+.tabs2 button,#cats button,#segMode button,.seg2 button{transition:background .3s ease,color .25s ease,box-shadow .3s ease,border-color .25s ease,transform .3s var(--ax-spring)}
+.srow .chev{transition:transform .3s var(--ax-spring)}
+.srow:hover .chev{transform:translateX(4px)}
+#pks .tl{transition:transform .25s var(--ax-spring)}
+#pks .tl:active{transform:scale(.96)}
+#pks .ck{transition:background .2s ease,transform .3s var(--ax-spring)}
+#pks .tl.on .ck{transform:scale(1.12)}
+
+/* ripple */
+.ax-rp{position:absolute;border-radius:50%;background:currentColor;opacity:.2;transform:scale(0);pointer-events:none;animation:ax-rp .6s ease-out forwards}
+
+/* плавная смена темы и цвета */
+html.ax-th *,html.ax-th *::before,html.ax-th *::after{transition:background-color .45s ease,color .45s ease,border-color .45s ease,box-shadow .45s ease,fill .45s ease,stroke .45s ease!important}
+}
+
+/* живой фон только на больших экранах (на телефоне не греем батарею) */
+@media(prefers-reduced-motion:no-preference) and (min-width:701px){
+body{isolation:isolate}
+body::before,body::after{content:"";position:fixed;z-index:-1;pointer-events:none;width:64vmax;height:64vmax;border-radius:50%;will-change:transform}
+body::before{left:-18vmax;top:-22vmax;background:radial-gradient(circle,color-mix(in srgb,var(--ac) 20%,transparent),transparent 66%);animation:ax-drift1 26s ease-in-out infinite}
+body::after{right:-20vmax;bottom:-26vmax;background:radial-gradient(circle,color-mix(in srgb,var(--ac) 15%,transparent),transparent 66%);animation:ax-drift2 32s ease-in-out infinite}
+}
+</style>
+<script>
+(()=>{
+const RM=matchMedia('(prefers-reduced-motion:reduce)');
+const replay=(el,c,ms)=>{if(!el||RM.matches)return;el.classList.remove(c);void el.offsetWidth;el.classList.add(c);
+ clearTimeout(el['_ax'+c]);el['_ax'+c]=setTimeout(()=>el.classList.remove(c),ms||700)};
+
+/* страницы настроек: вперёд / назад */
+try{const _g=goPage;
+ goPage=function(k){const el=$('pg-'+k);if(el)el.dataset.dir=(k==='hub')?'back':'fwd';
+  const changed=typeof curPg!=='undefined'&&curPg!==k;_g.apply(this,arguments);
+  if(changed)replay($('sTitle'),'ax-ti',500)}}catch(e){}
+
+/* открытие чата: мягкая смена содержимого */
+try{const _o=openChat;
+ openChat=async function(u){if(!peer||peer.id!==u.id){replay($('msgs'),'ax-ch',600);replay($('head'),'ax-hd',600)}return _o.apply(this,arguments)}}catch(e){}
+
+/* появление новых строк в списке чатов (один раз, без повторов при перерисовке) */
+const list=$('list'),known=new Set();
+new MutationObserver(recs=>{let i=0;
+ recs.forEach(r=>r.addedNodes.forEach(n=>{
+  if(n.nodeType!==1||n.parentNode!==list||!(n.classList.contains('u')||n.classList.contains('swr')))return;
+  const k=((n.querySelector('.nm')||n).textContent||'').trim();
+  if(known.has(k))return;known.add(k);
+  n.style.animationDelay=Math.min(i++,10)*40+'ms';n.classList.add('ax-enter')}))}).observe(list,{childList:true});
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#tChats,#tCont,#cats button'))known.clear()},true);
+try{const _b=boot;boot=async function(){known.clear();return _b.apply(this,arguments)}}catch(e){}
+
+/* уведомления плавно уходят */
+new MutationObserver(recs=>recs.forEach(r=>r.addedNodes.forEach(n=>{
+ if(n.nodeType===1&&n.classList.contains('toast'))setTimeout(()=>n.classList.add('ax-out'),4550)})))
+ .observe($('toasts'),{childList:true});
+
+/* плавная смена темы / цвета */
+try{let sig=S.mode+'|'+S.accent;const _a=applyAll;
+ applyAll=function(){const n=S.mode+'|'+S.accent;
+  if(n!==sig&&!RM.matches){sig=n;const h=document.documentElement;h.classList.add('ax-th');clearTimeout(h._axt);h._axt=setTimeout(()=>h.classList.remove('ax-th'),550)}
+  return _a.apply(this,arguments)}}catch(e){}
+
+/* отправка: «щелчок» кнопки */
+$('form').addEventListener('submit',()=>{replay($('sendBtn'),'ax-fly',500);replay($('vrec'),'ax-fly',500)});
+
+/* ripple от места касания */
+const RP='button.solid,#form button.ic,.srow,.u,#cats button,.tabs2 button,#segMode button,.seg2 button,.ro,.brow button,#botbar button,#pks .tb button';
+document.addEventListener('pointerdown',e=>{
+ if(RM.matches||(e.button>0))return;
+ const el=e.target.closest&&e.target.closest(RP);if(!el||el.disabled)return;
+ const cs=getComputedStyle(el);
+ if(cs.position==='static')el.style.position='relative';
+ if(cs.overflow==='visible')el.style.overflow='hidden';
+ const r=el.getBoundingClientRect(),d=Math.max(r.width,r.height)*2.2,s=document.createElement('span');
+ s.className='ax-rp';
+ s.style.cssText='width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px';
+ el.append(s);setTimeout(()=>s.remove(),650)},{passive:true});
+})();
+</script>
 </body>
 </html>
