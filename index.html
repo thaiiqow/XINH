@@ -4410,7 +4410,7 @@ b.addEventListener('pointerdown',e=>{
  if(!ok())return;
  tm=setTimeout(()=>{tm=null;fired=true;
   try{navigator.vibrate&&navigator.vibrate(30)}catch(_){}
-  choice('🔞 18+',[['🔞 '+t('nsfw_send'),()=>{window.XOPT.nsfw=true;$('form').requestSubmit()}]])},450)});
+  choice('*',[['* '+t('nsfw_send'),()=>{window.XOPT.nsfw=true;$('form').requestSubmit()}]])},450)});
 b.addEventListener('pointermove',e=>{if(tm&&(Math.abs(e.clientX-x0)>10||Math.abs(e.clientY-y0)>10))clr()});
 ['pointerup','pointercancel','pointerleave'].forEach(k=>b.addEventListener(k,clr));
 /* после долгого нажатия обычную отправку гасим */
@@ -4419,6 +4419,246 @@ b.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* красная подсветка кнопки, когда 18+ включено */
 setInterval(()=>b.classList.toggle('n18',!!(window.XOPT&&window.XOPT.nsfw)),400);
+})();
+</script>
+<!-- ===== ЖИВАЯ ИСТОРИЯ ОБЩЕНИЯ: вставьте в самый конец index.html, прямо перед </body> ===== -->
+<style>
+#lt{position:fixed;inset:0;z-index:31;background:var(--shade);display:flex;align-items:center;justify-content:center;padding:20px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#lt .card{max-width:420px}
+.lts{display:flex;gap:8px}
+.lts .srow{flex:1;flex-direction:column;align-items:center;gap:0;padding:10px 6px;text-align:center}
+.lts b{font-size:20px}
+.ltl{position:relative;display:flex;flex-direction:column;gap:12px;padding-left:24px;margin:4px 0}
+.ltl::before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:2px;border-radius:2px;background:linear-gradient(var(--ac),transparent);opacity:.7}
+.lti{position:relative;padding:10px 12px;border-radius:18px;cursor:pointer;background:var(--gl);border:1px solid var(--gb)}
+.lti::before{content:"";position:absolute;left:-21px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--ac);box-shadow:var(--glow)}
+.lti .d{font-size:12px;color:var(--mt)}
+.lti b{display:block}
+.lti .s,.lti .w{font-size:13px;color:var(--mt)}
+.lti .q{margin-top:4px;font-size:13px;opacity:.85;overflow-wrap:anywhere}
+.lti .th{margin-top:6px;width:96px;height:96px;border-radius:14px;overflow:hidden}
+.lti .th img,.lti .th video{width:100%;height:100%;object-fit:cover;max-width:none;max-height:none;display:block;border-radius:0}
+
+/* фильм */
+#lf{position:fixed;inset:0;z-index:58;background:#000;color:#fff;display:flex;justify-content:center}
+#lf .fc{position:relative;width:min(460px,100%);height:100%;overflow:hidden;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+#lf .bgi{position:absolute;inset:-30px;background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--ac) 45%,#000),#000 70%) center/cover;filter:blur(28px) brightness(.5);transform:scale(1.15)}
+#lf .fbars,#lf .fh,#lf .fst,#lf .fcap{position:relative;z-index:2}
+#lf .fbars{display:flex;gap:3px;padding:12px 14px 0}
+#lf .fbars div{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.3);overflow:hidden}
+#lf .fbars i{display:block;height:100%;width:0;background:#fff}
+#lf .fh{display:flex;align-items:center;gap:10px;padding:10px 14px;z-index:4}
+#lf .fh .av{width:36px;height:36px}
+#lf .fh .n{flex:1;min-width:0}
+#lf .fh small{display:block;opacity:.75;font-size:12px}
+#lf .fst{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:8px 16px}
+#lf .fst img,#lf .fst video{max-width:100%;max-height:100%;border-radius:22px;object-fit:contain;display:block}
+#lf .fst video.circ{width:min(72vw,300px);height:auto;aspect-ratio:1;border-radius:50%;object-fit:cover;border:3px solid var(--ac);box-shadow:var(--glow)}
+#lf .fav{width:130px;height:130px;font-size:48px}
+#lf .fico{font-size:84px;filter:drop-shadow(0 0 22px var(--ac))}
+#lf .fq{font-size:24px;line-height:1.35;text-align:center;font-weight:700;white-space:pre-wrap;overflow-wrap:anywhere;max-height:100%;overflow:hidden}
+#lf .fdisc{width:190px;height:190px;border-radius:50%;display:grid;place-items:center;font-size:64px;border:2px solid var(--ac);background:radial-gradient(circle at 35% 30%,var(--ac),#000 78%) center/cover;box-shadow:var(--glow)}
+#lf .fcap{padding:8px 22px 26px;text-align:center;text-shadow:0 2px 10px #000}
+#lf .fcap b{display:block;font-size:26px;line-height:1.2}
+#lf .fcap div{font-size:16px;opacity:.9;margin-top:4px}
+#lf .fcap small{display:block;margin-top:6px;opacity:.7}
+#lf .fz{position:absolute;top:70px;bottom:0;z-index:3}
+#lf .fz.l{left:0;width:35%}#lf .fz.r{right:0;width:65%}
+@media(prefers-reduced-motion:no-preference){
+#lf .fst>*,#lf .fcap{animation:lfin .7s cubic-bezier(.22,.9,.3,1) backwards}
+@keyframes lfin{from{opacity:0;transform:translateY(18px) scale(.96)}}
+#lf .fst img{animation:lfin .7s cubic-bezier(.22,.9,.3,1) backwards,lfzoom 9s ease-out forwards}
+@keyframes lfzoom{to{transform:scale(1.05)}}
+}
+</style>
+<script>
+(()=>{
+/* ---------- переводы ---------- */
+const L={
+ru:{lf_btn:'🎞 Живая история общения',lf_title:'Наша история',lf_play:'▶ Смотреть как фильм',lf_empty:'Здесь пока нечего вспомнить. Напишите первое сообщение.',lf_together:'Дней вместе: {n}',lf_total:'Сообщений: {n}',
+ lf_first_msg:'Первое сообщение',lf_first_photo:'Первое фото',lf_first_video:'Первое видео',lf_first_circle:'Первый кружок',lf_first_voice:'Первое голосовое',lf_first_music:'Первая музыка',lf_first_file:'Первый файл',
+ lf_milestone:'Сообщение №{n}',lf_busy:'Самый живой день',lf_busy_s:'Сообщений за день: {n}',lf_streak:'Серия общения',lf_streak_s:'Дней подряд: {n}',lf_back:'Снова на связи',lf_back_s:'Пауза, дней: {n}',
+ lf_anniv:'Годовщина знакомства',lf_anniv_s:'Год {n}',lf_you:'Вы',lf_end:'Ваша история продолжается…'},
+en:{lf_btn:'🎞 Living history',lf_title:'Our story',lf_play:'▶ Watch as a film',lf_empty:'Nothing to remember yet. Send the first message.',lf_together:'Days together: {n}',lf_total:'Messages: {n}',
+ lf_first_msg:'First message',lf_first_photo:'First photo',lf_first_video:'First video',lf_first_circle:'First video circle',lf_first_voice:'First voice message',lf_first_music:'First music',lf_first_file:'First file',
+ lf_milestone:'Message #{n}',lf_busy:'Busiest day',lf_busy_s:'Messages that day: {n}',lf_streak:'Chat streak',lf_streak_s:'Days in a row: {n}',lf_back:'Back in touch',lf_back_s:'Pause, days: {n}',
+ lf_anniv:'Anniversary of meeting',lf_anniv_s:'Year {n}',lf_you:'You',lf_end:'Your story goes on…'},
+vi:{lf_btn:'🎞 Lịch sử trò chuyện sống động',lf_title:'Câu chuyện của chúng ta',lf_play:'▶ Xem như một bộ phim',lf_empty:'Chưa có gì để nhớ. Hãy gửi tin nhắn đầu tiên.',lf_together:'Số ngày bên nhau: {n}',lf_total:'Tin nhắn: {n}',
+ lf_first_msg:'Tin nhắn đầu tiên',lf_first_photo:'Ảnh đầu tiên',lf_first_video:'Video đầu tiên',lf_first_circle:'Video tròn đầu tiên',lf_first_voice:'Tin nhắn thoại đầu tiên',lf_first_music:'Bài nhạc đầu tiên',lf_first_file:'Tệp đầu tiên',
+ lf_milestone:'Tin nhắn thứ {n}',lf_busy:'Ngày sôi nổi nhất',lf_busy_s:'Số tin nhắn trong ngày: {n}',lf_streak:'Chuỗi trò chuyện',lf_streak_s:'Số ngày liên tiếp: {n}',lf_back:'Liên lạc trở lại',lf_back_s:'Thời gian im lặng, ngày: {n}',
+ lf_anniv:'Kỷ niệm ngày quen nhau',lf_anniv_s:'Năm thứ {n}',lf_you:'Bạn',lf_end:'Câu chuyện của bạn vẫn tiếp tục…'},
+zh:{lf_btn:'🎞 活的聊天历史',lf_title:'我们的故事',lf_play:'▶ 像电影一样观看',lf_empty:'还没有可回忆的内容。发出第一条消息吧。',lf_together:'在一起的天数：{n}',lf_total:'消息数：{n}',
+ lf_first_msg:'第一条消息',lf_first_photo:'第一张照片',lf_first_video:'第一个视频',lf_first_circle:'第一个圆形视频',lf_first_voice:'第一条语音',lf_first_music:'第一首音乐',lf_first_file:'第一个文件',
+ lf_milestone:'第 {n} 条消息',lf_busy:'最热闹的一天',lf_busy_s:'当天消息数：{n}',lf_streak:'连续聊天',lf_streak_s:'连续天数：{n}',lf_back:'重新联系',lf_back_s:'沉默天数：{n}',
+ lf_anniv:'相识纪念日',lf_anniv_s:'第 {n} 年',lf_you:'你',lf_end:'你们的故事还在继续……'},
+be:{lf_btn:'🎞 Жывая гісторыя зносін',lf_title:'Наша гісторыя',lf_play:'▶ Глядзець як фільм',lf_empty:'Тут пакуль няма чаго ўспомніць. Напішыце першае паведамленне.',lf_together:'Дзён разам: {n}',lf_total:'Паведамленняў: {n}',
+ lf_first_msg:'Першае паведамленне',lf_first_photo:'Першае фота',lf_first_video:'Першае відэа',lf_first_circle:'Першы кружок',lf_first_voice:'Першае галасавое',lf_first_music:'Першая музыка',lf_first_file:'Першы файл',
+ lf_milestone:'Паведамленне №{n}',lf_busy:'Самы жывы дзень',lf_busy_s:'Паведамленняў за дзень: {n}',lf_streak:'Серыя зносін',lf_streak_s:'Дзён запар: {n}',lf_back:'Зноў на сувязі',lf_back_s:'Паўза, дзён: {n}',
+ lf_anniv:'Гадавіна знаёмства',lf_anniv_s:'Год {n}',lf_you:'Вы',lf_end:'Ваша гісторыя працягваецца…'},
+ja:{lf_btn:'🎞 生きたやり取りの歴史',lf_title:'二人のストーリー',lf_play:'▶ 映画のように見る',lf_empty:'まだ思い出がありません。最初のメッセージを送ってみましょう。',lf_together:'一緒に過ごした日数: {n}',lf_total:'メッセージ数: {n}',
+ lf_first_msg:'最初のメッセージ',lf_first_photo:'最初の写真',lf_first_video:'最初の動画',lf_first_circle:'最初の丸型動画',lf_first_voice:'最初のボイスメッセージ',lf_first_music:'最初の音楽',lf_first_file:'最初のファイル',
+ lf_milestone:'{n}通目のメッセージ',lf_busy:'一番にぎやかだった日',lf_busy_s:'その日のメッセージ数: {n}',lf_streak:'連続でやり取りした日',lf_streak_s:'連続日数: {n}',lf_back:'また連絡を取り合った',lf_back_s:'空いた日数: {n}',
+ lf_anniv:'出会った記念日',lf_anniv_s:'{n}年目',lf_you:'あなた',lf_end:'二人のストーリーはこれからも続きます…'},
+de:{lf_btn:'🎞 Lebendige Chat-Geschichte',lf_title:'Unsere Geschichte',lf_play:'▶ Wie einen Film ansehen',lf_empty:'Noch nichts zu erinnern. Schreib die erste Nachricht.',lf_together:'Tage zusammen: {n}',lf_total:'Nachrichten: {n}',
+ lf_first_msg:'Erste Nachricht',lf_first_photo:'Erstes Foto',lf_first_video:'Erstes Video',lf_first_circle:'Erste Videonachricht',lf_first_voice:'Erste Sprachnachricht',lf_first_music:'Erste Musik',lf_first_file:'Erste Datei',
+ lf_milestone:'Nachricht Nr. {n}',lf_busy:'Aktivster Tag',lf_busy_s:'Nachrichten an dem Tag: {n}',lf_streak:'Chat-Serie',lf_streak_s:'Tage in Folge: {n}',lf_back:'Wieder in Kontakt',lf_back_s:'Pause, Tage: {n}',
+ lf_anniv:'Jahrestag des Kennenlernens',lf_anniv_s:'Jahr {n}',lf_you:'Du',lf_end:'Eure Geschichte geht weiter …'},
+fr:{lf_btn:'🎞 Histoire vivante de votre échange',lf_title:'Notre histoire',lf_play:'▶ Regarder comme un film',lf_empty:'Rien à se rappeler pour l’instant. Écrivez le premier message.',lf_together:'Jours ensemble : {n}',lf_total:'Messages : {n}',
+ lf_first_msg:'Premier message',lf_first_photo:'Première photo',lf_first_video:'Première vidéo',lf_first_circle:'Premier message vidéo',lf_first_voice:'Premier message vocal',lf_first_music:'Première musique',lf_first_file:'Premier fichier',
+ lf_milestone:'Message n° {n}',lf_busy:'Jour le plus animé',lf_busy_s:'Messages ce jour-là : {n}',lf_streak:'Série de discussions',lf_streak_s:'Jours d’affilée : {n}',lf_back:'De nouveau en contact',lf_back_s:'Pause, jours : {n}',
+ lf_anniv:'Anniversaire de votre rencontre',lf_anniv_s:'Année {n}',lf_you:'Vous',lf_end:'Votre histoire continue…'},
+bg:{lf_btn:'🎞 Жива история на общуването',lf_title:'Нашата история',lf_play:'▶ Гледай като филм',lf_empty:'Още няма какво да си спомним. Изпратете първото съобщение.',lf_together:'Дни заедно: {n}',lf_total:'Съобщения: {n}',
+ lf_first_msg:'Първо съобщение',lf_first_photo:'Първа снимка',lf_first_video:'Първо видео',lf_first_circle:'Първо кръгче',lf_first_voice:'Първо гласово',lf_first_music:'Първа музика',lf_first_file:'Първи файл',
+ lf_milestone:'Съобщение №{n}',lf_busy:'Най-оживеният ден',lf_busy_s:'Съобщения за деня: {n}',lf_streak:'Серия от разговори',lf_streak_s:'Дни поред: {n}',lf_back:'Отново на връзка',lf_back_s:'Пауза, дни: {n}',
+ lf_anniv:'Годишнина от запознанството',lf_anniv_s:'Година {n}',lf_you:'Вие',lf_end:'Вашата история продължава…'},
+sr:{lf_btn:'🎞 Жива историја дописивања',lf_title:'Наша прича',lf_play:'▶ Гледај као филм',lf_empty:'Још нема чега да се сетимо. Пошаљите прву поруку.',lf_together:'Дана заједно: {n}',lf_total:'Порука: {n}',
+ lf_first_msg:'Прва порука',lf_first_photo:'Прва фотографија',lf_first_video:'Први видео',lf_first_circle:'Први кружић',lf_first_voice:'Прва гласовна порука',lf_first_music:'Прва музика',lf_first_file:'Прва датотека',
+ lf_milestone:'Порука бр. {n}',lf_busy:'Најживљи дан',lf_busy_s:'Порука тог дана: {n}',lf_streak:'Серија дописивања',lf_streak_s:'Дана заредом: {n}',lf_back:'Поново у контакту',lf_back_s:'Пауза, дана: {n}',
+ lf_anniv:'Годишњица познанства',lf_anniv_s:'Година {n}',lf_you:'Ви',lf_end:'Ваша прича се наставља…'}};
+Object.keys(L).forEach(l=>{I18[l]=Object.assign(I18[l]||{},L[l])});
+/* Lanđȃ и нуринамский: пока русский текст — замените значения на свои */
+['xx','nr'].forEach(l=>{I18[l]=Object.assign(I18[l]||{},L.ru)});
+
+/* ---------- вспомогательное ---------- */
+const CIR=/^circle_\d+s_/,DAY=864e5,OKU=u=>/^https?:/.test(u||'');
+const ICON={msg:'💬',photo:'📷',video:'🎥',circle:'⭕',voice:'🎤',music:'🎵',file:'📎'};
+const fmt=(s,n)=>String(s).replace('{n}',n);
+const fmtD=ts=>new Date(ts).toLocaleDateString(loc(),{day:'numeric',month:'long',year:'numeric'});
+const dayN=ts=>{const d=new Date(ts);return Math.round(new Date(d.getFullYear(),d.getMonth(),d.getDate())/DAY)};
+const isDM=p=>!!p&&!p.room&&!p.cloud&&!p.bot&&!p.ubot&&!p.preview;
+const clean=m=>!m.once&&!(m.price>0)&&!m.room_id&&!m.comment_of&&!hid.has(m.id)&&alive(m);
+const byT=(a,b)=>new Date(a.created_at)-new Date(b.created_at);
+const albumFirst=m=>{try{const a=JSON.parse(m.file_name);if(Array.isArray(a)&&a[0]&&a[0].u)return{u:a[0].u,k:a[0].k}}catch(e){}return{u:m.file_url,k:m.kind}};
+
+function mk(m){const k=m.kind||'text',n=m.file_name||'';
+ if(k==='image')return'photo';
+ if(k==='video')return CIR.test(n)?'circle':'video';
+ if(k==='voice')return'voice';
+ if(k==='audio')return'music';
+ if(k==='file')return AUDIO_RE.test(n)?'music':'file';
+ if(k==='text'&&/\S/.test(m.body||'')&&!/^(🔥|💰|🔞)$/.test(m.body))return'msg';
+ return null}
+function mediaOf(m,k){
+ if(k==='msg')return{k:'txt',text:m.body};
+ if(k==='file')return{k:'file',name:m.file_name||''};
+ if(k==='photo'){const a=albumFirst(m);return OKU(a.u)?{k:a.k==='video'?'vid':'img',u:a.u}:null}
+ if(k==='video'||k==='circle')return OKU(m.file_url)?{k:k==='circle'?'circ':'vid',u:m.file_url}:null;
+ if(k==='voice'||k==='music'){const p=String(m.file_url||'').split('#cover='),cv=m.cover_url||(p[1]?decodeURIComponent(p[1]):'');
+  return OKU(p[0])?{k:'aud',u:p[0],name:k==='music'?(m.file_name||'').replace(/\.[^.]+$/,''):'',cover:cv}:null}
+ return null}
+
+/* ---------- данные ---------- */
+async function load(p){
+ const mine=msgs.filter(m=>inDm(m,p.id)&&clean(m));
+ const q='and(sender_id.eq.'+me.id+',recipient_id.eq.'+p.id+'),and(sender_id.eq.'+p.id+',recipient_id.eq.'+me.id+')';
+ let base=null,total=0;
+ try{const r=await sb.from('messages').select('*').or(q).order('created_at').limit(1000);if(!r.error&&r.data)base=r.data.filter(clean)}catch(e){}
+ try{const c=await sb.from('messages').select('id',{count:'exact',head:true}).or(q);if(!c.error&&typeof c.count==='number')total=c.count}catch(e){}
+ const map=new Map();(base||[]).concat(mine).forEach(m=>map.set(m.id,m));
+ const all=[...map.values()].sort(byT);
+ return{all,base:(base&&base.length?base:all),total:Math.max(total,all.length)}}
+
+function build(D,p){
+ const ev=[],all=D.all,base=D.base;
+ const push=(ts,ic,title,sub,m,media)=>ev.push({ts:+new Date(ts),ic,title,sub:sub||'',who:m?(m.sender_id===me.id?t('lf_you'):dn(p)):'',media:media||null});
+ const seen={};
+ base.forEach(m=>{const k=mk(m);if(!k||seen[k])return;seen[k]=1;push(m.created_at,ICON[k],t('lf_first_'+k),'',m,mediaOf(m,k))});
+ [100,500,1000,5000,10000].forEach(n=>{if(base.length>=n){const m=base[n-1];push(m.created_at,'🎯',fmt(t('lf_milestone'),n),'',m,null)}});
+ const first=+new Date(all[0].created_at);
+ for(let y=1;y<=30;y++){const d=new Date(first);d.setFullYear(d.getFullYear()+y);if(d>Date.now())break;push(d,'🎉',t('lf_anniv'),fmt(t('lf_anniv_s'),y),null,null)}
+ /* самый живой день */
+ const cnt={},firstOf={};
+ all.forEach(m=>{const d=dayN(m.created_at);cnt[d]=(cnt[d]||0)+1;if(!firstOf[d])firstOf[d]=m.created_at});
+ const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+ if(top&&top[1]>=5)push(firstOf[top[0]],'🔥',t('lf_busy'),fmt(t('lf_busy_s'),top[1]),null,null);
+ /* самая длинная серия дней подряд */
+ const ds=Object.keys(cnt).map(Number).sort((a,b)=>a-b);let best=0,bs=0,run=0,rs=0;
+ ds.forEach((d,i)=>{if(i&&d-ds[i-1]===1)run++;else{run=1;rs=d}if(run>best){best=run;bs=rs}});
+ if(best>=3)push(firstOf[bs],'⚡️',t('lf_streak'),fmt(t('lf_streak_s'),best),null,null);
+ /* самая долгая пауза, после которой заговорили снова */
+ let gap=0,gm=null;
+ for(let i=1;i<all.length;i++){const g=Math.floor((new Date(all[i].created_at)-new Date(all[i-1].created_at))/DAY);if(g>gap){gap=g;gm=all[i]}}
+ if(gap>=7&&gm)push(gm.created_at,'🤝',t('lf_back'),fmt(t('lf_back_s'),gap),gm,null);
+ return ev.sort((a,b)=>a.ts-b.ts)}
+
+/* ---------- окно «временная линия» ---------- */
+const lt=H('div',{id:'lt',className:'hide'});document.body.append(lt);
+const hideLt=()=>lt.classList.add('hide');
+lt.onclick=e=>{if(e.target===lt)hideLt()};
+const closeBtn=()=>H('button',{type:'button',textContent:t('close'),onclick:hideLt});
+
+async function openLt(p){
+ $('pview').classList.add('hide');lt.textContent='';
+ const card=H('div',{className:'card'},H('h2',{textContent:t('lf_title')+' · '+dn(p)}),H('div',{className:'lbl',textContent:'…'}),closeBtn());
+ lt.append(card);lt.classList.remove('hide');
+ const D=await load(p);if(lt.classList.contains('hide'))return;
+ card.textContent='';card.append(H('h2',{textContent:t('lf_title')+' · '+dn(p)}));
+ if(!D.all.length){card.append(H('div',{className:'lbl',textContent:t('lf_empty')}),closeBtn());return}
+ const first=+new Date(D.all[0].created_at),days=Math.max(1,Math.floor((Date.now()-first)/DAY)+1),ev=build(D,p);
+ const slides=[{k:'intro',title:dn(p),sub:fmt(t('lf_together'),days)+' · '+fmt(t('lf_total'),D.total),date:fmtD(first),dur:4500},
+  ...ev.map(e=>({k:'ev',ic:e.ic,title:e.title,sub:e.sub,who:e.who,date:fmtD(e.ts),media:e.media,dur:(e.media&&(e.media.k==='vid'||e.media.k==='circ'))?9000:(e.media&&e.media.k==='aud')?8000:5500})),
+  {k:'outro',title:t('lf_end'),sub:'',date:fmtD(Date.now()),dur:4500}];
+ card.append(H('div',{className:'lts'},
+  H('div',{className:'srow'},H('b',{textContent:days}),H('span',{className:'lbl',textContent:t('lf_together').replace(/[:：]?\s*\{n\}/,'')})),
+  H('div',{className:'srow'},H('b',{textContent:D.total}),H('span',{className:'lbl',textContent:t('lf_total').replace(/[:：]?\s*\{n\}/,'')}))),
+  H('button',{type:'button',className:'solid',textContent:t('lf_play'),onclick:()=>{hideLt();startFilm(p,slides,0)}}));
+ const list=H('div',{className:'ltl'});
+ ev.forEach((e,i)=>{const m=e.media,box=H('div',{className:'lti',onclick:()=>{hideLt();startFilm(p,slides,i+1)}},
+  H('div',{className:'d',textContent:fmtD(e.ts)}),H('b',{textContent:e.ic+' '+e.title}));
+  if(e.sub)box.append(H('div',{className:'s',textContent:e.sub}));
+  if(e.who)box.append(H('div',{className:'w',textContent:e.who}));
+  if(m&&m.k==='txt')box.append(H('div',{className:'q',textContent:'“'+String(m.text).slice(0,120)+'”'}));
+  else if(m&&m.k==='img')box.append(H('div',{className:'th'},H('img',{src:m.u,alt:'',loading:'lazy'})));
+  else if(m&&(m.k==='vid'||m.k==='circ'))box.append(H('div',{className:'th'},H('video',{src:m.u+'#t=0.1',preload:'metadata',muted:true,playsInline:true})));
+  else if(m&&(m.k==='aud'||m.k==='file'))box.append(H('div',{className:'q',textContent:(m.k==='file'?'📎 ':'🎵 ')+(m.name||'')}));
+  list.append(box)});
+ card.append(list,closeBtn())}
+
+/* ---------- фильм ---------- */
+const lf=H('div',{id:'lf',className:'hide'});document.body.append(lf);
+const F={s:[],i:0,el:0,dur:5000,paused:false,iv:null,a:null,bar:null,p:null};
+function stopMedia(){if(F.a){try{F.a.pause()}catch(e){}F.a=null}lf.querySelectorAll('video').forEach(v=>{try{v.pause()}catch(e){}})}
+function fClose(){clearInterval(F.iv);F.iv=null;stopMedia();lf.classList.add('hide');lf.textContent=''}
+function play(el){const r=el.play();if(r&&r.catch)r.catch(()=>{el.muted=true;el.play().catch(()=>{})})}
+function nextS(){F.i++;F.i>=F.s.length?fClose():showS()}
+function prevS(){F.i=Math.max(0,F.i-1);showS()}
+function startFilm(p,slides,i){F.p=p;F.s=slides;F.i=i||0;F.paused=false;clearInterval(F.iv);lf.classList.remove('hide');showS();
+ F.iv=setInterval(()=>{if(F.paused||!F.bar)return;F.el+=100;F.bar.style.width=Math.min(100,F.el/F.dur*100)+'%';if(F.el>=F.dur)nextS()},100)}
+function showS(){const s=F.s[F.i];if(!s){fClose();return}
+ stopMedia();F.el=0;F.dur=s.dur;lf.textContent='';
+ const m=s.media,bg=H('div',{className:'bgi'}),st=H('div',{className:'fst'}),run=[];
+ const img=u=>'url("'+String(u).replace(/"/g,'%22')+'")';
+ if(m&&m.k==='img')bg.style.backgroundImage=img(m.u);
+ if(m&&m.k==='aud'&&m.cover)bg.style.backgroundImage=img(m.cover);
+ if(s.k==='intro'||s.k==='outro'){const av=H('div',{className:'av fav'});setAv(av,F.p);st.append(av)}
+ else if(!m)st.append(H('div',{className:'fico',textContent:s.ic}));
+ else if(m.k==='img')st.append(H('img',{src:m.u,alt:'',draggable:false}));
+ else if(m.k==='vid'||m.k==='circ'){const v=H('video',{src:m.u,playsInline:true});if(m.k==='circ')v.className='circ';
+  v.onloadedmetadata=()=>{if(isFinite(v.duration))F.dur=Math.min(15000,Math.max(3000,v.duration*1000+300))};st.append(v);run.push(()=>play(v))}
+ else if(m.k==='aud'){const d=H('div',{className:'fdisc'});if(m.cover)d.style.backgroundImage=img(m.cover);else d.textContent='🎵';st.append(d);
+  if(m.name)st.append(H('div',{className:'fq',textContent:m.name,style:'font-size:18px'}));
+  const a=new Audio(m.u);F.a=a;a.onloadedmetadata=()=>{if(isFinite(a.duration))F.dur=Math.min(12000,Math.max(3000,a.duration*1000))};run.push(()=>{a.play().catch(()=>{})})}
+ else st.append(H('div',{className:'fq',textContent:m.k==='file'?'📎 '+m.name:String(m.text||'').slice(0,260)}));
+ const bars=H('div',{className:'fbars'});
+ F.s.forEach((_,k)=>{const i=H('i');i.style.width=k<F.i?'100%':'0';if(k===F.i)F.bar=i;bars.append(H('div',{},i))});
+ const av=H('div',{className:'av'});setAv(av,F.p);
+ const pb=H('button',{type:'button',className:'x',textContent:F.paused?'▶':'❚❚'});
+ pb.onclick=e=>{e.stopPropagation();F.paused=!F.paused;pb.textContent=F.paused?'▶':'❚❚';
+  lf.querySelectorAll('video').forEach(v=>F.paused?v.pause():play(v));if(F.a)F.paused?F.a.pause():F.a.play().catch(()=>{})};
+ const cx=H('button',{type:'button',className:'x',textContent:'✕',onclick:e=>{e.stopPropagation();fClose()}});
+ const head=H('div',{className:'fh'},av,H('div',{className:'n'},H('b',{textContent:dn(F.p)}),H('small',{textContent:s.date})),pb,cx);
+ const cap=H('div',{className:'fcap'},H('b',{textContent:s.title}),s.sub?H('div',{textContent:s.sub}):'',s.who?H('small',{textContent:s.who}):'');
+ const fc=H('div',{className:'fc'},bg,bars,head,st,cap,H('div',{className:'fz l',onclick:prevS}),H('div',{className:'fz r',onclick:nextS}));
+ lf.append(fc);run.forEach(f=>f())}
+document.addEventListener('keydown',e=>{if(lf.classList.contains('hide'))return;
+ if(e.key==='Escape')fClose();else if(e.key==='ArrowRight')nextS();else if(e.key==='ArrowLeft')prevS()});
+
+/* ---------- кнопка в профиле контакта ---------- */
+const bt=H('button',{type:'button',className:'hide'});$('vSecs').before(bt);
+const _sp=showProfile;
+showProfile=function(){_sp.apply(this,arguments);const ok=isDM(peer);bt.classList.toggle('hide',!ok);
+ if(ok){bt.textContent=t('lf_btn');bt.onclick=()=>openLt(peer)}};
+$('hav').onclick=$('hnm').onclick=showProfile;
 })();
 </script>
 </body>
