@@ -4132,7 +4132,7 @@ Object.assign(I18.ru,RU);Object.assign(I18.en,EN);
 ['vi','zh','ja','de','fr'].forEach(l=>{if(I18[l])Object.assign(I18[l],EN)});
 
 /* ---------- состояние ---------- */
-const OPT={once:false,nsfw:false,price:0};
+const OPT=window.XOPT={once:false,nsfw:false,price:0};
 const viewed=new Set(),purchased=new Set(),revealed=new Set(),privPaths=new Map(),thumbs=new Map(),sCache=new Map();
 const MSGPATH=/^[^/]+\/\d+(_\d+)?\.[^/]*$/,MEDIA=['image','video','audio','voice','file'],CIRC=/^circle_\d+s_/;
 const AUTO=/^(📎 |🎵|🖼|🎤|🎥|💰|🔥)/;
@@ -4381,6 +4381,44 @@ rsGo=async function(k){const r=await _rg.apply(this,arguments);
  return r};
 
 upd();
+})();
+</script>
+<!-- ===== 18+ ПО УДЕРЖАНИЮ КНОПКИ ОТПРАВКИ: вставьте в самый конец index.html, прямо перед </body> (после блока исчезающих/платных).
+     ВАЖНО: в том блоке замените строку
+       const OPT={once:false,nsfw:false,price:0};
+     на
+       const OPT=window.XOPT={once:false,nsfw:false,price:0};
+     ===== -->
+<style>
+#sendBtn{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+#sendBtn.n18{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),0 0 0 2px #ff453a,0 0 16px rgba(255,69,58,.6)}
+</style>
+<script>
+(()=>{
+Object.assign(I18.ru,{nsfw_send:'Отправить как 18+'});
+Object.assign(I18.en,{nsfw_send:'Send as 18+'});
+['xx','nr','be','bg','sr'].forEach(l=>{if(I18[l])I18[l].nsfw_send=I18.ru.nsfw_send});
+['vi','zh','ja','de','fr'].forEach(l=>{if(I18[l])I18[l].nsfw_send=I18.en.nsfw_send});
+
+const b=$('sendBtn');let tm=null,fired=false,x0=0,y0=0;
+const ok=()=>!!peer&&!peer.bot&&!peer.ubot&&!peer.preview&&!peer.cloud&&!!window.XOPT;
+const clr=()=>{clearTimeout(tm);tm=null};
+
+b.addEventListener('pointerdown',e=>{
+ if(e.pointerType==='mouse'&&e.button!==0)return;
+ fired=false;x0=e.clientX;y0=e.clientY;clr();
+ if(!ok())return;
+ tm=setTimeout(()=>{tm=null;fired=true;
+  try{navigator.vibrate&&navigator.vibrate(30)}catch(_){}
+  choice('🔞 18+',[['🔞 '+t('nsfw_send'),()=>{window.XOPT.nsfw=true;$('form').requestSubmit()}]])},450)});
+b.addEventListener('pointermove',e=>{if(tm&&(Math.abs(e.clientX-x0)>10||Math.abs(e.clientY-y0)>10))clr()});
+['pointerup','pointercancel','pointerleave'].forEach(k=>b.addEventListener(k,clr));
+/* после долгого нажатия обычную отправку гасим */
+b.addEventListener('click',e=>{if(fired){e.preventDefault();e.stopImmediatePropagation();fired=false}},true);
+b.addEventListener('contextmenu',e=>e.preventDefault());
+
+/* красная подсветка кнопки, когда 18+ включено */
+setInterval(()=>b.classList.toggle('n18',!!(window.XOPT&&window.XOPT.nsfw)),400);
 })();
 </script>
 </body>
