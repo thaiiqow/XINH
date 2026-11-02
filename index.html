@@ -4117,12 +4117,12 @@ document.addEventListener('pointerdown',e=>{
 </style>
 <script>
 (()=>{
-const RU={o_once:'🔥 Исчезающее',o_nsfw:'🔞 18+',o_price:'💰 Цена',o_price_n:'💰 {p} Ỻ',o_ask:'Цена за открытие медиа, Ỻ',o_bad:'Введите число от 1 до 100000.',
+const RU={o_once:'🔥 Исчезающее',o_nsfw:'*',o_price:'💰 Цена',o_price_n:'💰 {p} Ỻ',o_ask:'Цена за открытие медиа, Ỻ',o_bad:'Введите число от 1 до 100000.',
  on_text:'Исчезающее сообщение',on_photo:'Исчезающее фото',on_video:'Исчезающее видео',on_voice:'Исчезающее голосовое',on_circle:'Исчезающий кружок',on_file:'Исчезающий файл',
  on_open:'Нажмите, чтобы открыть (1 раз)',on_viewed:'Просмотрено',on_unopened:'Не открыто',on_gone:'Это сообщение уже просмотрено.',on_close:'Закрыть навсегда',on_hint:'Исчезнет после закрытия',
  nsfw_tap:'нажмите, чтобы показать',pw_lock:'Платное медиа',pw_buy:'Открыть за {p} Ỻ',pw_conf:'Купить за {p} Ỻ? Деньги пойдут в казну канала.',pw_bought:'Куплено',pw_price:'Цена: {p} Ỻ',
  rs_treasury:'Казна',tr_bal:'Казна канала',tr_pay:'Выплатить',tr_amt:'Сумма, Ỻ',tr_none:'Операций пока нет.',tr_owner:'Казну распределяет только владелец.',tr_log:'История',e_fwd:'Это нельзя переслать или сохранить.'};
-const EN={o_once:'🔥 Disappearing',o_nsfw:'🔞 18+',o_price:'💰 Price',o_price_n:'💰 {p} Ỻ',o_ask:'Price to open the media, Ỻ',o_bad:'Enter a number from 1 to 100000.',
+const EN={o_once:'🔥 Disappearing',o_nsfw:'*',o_price:'💰 Price',o_price_n:'💰 {p} Ỻ',o_ask:'Price to open the media, Ỻ',o_bad:'Enter a number from 1 to 100000.',
  on_text:'Disappearing message',on_photo:'Disappearing photo',on_video:'Disappearing video',on_voice:'Disappearing voice',on_circle:'Disappearing circle',on_file:'Disappearing file',
  on_open:'Tap to open (once)',on_viewed:'Viewed',on_unopened:'Not opened',on_gone:'This message was already viewed.',on_close:'Close for good',on_hint:'Disappears when closed',
  nsfw_tap:'tap to show',pw_lock:'Paid media',pw_buy:'Open for {p} Ỻ',pw_conf:'Buy for {p} Ỻ? The money goes to the channel treasury.',pw_bought:'Purchased',pw_price:'Price: {p} Ỻ',
@@ -4254,9 +4254,9 @@ const _f=fill;
 function inner(m,d){const tmp=H('div');_f(tmp,m);if(d&&tmp.classList.contains('vn'))d.classList.add('vn');return[...tmp.childNodes]}
 function keepBottom(){const b=$('msgs');if(b.scrollHeight-b.scrollTop-b.clientHeight<500)b.scrollTop=b.scrollHeight}
 function nsfwBox(parent,m,nodes){
- parent.append(H('span',{className:'nsb',textContent:'🔞 18+'}));
+ parent.append(H('span',{className:'nsb',textContent:'*'}));
  const box=H('div',{className:'nsfw'+(revealed.has(m.id)?' rv':'')});nodes.forEach(n=>box.append(n));
- box.append(H('div',{className:'nsov',textContent:'18+ · '+t('nsfw_tap')}));
+ box.append(H('div',{className:'nsov',textContent:'* · '+t('nsfw_tap')}));
  box.addEventListener('click',e=>{if(!box.classList.contains('rv')){e.stopPropagation();e.preventDefault();box.classList.add('rv');revealed.add(m.id)}},true);
  parent.append(box)}
 function onceInfo(m){const k=m.kind||'text',n=m.file_name||'';
@@ -4267,7 +4267,7 @@ function fillOnce(d,m){
  const own=m.sender_id===me.id,v=viewed.has(m.id),[ic,k]=onceInfo(m);
  const c=H('div',{className:'onc'+(v?' dn':'')},H('span',{className:'oi',textContent:v?'✓':ic}),
   H('div',{style:'min-width:0'},H('b',{textContent:t(k)}),H('small',{textContent:v?t('on_viewed'):(own?t('on_unopened'):t('on_open'))})));
- if(m.nsfw)c.append(H('span',{className:'nsb',textContent:'🔞 18+'}));
+ if(m.nsfw)c.append(H('span',{className:'nsb',textContent:'*'}));
  if(!own&&!v)c.onclick=e=>{e.stopPropagation();openOnce(m)};
  d.append(c)}
 
@@ -4298,7 +4298,7 @@ function lockedCard(m){const w=H('div',{className:'pwall'});
  if(m.cover_url)w.append(H('img',{src:m.cover_url,alt:''}));
  w.append(H('div',{className:'pwo'},H('span',{className:'pl',textContent:'🔒'}),H('b',{textContent:t('pw_lock')}),
   H('button',{type:'button',className:'solid',textContent:t('pw_buy').replace('{p}',m.price),onclick:e=>{e.stopPropagation();buy(m)}})));
- const wrap=H('div');if(m.nsfw)wrap.append(H('span',{className:'nsb',textContent:'🔞 18+'}));wrap.append(w);
+ const wrap=H('div');if(m.nsfw)wrap.append(H('span',{className:'nsb',textContent:'*'}));wrap.append(w);
  if(m.body&&!AUTO.test(m.body)){const cap=H('div',{className:'cap'});rich(cap,m.body);wrap.append(cap)}
  return wrap}
 function fillPaid(d,m){
@@ -4324,10 +4324,10 @@ const _last=last;
 last=function(id){const m=_last(id);if(!m)return m;
  if(m.once)return{...m,body:'🔥 '+t(onceInfo(m)[1])};
  if(m.price>0)return{...m,body:'💰 '+t('pw_lock')};
- if(m.nsfw)return{...m,body:'🔞 18+'};
+ if(m.nsfw)return{...m,body:'*'};
  return m};
 const _nt=notify;
-notify=function(m,o){if(m&&(m.once||m.nsfw||m.price>0))m={...m,body:m.once?'🔥':m.price>0?'💰':'🔞 18+'};return _nt.call(this,m,o)};
+notify=function(m,o){if(m&&(m.once||m.nsfw||m.price>0))m={...m,body:m.once?'🔥':m.price>0?'💰':'*'};return _nt.call(this,m,o)};
 
 /* нельзя пересылать / сохранять защищённое */
 const blocked=m=>m&&(m.once||m.price>0||hasPriv(m));
@@ -4395,8 +4395,8 @@ upd();
 </style>
 <script>
 (()=>{
-Object.assign(I18.ru,{nsfw_send:'Отправить как 18+'});
-Object.assign(I18.en,{nsfw_send:'Send as 18+'});
+Object.assign(I18.ru,{nsfw_send:'Отправить как *'});
+Object.assign(I18.en,{nsfw_send:'Send as *'});
 ['xx','nr','be','bg','sr'].forEach(l=>{if(I18[l])I18[l].nsfw_send=I18.ru.nsfw_send});
 ['vi','zh','ja','de','fr'].forEach(l=>{if(I18[l])I18[l].nsfw_send=I18.en.nsfw_send});
 
